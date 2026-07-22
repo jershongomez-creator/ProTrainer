@@ -1,0 +1,394 @@
+{
+  "reloj-inteligente": {
+    "alkosto": 299900,
+    "cencosud": 309900,
+    "exito": 289900,
+    "falabella": 319900,
+    "olimpica": 299900
+  },
+  "smart-20": {
+    "alkosto": 449900,
+    "cencosud": 459900,
+    "exito": 439900,
+    "falabella": 469900,
+    "olimpica": 449900
+  },
+  "hot-60i": {
+    "alkosto": 549900,
+    "cencosud": 559900,
+    "exito": 539900,
+    "falabella": 569900,
+    "olimpica": 549900
+  },
+  "hot-70": {
+    "alkosto": 699900,
+    "cencosud": 709900,
+    "exito": 689900,
+    "falabella": 719900,
+    "olimpica": 699900
+  },
+  "hot-60-pro": {
+    "alkosto": 799900,
+    "cencosud": 809900,
+    "exito": 789900,
+    "falabella": 819900,
+    "olimpica": 799900
+  },
+  "note-edge": {
+    "alkosto": 1099900,
+    "cencosud": 1119900,
+    "exito": 1089900,
+    "falabella": 1129900,
+    "olimpica": 1099900
+  },
+  "note-60": {
+    "alkosto": 1299900,
+    "cencosud": 1319900,
+    "exito": 1289900,
+    "falabella": 1329900,
+    "olimpica": 1299900
+  },
+  "note-60-pro": {
+    "alkosto": 1599900,
+    "cencosud": 1619900,
+    "exito": 1589900,
+    "falabella": 1629900,
+    "olimpica": 1599900
+  },
+  "note-60-ultra": {
+    "alkosto": 1999900,
+    "cencosud": 2049900,
+    "exito": 1979900,
+    "falabella": 2059900,
+    "olimpica": 1999900
+  },
+  "a07": {
+    "alkosto": 429900,
+    "cencosud": 439900,
+    "exito": 419900,
+    "falabella": 449900,
+    "olimpica": 429900
+  },
+  "a17": {
+    "alkosto": 529900,
+    "cencosud": 539900,
+    "exito": 519900,
+    "falabella": 549900,
+    "olimpica": 529900
+  },
+  "a27": {
+    "alkosto": 749900,
+    "cencosud": 759900,
+    "exito": 739900,
+    "falabella": 779900,
+    "olimpica": 749900
+  },
+  "a37": {
+    "alkosto": 999900,
+    "cencosud": 1019900,
+    "exito": 989900,
+    "falabella": 1029900,
+    "olimpica": 999900
+  },
+  "a57": {
+    "alkosto": 1399900,
+    "cencosud": 1419900,
+    "exito": 1389900,
+    "falabella": 1429900,
+    "olimpica": 1399900
+  },
+  "s25fe": {
+    "alkosto": 2699900,
+    "cencosud": 2749900,
+    "exito": 2679900,
+    "falabella": 2759900,
+    "olimpica": 2699900
+  },
+  "s26-plus": {
+    "alkosto": 4499900,
+    "cencosud": 4599900,
+    "exito": 4449900,
+    "falabella": 4619900,
+    "olimpica": 4499900
+  },
+  "x5c": {
+    "alkosto": 399900,
+    "cencosud": 409900,
+    "exito": 389900,
+    "falabella": 419900,
+    "olimpica": 399900
+  },
+  "x7d": {
+    "alkosto": 599900,
+    "cencosud": 609900,
+    "exito": 589900,
+    "falabella": 619900,
+    "olimpica": 599900
+  },
+  "x8d": {
+    "alkosto": 799900,
+    "cencosud": 819900,
+    "exito": 789900,
+    "falabella": 829900,
+    "olimpica": 799900
+  },
+  "400-smart": {
+    "alkosto": 699900,
+    "cencosud": 709900,
+    "exito": 689900,
+    "falabella": 719900,
+    "olimpica": 699900
+  },
+  "magic-7-lite": {
+    "alkosto": 1199900,
+    "cencosud": 1219900,
+    "exito": 1189900,
+    "falabella": 1229900,
+    "olimpica": 1199900
+  },
+  "magic-8-lite": {
+    "alkosto": 1499900,
+    "cencosud": 1529900,
+    "exito": 1479900,
+    "falabella": 1539900,
+    "olimpica": 1499900
+  },
+  "600": {
+    "alkosto": 2199900,
+    "cencosud": 2249900,
+    "exito": 2179900,
+    "falabella": 2259900,
+    "olimpica": 2199900
+  },
+  "g06": {
+    "alkosto": 389900,
+    "cencosud": 399900,
+    "exito": 379900,
+    "falabella": 409900,
+    "olimpica": 389900
+  },
+  "g15": {
+    "alkosto": 499900,
+    "cencosud": 509900,
+    "exito": 489900,
+    "falabella": 519900,
+    "olimpica": 499900
+  },
+  "g56": {
+    "alkosto": 899900,
+    "cencosud": 919900,
+    "exito": 889900,
+    "falabella": 929900,
+    "olimpica": 899900
+  },
+  "g67": {
+    "alkosto": 999900,
+    "cencosud": 1019900,
+    "exito": 989900,
+    "falabella": 1029900,
+    "olimpica": 999900
+  },
+  "g86": {
+    "alkosto": 1299900,
+    "cencosud": 1319900,
+    "exito": 1289900,
+    "falabella": 1329900,
+    "olimpica": 1299900
+  },
+  "edge-50-fusion": {
+    "alkosto": 1699900,
+    "cencosud": 1729900,
+    "exito": 1679900,
+    "falabella": 1739900,
+    "olimpica": 1699900
+  },
+  "edge-60-fusion": {
+    "alkosto": 1799900,
+    "cencosud": 1829900,
+    "exito": 1779900,
+    "falabella": 1839900,
+    "olimpica": 1799900
+  },
+  "edge-70-fusion": {
+    "alkosto": 1999900,
+    "cencosud": 2039900,
+    "exito": 1979900,
+    "falabella": 2049900,
+    "olimpica": 1999900
+  },
+  "15": {
+    "alkosto": 999900,
+    "cencosud": 1019900,
+    "exito": 989900,
+    "falabella": 1029900,
+    "olimpica": 999900
+  },
+  "15t": {
+    "alkosto": 1099900,
+    "cencosud": 1119900,
+    "exito": 1089900,
+    "falabella": 1129900,
+    "olimpica": 1099900
+  },
+  "15t-pro": {
+    "alkosto": 1399900,
+    "cencosud": 1429900,
+    "exito": 1379900,
+    "falabella": 1439900,
+    "olimpica": 1399900
+  },
+  "c100": {
+    "alkosto": 699900,
+    "cencosud": 709900,
+    "exito": 689900,
+    "falabella": 719900,
+    "olimpica": 699900
+  },
+  "c100x": {
+    "alkosto": 549900,
+    "cencosud": 559900,
+    "exito": 539900,
+    "falabella": 569900,
+    "olimpica": 549900
+  },
+  "c100i": {
+    "alkosto": 449900,
+    "cencosud": 459900,
+    "exito": 439900,
+    "falabella": 469900,
+    "olimpica": 449900
+  },
+  "a6": {
+    "alkosto": 799900,
+    "cencosud": 819900,
+    "exito": 789900,
+    "falabella": 829900,
+    "olimpica": 799900
+  },
+  "a6c": {
+    "alkosto": 499900,
+    "cencosud": 509900,
+    "exito": 489900,
+    "falabella": 519900,
+    "olimpica": 499900
+  },
+  "a6k": {
+    "alkosto": 599900,
+    "cencosud": 609900,
+    "exito": 589900,
+    "falabella": 619900,
+    "olimpica": 599900
+  },
+  "a6-pro": {
+    "alkosto": 1099900,
+    "cencosud": 1129900,
+    "exito": 1089900,
+    "falabella": 1139900,
+    "olimpica": 1099900
+  },
+  "reno14f": {
+    "alkosto": 1499900,
+    "cencosud": 1529900,
+    "exito": 1479900,
+    "falabella": 1539900,
+    "olimpica": 1499900
+  },
+  "reno14": {
+    "alkosto": 1899900,
+    "cencosud": 1939900,
+    "exito": 1879900,
+    "falabella": 1949900,
+    "olimpica": 1899900
+  },
+  "sparkgo3": {
+    "alkosto": 349900,
+    "cencosud": 359900,
+    "exito": 339900,
+    "falabella": 369900,
+    "olimpica": 349900
+  },
+  "spark50": {
+    "alkosto": 529900,
+    "cencosud": 539900,
+    "exito": 519900,
+    "falabella": 549900,
+    "olimpica": 529900
+  },
+  "spark50-5g": {
+    "alkosto": 799900,
+    "cencosud": 819900,
+    "exito": 789900,
+    "falabella": 829900,
+    "olimpica": 799900
+  },
+  "camon50": {
+    "alkosto": 1199900,
+    "cencosud": 1229900,
+    "exito": 1179900,
+    "falabella": 1239900,
+    "olimpica": 1199900
+  },
+  "pova-curve-2": {
+    "alkosto": 1399900,
+    "cencosud": 1429900,
+    "exito": 1379900,
+    "falabella": 1439900,
+    "olimpica": 1399900
+  },
+  "redmi15": {
+    "alkosto": 699900,
+    "cencosud": 709900,
+    "exito": 689900,
+    "falabella": 719900,
+    "olimpica": 699900
+  },
+  "note15": {
+    "alkosto": 899900,
+    "cencosud": 919900,
+    "exito": 889900,
+    "falabella": 929900,
+    "olimpica": 899900
+  },
+  "note15-pro": {
+    "alkosto": 1199900,
+    "cencosud": 1229900,
+    "exito": 1179900,
+    "falabella": 1239900,
+    "olimpica": 1199900
+  },
+  "note15-pro-plus": {
+    "alkosto": 1699900,
+    "cencosud": 1739900,
+    "exito": 1679900,
+    "falabella": 1749900,
+    "olimpica": 1699900
+  },
+  "xiaomi15": {
+    "alkosto": 3799900,
+    "cencosud": 3899900,
+    "exito": 3749900,
+    "falabella": 3919900,
+    "olimpica": 3799900
+  },
+  "xiaomi17t": {
+    "alkosto": 2499900,
+    "cencosud": 2549900,
+    "exito": 2479900,
+    "falabella": 2559900,
+    "olimpica": 2499900
+  },
+  "xiaomi17t-pro": {
+    "alkosto": 3199900,
+    "cencosud": 3269900,
+    "exito": 3159900,
+    "falabella": 3279900,
+    "olimpica": 3199900
+  },
+  "redmi15c": {
+    "alkosto": 549900,
+    "cencosud": 559900,
+    "exito": 539900,
+    "falabella": 569900,
+    "olimpica": 549900
+  }
+}
