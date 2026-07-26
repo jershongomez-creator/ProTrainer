@@ -16,6 +16,7 @@
     <!-- SDK de Firebase (¡Cargando primero y fuera de las etiquetas de estilo!) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
     <script>
         const firebaseConfig = {
@@ -234,9 +235,9 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                 <span>Arena Cara a Cara</span>
             </button>
-            <button onclick="switchTab('tab-argumentos')" id="btn-tab-argumentos" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-                <span>Manejo de Objeciones</span>
+            <button onclick="switchTab('tab-radar-caracteristicas')" id="btn-tab-radar-caracteristicas" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
+                <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <span>Radar Specs</span>
             </button>
             <button onclick="switchTab('tab-quiz')" id="btn-tab-quiz" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
                 <span class="text-lg">🎯</span>
@@ -283,45 +284,49 @@
     
 </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="space-y-1.5">
-                    <label for="select-infinix" class="text-[10px] font-black text-infinix uppercase tracking-widest orbitron flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-infinix"></span> 1. Arma Infinix Activa
-                    </label>
-                    <div class="relative">
-                        <select id="select-infinix" onchange="selectInfinix(this.value)" class="infinix-select w-full bg-darkBg text-white border-2 border-infinix/40 rounded-xl px-4 py-3 text-xs sm:text-sm font-black focus:border-infinix focus:ring-1 focus:ring-infinix transition-all cursor-pointer shadow-lg">
-                            <!-- Inyectado por JS -->
-                        </select>
-                    </div>
-                </div>
+<div id="top-selectors-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4 transition-all duration-500">
+    <!-- 1. Infinix -->
+    <div id="container-infinix" class="space-y-1.5 w-full">
+        <label for="select-infinix" class="text-[10px] font-black text-infinix uppercase tracking-widest orbitron flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-infinix"></span> 1. Arma Infinix Activa
+        </label>
+        <div class="relative">
+            <select id="select-infinix" onchange="selectInfinix(this.value)" class="infinix-select w-full bg-darkBg text-white border-2 border-infinix/40 rounded-xl px-4 py-3 text-xs sm:text-sm font-black focus:border-infinix focus:ring-1 focus:ring-infinix transition-all cursor-pointer shadow-lg">
+                <!-- Inyectado por JS -->
+            </select>
+        </div>
+    </div>
 
-                <div class="space-y-1.5">
-                    <label for="select-rival-brand" class="text-[10px] font-black text-rival-light uppercase tracking-widest orbitron flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-rival-light"></span> 2. Marca Enemiga
-                    </label>
-                    <div class="relative">
-                        <select id="select-rival-brand" onchange="changeRivalBrand(this.value)" class="rival-select w-full bg-darkBg text-white border-2 border-rival/40 rounded-xl px-4 py-3 text-xs sm:text-sm font-black focus:border-rival focus:ring-1 focus:ring-rival transition-all cursor-pointer shadow-lg">
-                            <option value="samsung">SAMSUNG</option>
-                            <option value="honor">HONOR</option>
-                            <option value="motorola">MOTOROLA</option>
-                            <option value="realme">REALME</option>
-                            <option value="oppo">OPPO</option>
-                            <option value="tecno">TECNO</option>
-                            <option value="xiaomi">XIAOMI / REDMI</option>
-                        </select>
-                    </div>
-                </div>
+    <!-- 2. Marca Enemiga -->
+    <div id="container-rival-brand" class="space-y-1.5">
+        <label for="select-rival-brand" class="text-[10px] font-black text-rival-light uppercase tracking-widest orbitron flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-rival-light"></span> 2. Marca Enemiga
+        </label>
+        <div class="relative">
+            <select id="select-rival-brand" onchange="changeRivalBrand(this.value)" class="rival-select w-full bg-darkBg text-white border-2 border-rival/40 rounded-xl px-4 py-3 text-xs sm:text-sm font-black focus:border-rival focus:ring-1 focus:ring-rival transition-all cursor-pointer shadow-lg">
+                <option value="samsung">SAMSUNG</option>
+                <option value="honor">HONOR</option>
+                <option value="motorola">MOTOROLA</option>
+                <option value="realme">REALME</option>
+                <option value="oppo">OPPO</option>
+                <option value="tecno">TECNO</option>
+                <option value="xiaomi">XIAOMI / REDMI</option>
+            </select>
+        </div>
+    </div>
 
-                <div class="space-y-1.5">
-                    <label for="select-rival-model" class="text-[10px] font-black text-rival-light uppercase tracking-widest orbitron flex items-center gap-1.5">
-                        <span class="text-xs">⚡</span> 3. Referencia Enemiga
-                    </label>
-                    <div class="relative">
-                        <select id="select-rival-model" onchange="selectRival(this.value)" class="rival-select w-full bg-darkBg text-white border-2 border-rival/40 rounded-xl px-4 py-3 text-xs sm:text-sm font-black focus:border-rival focus:ring-1 focus:ring-rival transition-all cursor-pointer shadow-lg">
-                            <!-- Inyectado dinámicamente por JS -->
-                        </select>
-                    </div>
-                </div>
+    <!-- 3. Referencia Enemiga -->
+    <div id="container-rival-model" class="space-y-1.5">
+        <label for="select-rival-model" class="text-[10px] font-black text-rival-light uppercase tracking-widest orbitron flex items-center gap-1.5">
+            <span class="text-xs">⚡</span> 3. Referencia Enemiga
+        </label>
+        <div class="relative">
+            <select id="select-rival-model" onchange="selectRival(this.value)" class="rival-select w-full bg-darkBg text-white border-2 border-rival/40 rounded-xl px-4 py-3 text-xs sm:text-sm font-black focus:border-rival focus:ring-1 focus:ring-rival transition-all cursor-pointer shadow-lg">
+                <!-- Inyectado dinámicamente por JS -->
+            </select>
+        </div>
+    </div>
+</div>   
             </div>
         </div>
     </section>
@@ -452,23 +457,17 @@
             </div>
         </section>
 
-        <section id="tab-argumentos" class="hidden space-y-6">
-            <div class="text-center max-w-2xl mx-auto space-y-3">
+        <section id="tab-radar-caracteristicas" class="hidden space-y-6">
+            <div class="text-center max-w-2xl mx-auto space-y-3 mb-6">
                 <div class="flex justify-center items-center space-x-2">
-                    <span class="text-2xl">🛡️</span>
-                    <span class="text-xs font-black text-infinix uppercase tracking-widest orbitron block">MANUAL DE COMBATE TÁCTICO</span>
+                    <span class="text-xs font-black text-purple-400 uppercase tracking-widest orbitron block animate-pulse">INTELIGENCIA DE CAMPO TÁCTICA</span>
                 </div>
-                <h3 id="obj-section-title" class="text-3xl font-black text-white orbitron tracking-wider">Maneja las Objeciones del Cliente</h3>
-                <p class="text-sm text-gray-400">Respuestas rápidas, inteligentes y agresivas comercialmente para que cierres la venta cuando el cliente ponga trabas.</p>
+                <h3 class="text-3xl font-black text-white orbitron tracking-wider">Radar de Características</h3>
+                <p class="text-sm text-gray-400">Estos son todos los rivales directos del mercado que compiten contra el <span id="radar-specs-inf-name" class="text-infinix font-bold text-lg"></span>.</p>
             </div>
-
-            <div id="admin-add-objection-btn" class="hidden flex justify-center mt-4">
-                 <button onclick="openObjectionModal()" class="px-6 py-2 bg-infinix/10 border border-infinix text-infinix font-bold rounded-lg hover:bg-infinix hover:text-black transition-all text-xs uppercase tracking-widest orbitron shadow-[0_0_10px_rgba(57,255,20,0.2)]">
-                    + Añadir Nueva Objeción Manual
-                </button>
-            </div>
-
-            <div id="objections-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            
+            <!-- Grid donde aparecerán las tarjetas de los rivales -->
+            <div id="specs-radar-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Inyectado dinámicamente por JS -->
             </div>
         </section>
@@ -540,6 +539,22 @@
                     </table>
                 </div>
             </div>
+      <!-- NUEVO: RADAR DE COMPETENCIA DIRECTA DETALLADO (VISTA HACIA ABAJO) -->
+      <div class="bg-darkCard rounded-3xl border border-darkBorder overflow-hidden shadow-2xl mt-6">
+        <div class="p-6 border-b border-darkBorder bg-darkCard/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h4 class="text-lg font-bold text-white flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse"></span>
+                    Radar de Competencia Directa
+                </h4>
+                <p class="text-xs text-gray-400">Rivales en el mismo rango de precio (± 15%) que el <span id="radar-inf-name" class="text-infinix font-bold"></span>.</p>
+            </div>
+        </div>
+        <!-- Se cambiaron las clases a grid y se quitó el carrusel horizontal -->
+        <div class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="price-radar-container">
+            <!-- Inyectado por JS -->
+        </div>
+    </div>
         </section>
 
         <section id="tab-cortex" class="hidden space-y-6">
@@ -1179,6 +1194,34 @@
             } else {
                 if(errorMsg) errorMsg.classList.remove('hidden');
             }
+          // --- SISTEMA DE NOTIFICACIONES PUSH ---
+        function activarNotificaciones() {
+            const messaging = firebase.messaging();
+            
+            Notification.requestPermission().then((permission) => {
+                if (permission === 'granted') {
+                    console.log('Permiso de notificaciones concedido.');
+                    
+                    // Aquí el sistema le genera una "cédula" (Token) única a ese celular
+                    // Reemplazaremos 'TU_CLAVE_VAPID' en el siguiente paso
+                    messaging.getToken({ vapidKey: 'TU_CLAVE_VAPID' }).then((currentToken) => {
+                        if (currentToken) {
+                            console.log('Token del dispositivo:', currentToken);
+                            triggerCyberToast("SISTEMA PUSH ACTIVO", "Este dispositivo ya puede recibir alertas de combate.", true);
+                        } else {
+                            console.log('No se pudo generar el token.');
+                        }
+                    });
+                } else {
+                    console.log('El asesor bloqueó las notificaciones.');
+                }
+            });
+            
+            // Si la app está ABIERTA, muestra la notificación como un CyberToast tuyo
+            messaging.onMessage((payload) => {
+                triggerCyberToast(payload.notification.title, payload.notification.body, true);
+            });
+        }  
         }
 
         function applyRolePermissions(role) {
@@ -2529,94 +2572,11 @@ if (rivDeviceImg) {
             if (tblAdvCam) tblAdvCam.innerHTML = `<span class="inline-flex items-center px-1.5 py-0.5 bg-yellow-500/15 text-yellow-400 rounded text-[9px] font-bold">Optimizado IA</span>`;
 
             // Ejecutamos las funciones secundarias
-            updateObjectionsUI(inf, riv);
+            updateSpecsRadar(inf);
             renderEvaluations();
             updateShoppingPrices(inf, riv);
             updateCortexForm(inf, riv);
         }     
-// --- GENERADOR INTELIGENTE DE OBJECIONES BASADO EN ESPECIFICACIONES ---
-function updateObjectionsUI(inf, riv) {
-            const container = document.getElementById('objections-list-container');
-            if (!container) return;
-            container.innerHTML = '';
-            
-            if (!inf || !riv) return;
-
-            const duelKey = `${activeInfinixId}_vs_${activeRivalId}`;
-            let storedDuelObjections = [];
-            
-            try {
-                storedDuelObjections = JSON.parse(localStorage.getItem(`infinix_obj_${duelKey}`)) || [];
-            } catch (e) {
-                storedDuelObjections = [];
-            }
-
-            // Si el Admin no ha creado objeciones manuales, el sistema genera argumentos analizando el hardware real
-            let dataObj = storedDuelObjections.length > 0 ? storedDuelObjections : [
-                { 
-                    id: 'default_1', 
-                    q: `¿Por qué el cliente debería elegir el ${inf.name} (${inf.processor}) en lugar del ${riv.name} (${riv.processor})?`, 
-                    a: `El ${riv.name} carga un costo de marca elevado que encarece el equipo. Con el <strong>${inf.name}</strong>, el cliente invierte el 100% de su dinero en potencia real de procesamiento con el chipset <strong>${inf.processor}</strong> y una fluidez de <strong>${inf.hz}Hz</strong> superiores.` 
-                },
-                { 
-                    id: 'default_2', 
-                    q: `El cliente duda sobre la calidad de pantalla y fluidez entre ${inf.name} (${inf.hz}Hz) y ${riv.name} (${riv.hz || 120}Hz)`, 
-                    a: `Aquí hay una diferencia visual clave: el <strong>${inf.name}</strong> ofrece una experiencia superior de <strong>${inf.hz}Hz</strong> con tecnología ${inf.screentype}, optimizada para transiciones sin interrupciones frente a los ${riv.hz || 120}Hz estándar del ${riv.name}.` 
-                },
-                { 
-                    id: 'default_3', 
-                    q: `¿Cómo justificar la autonomía y velocidad de carga (${inf.charge} vs ${riv.charge}) ante el ${riv.name}?`, 
-                    a: `Mientras el ${riv.name} te deja atado al tomacorriente con su carga de ${riv.charge}, el <strong>${inf.name}</strong> te respalda con una masiva batería de <strong>${inf.battery}</strong> y una velocidad de carga ultrarrápida de <strong>${inf.charge}</strong>.` 
-                },
-                { 
-                    id: 'default_4', 
-                    q: `¿Qué blindaje y resistencia real ofrece el ${inf.name} frente a los golpes diarios en comparación con el ${riv.name}?`, 
-                    a: `El <strong>${inf.name}</strong> cuenta con especificaciones de alta resistencia: <em>${inf.durability}</em>, lo que protege de manera efectiva la inversión del usuario frente al chasis convencional del ${riv.name}.` 
-                }
-            ];
-
-            dataObj.forEach((obj, index) => {
-                const idx = index + 1;
-                const card = document.createElement('div');
-                card.className = "bg-darkCard border border-darkBorder hover:border-infinix/30 p-6 rounded-3xl transition-all duration-300 relative group";
-                
-                let adminControls = '';
-let currentRoleNormalized = (typeof currentUserRole !== 'undefined' ? currentUserRole : '').toUpperCase();
-
-// Validación estricta: Solo visible para ADMIN o TRAINER
-if (['ADMIN', 'TRAINER'].includes(currentRoleNormalized)) {
-    adminControls = `
-        <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
-            <button onclick="editObj('${obj.id}', event)" class="p-1.5 bg-infinix/20 text-infinix rounded hover:bg-infinix hover:text-black transition-all" title="Modificar Objeción">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-            </button>
-            <button onclick="deleteObjection('${obj.id}', event)" class="p-1.5 bg-red-900/40 text-red-500 rounded hover:bg-red-600 hover:text-white transition-all" title="Eliminar Objeción">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-            </button>
-        </div>
-    `;
-}           
-
-                card.innerHTML = `
-                    ${adminControls}
-                    <div class="flex items-start justify-between cursor-pointer" onclick="toggleObjection(${idx})">
-                        <div class="flex gap-4 pr-16">
-                            <span class="text-2xl sm:text-3xl">💬</span>
-                            <div>
-                                <h4 id="q-text-${obj.id}" class="font-extrabold text-white group-hover:text-infinix transition-colors text-xs sm:text-sm">"${obj.q}"</h4>
-                                <p class="text-[10px] text-gray-400 mt-1">Toca para abrir la respuesta persuasiva</p>
-                            </div>
-                        </div>
-                        <span id="icon-obj-${idx}" class="text-infinix font-bold text-xl transition-transform duration-300">+</span>
-                    </div>
-                    <div id="ans-obj-${idx}" class="hidden mt-4 pt-4 border-t border-darkBorder text-xs sm:text-sm text-gray-300 space-y-2 leading-relaxed">
-                        <div class="p-2 bg-infinix/10 border-l-4 border-infinix rounded-r text-[10px] font-mono text-infinix">PITCH MAESTRO DE VENTA:</div>
-                        <p id="a-text-${obj.id}" class="text-gray-300 leading-snug">"${obj.a}"</p>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
 
         let editingObjId = null;
 
@@ -2875,8 +2835,8 @@ if (['ADMIN', 'TRAINER'].includes(currentRoleNormalized)) {
             });
         }  
         function switchTab(tabId) {
-            // 1. Añadido 'tab-tendencias-nacionales' a la lista general de ocultación
-            const tabs = ['tab-comparativa', 'tab-argumentos', 'tab-quiz', 'tab-shopping', 'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales'];
+            // Actualizamos la lista de pestañas
+            const tabs = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping', 'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales'];
             tabs.forEach(t => {
                 const el = document.getElementById(t);
                 if (el) el.classList.add('hidden');
@@ -2884,6 +2844,21 @@ if (['ADMIN', 'TRAINER'].includes(currentRoleNormalized)) {
 
             if (tabId === 'tab-tendencias-nacionales') {
                 renderTendenciasNacionalesTab();
+            }
+
+            // Ocultar/Mostrar los selectores de la competencia dinámicamente
+            const containerRivalBrand = document.getElementById('container-rival-brand');
+            const containerRivalModel = document.getElementById('container-rival-model');
+            const selectorsGrid = document.getElementById('top-selectors-grid');
+            
+            if (tabId === 'tab-radar-caracteristicas') {
+                if(containerRivalBrand) containerRivalBrand.classList.add('hidden');
+                if(containerRivalModel) containerRivalModel.classList.add('hidden');
+                if(selectorsGrid) selectorsGrid.className = "grid grid-cols-1 gap-4 max-w-sm mx-auto transition-all duration-500";
+            } else {
+                if(containerRivalBrand) containerRivalBrand.classList.remove('hidden');
+                if(containerRivalModel) containerRivalModel.classList.remove('hidden');
+                if(selectorsGrid) selectorsGrid.className = "grid grid-cols-1 md:grid-cols-3 gap-4 transition-all duration-500";
             }
 
             const hwEditorBtn = document.getElementById('admin-hardware-editor-btn');
@@ -2895,8 +2870,8 @@ if (['ADMIN', 'TRAINER'].includes(currentRoleNormalized)) {
                 }
             }
 
-// 2. Añadido 'btn-tab-tendencias-nacionales' a la lista de botones de navegación
-const buttons = ['btn-tab-comparativa', 'btn-tab-argumentos', 'btn-tab-quiz', 'btn-tab-shopping', 'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales'];
+            // Actualizamos la lista de botones
+            const buttons = ['btn-tab-comparativa', 'btn-tab-radar-caracteristicas', 'btn-tab-quiz', 'btn-tab-shopping', 'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales'];
             buttons.forEach(btnId => {
                 const element = document.getElementById(btnId);
                 if (element) {
@@ -2914,10 +2889,9 @@ const buttons = ['btn-tab-comparativa', 'btn-tab-argumentos', 'btn-tab-quiz', 'b
                     if (btnId === 'btn-tab-tendencias-nacionales' && !['GERENTE', 'SUPERVISOR', 'TRAINER'].includes(currentUserRole)) {
                         element.classList.add('hidden');
                     }
-                    if (btnId === 'btn-tab-argumentos' && ['GERENTE', 'SUPERVISOR'].includes(currentUserRole)) {
+                    if (btnId === 'btn-tab-radar-caracteristicas' && ['GERENTE', 'SUPERVISOR'].includes(currentUserRole)) {
                         element.classList.add('hidden');
                     }
-                    // 👇 AGREGA ESTA LÍNEA AQUÍ MISMO 👇
                     if (btnId === 'btn-tab-quiz' && currentUserRole === 'GERENTE') {
                         element.classList.add('hidden');
                     }
@@ -2928,8 +2902,7 @@ const buttons = ['btn-tab-comparativa', 'btn-tab-argumentos', 'btn-tab-quiz', 'b
 
             const activeButton = document.getElementById('btn-' + tabId);
             if (activeButton) {
-                // 3. Estilo blanco activo para Cortex, Alertas Master y Tendencias Nacionales
-                if (tabId === 'tab-cortex' || tabId === 'tab-alertas-master' || tabId === 'tab-tendencias-nacionales') {
+                if (tabId === 'tab-cortex' || tabId === 'tab-alertas-master' || tabId === 'tab-tendencias-nacionales' || tabId === 'tab-radar-caracteristicas') {
                     activeButton.className = "py-3 px-2 rounded-xl font-black text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-white text-black shadow-lg shadow-white/30 transform scale-105 whitespace-nowrap";
                 } else {
                     activeButton.className = "py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-infinix text-black shadow-lg shadow-infinix/20 transform scale-105 whitespace-nowrap";
@@ -3073,10 +3046,280 @@ const buttons = ['btn-tab-comparativa', 'btn-tab-argumentos', 'btn-tab-quiz', 'b
     RETAILERS.forEach(r => { defaults[r.id] = 0; });
     return defaults;
 }
+function updateSpecsRadar(inf) {
+            const container = document.getElementById('specs-radar-container');
+            const nameLabel = document.getElementById('radar-specs-inf-name');
+            if(!container || !nameLabel) return;
 
-        function updateShoppingPrices(inf, riv) {
+            nameLabel.textContent = inf.name.toUpperCase();
+            container.innerHTML = '';
+
+            // 1. Motor de Extracción Numérica Avanzado (Soporta TB)
+            const extractRam = (str) => {
+                if(!str) return 0;
+                const matches = String(str).match(/\d+/g);
+                return matches ? Math.max(...matches.map(Number)) : 0;
+            };
+            const extractRom = (str) => {
+                if(!str) return 0;
+                let s = String(str).toUpperCase();
+                let isTB = s.includes('TB');
+                const matches = s.match(/\d+/g);
+                if(!matches) return 0;
+                let val = Math.max(...matches.map(Number));
+                if (isTB && val < 10) val *= 1024;
+                return val;
+            };
+            
+            const infRam = extractRam(inf.ram);
+            const infRom = extractRom(inf.storage);
+            const infHz = parseInt(inf.hz) || 120;
+
+            const infPrices = getPricesForModel(activeInfinixId, true);
+            let validPrices = Object.values(infPrices).filter(p => p > 0);
+            const avgInfPrice = validPrices.length > 0 ? validPrices.reduce((a, b) => a + b, 0) / validPrices.length : 0;
+
+            let finalCompetitors = [];
+            
+            // 2. BÚSQUEDA TÁCTICA: FRANJA DE PRECIO Y HARDWARE
+            Object.keys(competitorsDatabase).forEach(brandKey => {
+                const brandData = competitorsDatabase[brandKey];
+                if(brandData && brandData.models) {
+                    
+                    let bestModelForBrand = null;
+                    let highestScore = -9999; 
+
+                    Object.keys(brandData.models).forEach(modelKey => {
+                        const m = brandData.models[modelKey];
+                        const rivalPrices = getPricesForModel(modelKey, false);
+                        let validRivPrices = Object.values(rivalPrices).filter(p => p > 0);
+                        const avgRivPrice = validRivPrices.length > 0 ? validRivPrices.reduce((a, b) => a + b, 0) / validRivPrices.length : 0;
+                        
+                        const rivRam = extractRam(m.ram);
+                        const rivRom = extractRom(m.storage);
+                        const rivHz = parseInt(m.hz) || 120;
+
+                        // 3. ALGORITMO ESTRICTO DE COMPETENCIA
+                        let matchScore = 100; 
+                        let priceRatio = 1;
+                        
+                        if (avgInfPrice > 0 && avgRivPrice > 0) {
+                            priceRatio = avgRivPrice / avgInfPrice;
+                            
+                            // LA GUILLOTINA: Descartamos los que sean mucho más baratos (<0.7x) o absurdamente costosos (>1.6x)
+                            if (priceRatio < 0.7 || priceRatio > 1.6) {
+                                matchScore -= 1000; 
+                            } else {
+                                let diffPct = Math.abs(avgRivPrice - avgInfPrice) / avgInfPrice;
+                                matchScore -= (diffPct * 50); 
+                            }
+                        } else {
+                            matchScore -= 60; 
+                        }
+
+                        // ANÁLISIS DE HARDWARE
+                        matchScore -= Math.abs(rivRam - infRam) * 4;       
+                        matchScore -= Math.abs(rivRom - infRom) * (4/64);  
+                        matchScore -= Math.abs(rivHz - infHz) * 0.3;       
+
+                        if (matchScore > highestScore) {
+                            highestScore = matchScore;
+                            bestModelForBrand = {
+                                id: modelKey,
+                                brand: brandData.brandName,
+                                model: m,
+                                avgPrice: avgRivPrice,
+                                score: highestScore > 100 ? 100 : Math.round(highestScore),
+                                ratio: priceRatio,
+                                colorClass: brandData.brandColor.text,
+                                bgClass: brandData.brandColor.bg,
+                                borderClass: brandData.brandColor.border
+                            };
+                        }
+                    });
+
+                    if (bestModelForBrand && bestModelForBrand.score >= 0) {
+                        finalCompetitors.push(bestModelForBrand);
+                    }
+                }
+            });
+
+            if(finalCompetitors.length === 0) {
+                 container.innerHTML = '<div class="col-span-full text-center text-gray-500 py-10 font-mono text-sm border-2 border-dashed border-darkBorder rounded-2xl">No se detectaron rivales en esta escala de precio (± 50%) y características.</div>';
+                 return;
+            }
+
+            // 4. Ordenar por Nivel de Amenaza
+            finalCompetitors.sort((a, b) => b.score - a.score);
+            
+            // 5. Renderizar Tarjetas
+            finalCompetitors.forEach(comp => {
+                const m = comp.model;
+                let mainWeakness = "Revisar ficha completa";
+                if(m.highlights && m.highlights.length > 0) {
+                    const weakPoint = m.highlights.find(h => h.includes('✘'));
+                    if(weakPoint) mainWeakness = weakPoint.replace('✘', '').trim();
+                }
+                
+                // Etiquetas tácticas comerciales
+                let badgeInfo = '';
+                if (comp.avgPrice > 0 && avgInfPrice > 0) {
+                    if (comp.avgPrice > avgInfPrice * 1.15) {
+                        badgeInfo = `<span class="bg-red-500/20 text-red-400 px-2 py-0.5 rounded text-[9px] uppercase font-black tracking-widest border border-red-500/30">Más Costoso</span>`;
+                    } else if (comp.avgPrice < avgInfPrice * 0.85) {
+                        badgeInfo = `<span class="bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded text-[9px] uppercase font-black tracking-widest border border-yellow-500/30">Hardware Inferior</span>`;
+                    } else {
+                        badgeInfo = `<span class="bg-infinix/20 text-infinix px-2 py-0.5 rounded text-[9px] uppercase font-black tracking-widest border border-infinix/40 shadow-[0_0_8px_rgba(57,255,20,0.3)]">Combate Directo</span>`;
+                    }
+                }
+
+                // ----------------------------------------------------
+                // NUEVO: SISTEMA DE IMÁGENES DINÁMICAS
+                // ----------------------------------------------------
+                let mNameLower = m.name.toLowerCase();
+                let fileName = `${m.name}.png`; 
+
+                // HONOR
+                if (mNameLower.includes('600')) fileName = 'Honor_600.png';
+                else if (mNameLower.includes('400 smart')) fileName = 'Honor_400_smart.png';
+                else if (mNameLower.includes('magic 7 lite')) fileName = 'Honor_Magic_7_lite.png';
+                else if (mNameLower.includes('magic 8 lite')) fileName = 'Honor_magic8_lite.png';
+                else if (mNameLower.includes('x5c')) fileName = 'Honor_X5C.png';
+                else if (mNameLower.includes('x7d')) fileName = 'Honor_x7d.png';
+                else if (mNameLower.includes('x8d')) fileName = 'honor_x8d.png';
+
+                // MOTOROLA
+                else if (mNameLower.includes('g06')) fileName = 'G06.png';
+                else if (mNameLower.includes('g15')) fileName = 'G15.PNG';
+                else if (mNameLower.includes('g56')) fileName = 'G56.png';
+                else if (mNameLower.includes('g67')) fileName = 'G67.png';
+                else if (mNameLower.includes('g86')) fileName = 'G86.png';
+                else if (mNameLower.includes('edge 50 fusion')) fileName = 'Edge_50_Fusion.png';
+                else if (mNameLower.includes('edge 60 fusion')) fileName = 'Edge_60_Fusion.png';
+                else if (mNameLower.includes('edge 70 fusion')) fileName = 'Edge_70_Fusion.png';
+
+                // REALME
+                else if (mNameLower.includes('c100i')) fileName = 'realme_C100i.png';
+                else if (mNameLower.includes('c100x')) fileName = 'realme_C100X.png';
+                else if (mNameLower.includes('c100')) fileName = 'realme_C100.png';
+                else if (mNameLower.includes('15t pro')) fileName = 'Realme_15_Pro.png';
+                else if (mNameLower.includes('15t')) fileName = 'REALME 15T.png';
+                else if (mNameLower.includes('realme 15')) fileName = 'Realme_15_5g.png';
+
+                // OPPO
+                else if (mNameLower.includes('a6 pro')) fileName = 'OPPO_A6_Pro.png';
+                else if (mNameLower.includes('a6c')) fileName = 'OPPO_A6c.png';
+                else if (mNameLower.includes('a6k')) fileName = 'OPPO_A6k.png';
+                else if (mNameLower.includes('a6')) fileName = 'OPPO_A6.png';
+                else if (mNameLower.includes('reno 14f') || mNameLower.includes('reno14f')) fileName = 'OPPO_Reno_14F.png';
+                else if (mNameLower.includes('reno 14') || mNameLower.includes('reno14')) fileName = 'OPPO_Reno_14.png';
+
+                // TECNO
+                else if (mNameLower.includes('go3')) fileName = 'TECNO_GO3.PNG';
+                else if (mNameLower.includes('spark 50 5g')) fileName = 'spark_50_5G.png';
+                else if (mNameLower.includes('spark 50')) fileName = 'spark_50_4G.png';
+                else if (mNameLower.includes('camon 50') || mNameLower.includes('camon50')) fileName = 'CAMON 50.PNG';
+                else if (mNameLower.includes('curve 2')) fileName = 'POVA_CURVE.PNG';
+
+                // XIAOMI / REDMI
+                else if (mNameLower.includes('note 15 pro +') || mNameLower.includes('note 15 pro plus')) fileName = 'REDMI_NOTE_15_PRO_PLUS.png';
+                else if (mNameLower.includes('note 15 pro')) fileName = 'REDMI_NOTE_15_PRO.png';
+                else if (mNameLower.includes('note 15')) fileName = 'REDMI_NOTE_15.png';
+                else if (mNameLower.includes('15c')) fileName = 'REDMI_15.png';
+                else if (mNameLower.includes('redmi 15')) fileName = 'REDMI_15.png';
+                else if (mNameLower.includes('17t pro')) fileName = 'XIAOMI_17T_Pro.png';
+                else if (mNameLower.includes('17t')) fileName = 'XIAOMI_17TT.png';
+                else if (mNameLower.includes('xiaomi 15')) fileName = 'XIAOMI_15.png';
+
+                // SAMSUNG
+                else if (mNameLower.includes('s26+') || mNameLower.includes('s26 plus')) fileName = 'S26+.png';
+                else if (mNameLower.includes('s25 fe')) fileName = 'S25_FE.png';
+                else if (mNameLower.includes('a07')) fileName = 'A07.png';
+                else if (mNameLower.includes('a17')) fileName = 'A17.png';
+                else if (mNameLower.includes('a27')) fileName = 'A27.png';
+                else if (mNameLower.includes('a37')) fileName = 'A37.png';
+                else if (mNameLower.includes('a57')) fileName = 'A57.png';
+                else if (mNameLower.includes('fit 3') || mNameLower.includes('fit-3')) fileName = 'FIT_3.png';
+
+                let miniImgHtml = `<img src="./${fileName}" style="width: 80px; height: 110px; object-fit: contain; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.6));" onerror="this.style.display='none'">`;
+                // ----------------------------------------------------
+
+                container.innerHTML += `
+                    <div class="bg-gradient-to-br from-[#0a0a0f] to-black border-2 ${comp.borderClass} rounded-3xl p-5 flex flex-col hover:bg-black/60 transition-all shadow-xl relative overflow-hidden group">
+                        <div class="absolute -right-8 -top-8 w-32 h-32 ${comp.bgClass} rounded-full blur-3xl opacity-30 group-hover:opacity-70 transition-opacity pointer-events-none"></div>
+                        
+                        <!-- NUEVA CABECERA CON IMAGEN INCLUIDA -->
+                        <div class="flex items-center justify-between mb-5 relative z-10 border-b border-darkBorder/50 pb-4 gap-3">
+                            <div class="text-left flex-1">
+                                <div class="flex flex-wrap gap-2 mb-2">
+                                    <span class="${comp.bgClass} ${comp.colorClass} text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-widest border border-current/30">${comp.brand}</span>
+                                    ${badgeInfo}
+                                </div>
+                                <h5 class="text-white font-black text-xl leading-tight tracking-wide">${m.name}</h5>
+                                <div class="text-[9px] text-gray-400 mt-1.5 font-mono">ÍNDICE DE SIMILITUD: <span class="${comp.colorClass} font-bold">${comp.score}%</span></div>
+                            </div>
+                            <div class="shrink-0 flex items-center justify-center">
+                                ${miniImgHtml}
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3.5 relative z-10 flex-grow text-sm">
+                            <div class="flex items-start gap-3 bg-black/40 p-2.5 rounded-xl border border-darkBorder/40">
+                                <span class="text-xl">📱</span>
+                                <div>
+                                    <div class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Pantalla</div>
+                                    <div class="${parseInt(m.hz) < infHz ? 'text-red-400' : 'text-gray-200'} font-medium">${m.hz}Hz ${m.screentype}</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 bg-black/40 p-2.5 rounded-xl border border-darkBorder/40">
+                                <span class="text-xl">⚡</span>
+                                <div>
+                                    <div class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Procesador</div>
+                                    <div class="text-gray-200 font-medium text-xs">${m.processor}</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 bg-black/40 p-2.5 rounded-xl border border-darkBorder/40">
+                                <span class="text-xl">💾</span>
+                                <div>
+                                    <div class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Memorias</div>
+                                    <div class="${extractRam(m.ram) < infRam ? 'text-red-400' : 'text-gray-200'} font-medium">${m.ram} RAM / ${m.storage}</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 bg-black/40 p-2.5 rounded-xl border border-darkBorder/40">
+                                <span class="text-xl">🔋</span>
+                                <div>
+                                    <div class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Autonomía</div>
+                                    <div class="text-gray-200 font-medium">${m.battery} <span class="${comp.colorClass} font-bold bg-current/10 px-1.5 py-0.5 rounded ml-1 text-[10px]">${m.charge}</span></div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 bg-black/40 p-2.5 rounded-xl border border-darkBorder/40">
+                                <span class="text-xl">📸</span>
+                                <div>
+                                    <div class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Cámaras</div>
+                                    <div class="text-gray-200 font-medium text-[11px] leading-tight">${m.camera}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-3 border-t-2 border-red-500/20 relative z-10 bg-red-950/10 -mx-5 -mb-5 p-5 rounded-b-3xl">
+                            <div class="flex items-center gap-1.5 mb-1.5">
+                                <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                                <div class="text-[10px] text-red-400 font-bold uppercase tracking-widest">Vulnerabilidad de Marca:</div>
+                            </div>
+                            <div class="text-gray-300 font-medium text-xs leading-relaxed italic">"${mainWeakness}"</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+function updateShoppingPrices(inf, riv) {
             const tbody = document.getElementById('shopping-tbody');
             if(!tbody) return;
+
+            // LLAMAR EL RADAR AQUÍ:
+            updatePriceRadar(inf);
+
+            document.getElementById('shop-inf-header').textContent = inf.name.toUpperCase();
 
             document.getElementById('shop-inf-header').textContent = inf.name.toUpperCase();
             document.getElementById('shop-riv-header').textContent = riv.name.toUpperCase();
@@ -4533,7 +4776,122 @@ const cardHtml = `
                     showCustomAlert("Error de Cloud", "No se pudo sincronizar con Firestore: " + err.message);
                 });
             }
-        }    
+        } 
+        function updatePriceRadar(inf) {
+            const radarContainer = document.getElementById('price-radar-container');
+            const radarInfName = document.getElementById('radar-inf-name');
+            if(!radarContainer || !radarInfName) return;
+
+            radarInfName.textContent = inf.name.toUpperCase();
+            radarContainer.innerHTML = '';
+
+            // 1. Calcular precio promedio de la referencia Infinix actual para fijar el rango
+            const infPrices = getPricesForModel(activeInfinixId, true);
+            let validPrices = Object.values(infPrices).filter(p => p > 0);
+            if(validPrices.length === 0) {
+                radarContainer.innerHTML = '<p class="text-gray-500 text-xs font-mono w-full text-center py-4">No hay precios base para establecer el rango.</p>';
+                return;
+            }
+            const avgInfPrice = validPrices.reduce((a, b) => a + b, 0) / validPrices.length;
+
+            // 2. Definir el margen de batalla comercial (± 15% del precio)
+            const minPrice = avgInfPrice * 0.85;
+            const maxPrice = avgInfPrice * 1.15;
+
+            // 3. Rastrear todos los rivales que caigan en esa "Zona de Disputa"
+            let competitorsInRange = [];
+            
+            Object.keys(competitorsDatabase).forEach(brandKey => {
+                const brandData = competitorsDatabase[brandKey];
+                if(brandData && brandData.models) {
+                    Object.keys(brandData.models).forEach(modelKey => {
+                        const rivalPrices = getPricesForModel(modelKey, false);
+                        let validRivPrices = Object.values(rivalPrices).filter(p => p > 0);
+                        
+                        if(validRivPrices.length > 0) {
+                            const avgRivPrice = validRivPrices.reduce((a, b) => a + b, 0) / validRivPrices.length;
+                            
+                            // Validar si entra en el rango
+                            if(avgRivPrice >= minPrice && avgRivPrice <= maxPrice) {
+                                competitorsInRange.push({
+                                    brand: brandData.brandName,
+                                    modelName: brandData.models[modelKey].name,
+                                    avgPrice: avgRivPrice,
+                                    prices: rivalPrices, // Guardamos los precios exactos por cadena
+                                    colorClass: brandData.brandColor.text,
+                                    bgClass: brandData.brandColor.bg,
+                                    borderClass: brandData.brandColor.border
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+
+            // 4. Inyectar las tarjetas en la interfaz
+            if(competitorsInRange.length === 0) {
+                 radarContainer.innerHTML = '<p class="text-gray-500 text-xs font-mono w-full text-center py-4">No se detectaron competidores en este rango exacto.</p>';
+                 return;
+            }
+
+            // Ordenar del más económico al más costoso (promedio general)
+            competitorsInRange.sort((a, b) => a.avgPrice - b.avgPrice);
+
+            competitorsInRange.forEach(comp => {
+                // Construir la mini-lista de precios por cadena
+                let pricesHtml = '';
+                RETAILERS.forEach(r => {
+                    const p = comp.prices[r.id];
+                    const displayPrice = (p && p > 0) ? formatPrice(p) : '<span class="text-gray-600">N/A</span>';
+                    pricesHtml += `
+                        <div class="flex justify-between items-center text-[10px] border-b border-darkBorder/50 py-1.5 last:border-0">
+                            <span class="text-gray-400">${r.name}</span>
+                            <span class="font-mono font-bold ${p > 0 ? 'text-gray-200' : ''}">${displayPrice}</span>
+                        </div>
+                    `;
+                });
+
+                radarContainer.innerHTML += `
+                    <div class="min-w-[220px] sm:min-w-[240px] bg-black/40 border ${comp.borderClass} rounded-2xl p-4 flex flex-col shrink-0 hover:bg-black/60 transition-colors snap-center shadow-lg">
+                        <div class="text-center mb-4">
+                            <span class="${comp.bgClass} ${comp.colorClass} text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest border border-current/30">${comp.brand}</span>
+                            <h5 class="text-white font-bold text-xs mt-2.5 leading-tight truncate">${comp.modelName}</h5>
+                        </div>
+                        <div class="bg-[#0d0d11] p-3 rounded-xl border border-darkBorder flex-grow flex flex-col justify-center">
+                            ${pricesHtml}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        // --- SISTEMA DE NOTIFICACIONES PUSH ---
+        function activarNotificaciones() {
+            const messaging = firebase.messaging();
+            
+            Notification.requestPermission().then((permission) => {
+                if (permission === 'granted') {
+                    console.log('Permiso de notificaciones concedido.');
+                    
+                    // Aquí el sistema le genera una "cédula" (Token) única a ese celular
+                    // Reemplazaremos 'TU_CLAVE_VAPID' en el siguiente paso
+                    messaging.getToken({ vapidKey: 'BAI0anKCA1sbeW8U9qyG9ixHjFMnViEL_-IQajWf8b7nKiDuhYBldGI6cR-OFO_sWDw0ISyOigxUa_G00DQ3Q24' }).then((currentToken) => {
+                        if (currentToken) {
+                            console.log('Token del dispositivo:', currentToken);
+                            triggerCyberToast("SISTEMA PUSH ACTIVO", "Este dispositivo ya puede recibir alertas de combate.", true);
+                        } else {
+                            console.log('No se pudo generar el token.');
+                        }
+                    });
+                } else {
+                    console.log('El asesor bloqueó las notificaciones.');
+                }
+            });
+            
+            // Si la app está ABIERTA, muestra la notificación como un CyberToast tuyo
+            messaging.onMessage((payload) => {
+                triggerCyberToast(payload.notification.title, payload.notification.body, true);
+            });
+        }
     </script>
 </body>
 </html>
