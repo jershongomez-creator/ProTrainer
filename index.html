@@ -1098,9 +1098,12 @@
         ];
 
         function formatPrice(val) {
-            if(!val || val === 0) return "No config.";
-            return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
-        }
+    // Si el valor es 0, nulo o indefinido, retorna "No aplica"
+    if(!val || val === 0) return "N/A";
+    
+    // De lo contrario, le da el formato de pesos colombianos
+    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
+}
 
         const baseDatosAsesores = {
             "SUPERVISORES": { pass: "spv2026", nombre: "SUPERVISORES", role: "SUPERVISOR" },
@@ -1709,30 +1712,30 @@ let advancedSpecsDatabase = {
                 "memory": "LPDDR4X RAM (4/8GB) / uMCP 2.1 ROM (128/256GB)",
                 "screen": "6.7\" IPS LCD HD+, 120Hz con Magic Ring interactivo, 500 nits",
                 "camera": "Principal: 50MP (PDAF, EIS) + AI Cam | Frontal: 8MP con Flash Dual",
-                "battery": "5000 mAh | Carga Rápida 18W con protección térmica",
+                "battery": "5200 mAh | Carga Rápida 18W con protección térmica",
                 "build": "Policarbonato mate pulido | Certificación IP64 contra salpicaduras | 8.4 mm / 194g"
             },
             "infinix-hot-70": {
                 "name": "Infinix HOT 70",
                 "processor": "MediaTek Helio G100 (6nm), Octa-core (2x A76 @ 2.2 GHz + 6x A55 @ 2.0 GHz) | GPU Mali-G57 MC2",
-                "memory": "LPDDR4X RAM (8GB Reales + 8GB Virtuales) / UFS 2.2 ROM (256GB con MicroSD 1TB)",
+                "memory": "LPDDR4X RAM (4GB Reales + 8GB Virtuales) / UFS 2.2 ROM (256GB con MicroSD 1TB)",
                 "screen": "6.78\" IPS LCD, 120Hz de alta respuesta táctil (2460x1080, 600 nits, Panda Glass)",
-                "camera": "Principal: 108MP (Samsung HM6, Nonapixel, PDAF, EIS) + Macro 2MP | Frontal: 16MP con Flash Dual",
-                "battery": "6000 mAh de alta densidad | Carga Rápida 33W con Bypass Charging",
+                "camera": "Principal: 50MP (Samsung JN5, Nonapixel, PDAF, EIS) + Macro 2MP | Frontal: 16MP con Flash Dual",
+                "battery": "5600 mAh de alta densidad | Carga Rápida 45W con Bypass Charging",
                 "build": "Policarbonato endurecido con módulo esmerilado | Certificación IP54 y SGS Grado Militar 5 Estrellas | 8.45 mm / 202g"
             },
             "infinix-hot-60-pro-plus": {
                 "name": "Infinix Hot 60 Pro+",
-                "processor": "MediaTek Dimensity 6300 (6nm), Octa-core | GPU Mali-G57 MC2",
-                "memory": "LPDDR4X RAM (8/12GB) / UFS 2.2 ROM (256GB)",
+                "processor": "MediaTek Helio G200 Ultimate (6nm), Octa-core | GPU Mali-G57 MC2",
+                "memory": "LPDDR4X RAM (8GB Reales + 8GB Virtuales) / UFS 2.2 ROM (256GB)",
                 "screen": "6.78\" AMOLED Plana, 120Hz (2436x1080, 1300 nits HDR, PWM 1920Hz)",
-                "camera": "Principal: 108MP (Nonapixel, PDAF, EIS) + Macro 2MP + Profundidad 2MP | Frontal: 32MP",
+                "camera": "Principal: 50MP (Nonapixel, PDAF, EIS) + Macro 2MP + Profundidad 2MP | Frontal: 32MP",
                 "battery": "5000 mAh | Carga FastCharge 45W (50% en 20 min)",
                 "build": "Plástico reforzado y polímero acrílico mate premium | IP54 | 7.95 mm / 186g"
             },
             "infinix-note-edge": {
                 "name": "Infinix Note Edge",
-                "processor": "MediaTek Dimensity 7300 (4nm), Octa-core (4x A78 @ 2.5 GHz) | GPU Mali-G615 MC2 con HyperEngine",
+                "processor": "MediaTek Dimensity 7100 (6nm), Octa-core (4x A78 @ 2.5 GHz) | GPU Mali-G615 MC2 con HyperEngine",
                 "memory": "LPDDR5 RAM (8/12GB) / UFS 3.1 ROM (256GB)",
                 "screen": "6.78\" 3D Curved AMOLED, 144Hz (2436x1080, 2000 nits HDR, Gorilla Glass 5)",
                 "camera": "Principal: 50MP (Sony LYTIA 600, OIS, PDAF) + Ultra Gran Angular 8MP (120°) + Macro 2MP | Frontal: 32MP (PDAF)",
@@ -2968,78 +2971,77 @@ const buttons = ['btn-tab-comparativa', 'btn-tab-argumentos', 'btn-tab-quiz', 'b
   // --- BASE DE DATOS MAESTRA DE PRECIOS MULTICANAL (UNIVERSAL / SIN CORS) ---
   let remotePricesDatabase = {
             // GAMA INFINIX
-            "smart-20": { alkosto: 399000, exito: 419000, cencosud: 399000, falabella: 439000, olimpica: 429000 },
-            "hot-60i": { alkosto: 599000, exito: 619000, cencosud: 599000, falabella: 639000, olimpica: 629000 },
-            "hot-70": { alkosto: 799000, exito: 819000, cencosud: 799000, falabella: 849000, olimpica: 829000 },
-            "hot-60-pro": { alkosto: 899000, exito: 929000, cencosud: 899000, falabella: 949000, olimpica: 929000 },
-            "note-edge": { alkosto: 1099000, exito: 1149000, cencosud: 1099000, falabella: 1199000, olimpica: 1159000 },
-            "note-60": { alkosto: 999000, exito: 1049000, cencosud: 999000, falabella: 1099000, olimpica: 1069000 },
-            "note-60-pro": { alkosto: 1299000, exito: 1349000, cencosud: 1299000, falabella: 1399000, olimpica: 1369000 },
-            "note-60-ultra": { alkosto: 1799000, exito: 1849000, cencosud: 1799000, falabella: 1899000, olimpica: 1869000 },
-            "reloj-inteligente": { alkosto: 199000, exito: 219000, cencosud: 199000, falabella: 229000, olimpica: 219000 },
+            "smart-20": { alkosto: 599900, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "hot-60i": { alkosto: 0, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "hot-70": { alkosto: 899900, exito: 0, cencosud: 799900, falabella: 0, olimpica: 0 },
+            "hot-60-pro": { alkosto: 0, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "note-edge": { alkosto: 1151900, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "note-60": { alkosto: 1549900, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "note-60-pro": { alkosto: 1999900, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "note-60-ultra": { alkosto: 4329900, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "reloj-inteligente": { alkosto: 0, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
 
             // RIVALES SAMSUNG
-            "a07": { alkosto: 499000, exito: 519000, cencosud: 499000, falabella: 529000, olimpica: 509000 },
-            "a17": { alkosto: 599000, exito: 619000, cencosud: 599000, falabella: 649000, olimpica: 629000 },
-            "a27": { alkosto: 899000, exito: 919000, cencosud: 899000, falabella: 949000, olimpica: 929000 },
-            "a37": { alkosto: 1199000, exito: 1249000, cencosud: 1199000, falabella: 1299000, olimpica: 1259000 },
-            "a57": { alkosto: 1599000, exito: 1649000, cencosud: 1599000, falabella: 1699000, olimpica: 1659000 },
-            "s25fe": { alkosto: 2499000, exito: 2599000, cencosud: 2499000, falabella: 2699000, olimpica: 2649000 },
-            "s26-plus": { alkosto: 4599000, exito: 4799000, cencosud: 4599000, falabella: 4899000, olimpica: 4799000 },
+            "a07": { alkosto: 399050, exito: 499900, cencosud: 499900, falabella: 0, olimpica: 0 },
+            "a17": { alkosto: 1059050, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "a27": { alkosto: 1149050, exito: 1149900, cencosud: 999050, falabella: 1149900, olimpica: 0 },
+            "a37": { alkosto: 949050, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "a57": { alkosto: 0, exito: 0, cencosud: 0, falabella: 1499900, olimpica: 0 },
+            "s25fe": { alkosto: 2899990, exito: 2999900, cencosud: 0, falabella: 1899900, olimpica: 0 },
+            "s26-plus": { alkosto: 0, exito: 0, cencosud: 0, falabella: 6049900, olimpica: 0 },
 
             // RIVALES HONOR
-            "x5c": { alkosto: 450000, exito: 470000, cencosud: 450000, falabella: 490000, olimpica: 480000 },
-            "x7d": { alkosto: 690000, exito: 710000, cencosud: 690000, falabella: 730000, olimpica: 720000 },
-            "x8d": { alkosto: 950000, exito: 990000, cencosud: 950000, falabella: 1020000, olimpica: 1000000 },
-            "400-smart": { alkosto: 780000, exito: 800000, cencosud: 780000, falabella: 820000, olimpica: 810000 },
-            "magic-7-lite": { alkosto: 1300000, exito: 1350000, cencosud: 1300000, falabella: 1400000, olimpica: 1370000 },
-            "magic-8-lite": { alkosto: 1500000, exito: 1550000, cencosud: 1500000, falabella: 1600000, olimpica: 1570000 },
-            "600": { alkosto: 2100000, exito: 2200000, cencosud: 2100000, falabella: 2300000, olimpica: 2250000 },
+            "x5c": { alkosto: 0, exito: 599920, cencosud: 0, falabella: 0, olimpica: 0 },
+            "x7d": { alkosto: 849050, exito: 850419, cencosud: 0, falabella: 659900, olimpica: 0 },
+            "x8d": { alkosto: 1099050, exito: 1154923, cencosud: 999050, falabella: 1095900, olimpica: 0 },
+            "400-smart": { alkosto: 899050, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "magic-7-lite": { alkosto: 0, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "magic-8-lite": { alkosto: 2299050, exito: 0, cencosud: 0, falabella: 2199900, olimpica: 0 },
+            "600": { alkosto: 0, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
 
             // RIVALES MOTOROLA
-            "g06": { alkosto: 420000, exito: 440000, cencosud: 420000, falabella: 460000, olimpica: 450000 },
-            "g15": { alkosto: 580000, exito: 600000, cencosud: 580000, falabella: 620000, olimpica: 610000 },
-            "g56": { alkosto: 880000, exito: 910000, cencosud: 880000, falabella: 930000, olimpica: 920000 },
-            "g67": { alkosto: 990000, exito: 1030000, cencosud: 990000, falabella: 1070000, olimpica: 1050000 },
-            "g86": { alkosto: 1250000, exito: 1300000, cencosud: 1250000, falabella: 1350000, olimpica: 1320000 },
-            "edge-50-fusion": { alkosto: 1800000, exito: 1850000, cencosud: 1800000, falabella: 1900000, olimpica: 1870000 },
-            "edge-60-fusion": { alkosto: 1950000, exito: 2000000, cencosud: 1950000, falabella: 2050000, olimpica: 2020000 },
-            "edge-70-fusion": { alkosto: 2200000, exito: 2300000, cencosud: 2200000, falabella: 2400000, olimpica: 2350000 },
+            "g06": { alkosto: 489050, exito: 517931, cencosud: 529900, falabella: 0, olimpica: 0 },
+            "g15": { alkosto: 578558, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "g56": { alkosto: 849050, exito: 0, cencosud: 799900, falabella: 0, olimpica: 0 },
+            "g67": { alkosto: 1099050, exito: 1101942, cencosud: 1099900, falabella: 0, olimpica: 0 },
+            "g86": { alkosto: 0, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "edge-50-fusion": { alkosto: 0, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "edge-60-fusion": { alkosto: 999050, exito: 1034955, cencosud: 1099167, falabella: 0, olimpica: 0 },
+            "edge-70-fusion": { alkosto: 1999050, exito: 0, cencosud: 1999167, falabella: 2199900, olimpica: 0 },
 
             // RIVALES REALME
-            "15": { alkosto: 1150000, exito: 1200000, cencosud: 1150000, falabella: 1250000, olimpica: 1220000 },
-            "15t": { alkosto: 1350000, exito: 1400000, cencosud: 1350000, falabella: 1450000, olimpica: 1420000 },
-            "15t-pro": { alkosto: 1650000, exito: 1720000, cencosud: 1650000, falabella: 1780000, olimpica: 1750000 },
-            "c100": { alkosto: 750000, exito: 780000, cencosud: 750000, falabella: 810000, olimpica: 790000 },
-            "c100x": { alkosto: 650000, exito: 680000, cencosud: 650000, falabella: 710000, olimpica: 690000 },
-            "c100i": { alkosto: 520000, exito: 550000, cencosud: 520000, falabella: 580000, olimpica: 560000 },
+            "15": { alkosto: 0, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "15t": { alkosto: 1549050, exito: 0, cencosud: 1549167, falabella: 0, olimpica: 0 },
+            "15t-pro": { alkosto: 0, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "c100": { alkosto: 1149050, exito: 0, cencosud: 1149900, falabella: 0, olimpica: 0 },
+            "c100x": { alkosto: 949050, exito: 0, cencosud: 949900, falabella: 0, olimpica: 0 },
+            "c100i": { alkosto: 699050, exito: 0, cencosud: 699900, falabella: 0, olimpica: 0 },
 
             // RIVALES OPPO
-            "a6": { alkosto: 680000, exito: 710000, cencosud: 680000, falabella: 730000, olimpica: 710000 },
-            "a6c": { alkosto: 480000, exito: 500000, cencosud: 480000, falabella: 520000, olimpica: 510000 },
-            "a6k": { alkosto: 620000, exito: 650000, cencosud: 620000, falabella: 680000, olimpica: 660000 },
-            "a6-pro": { alkosto: 1400000, exito: 1460000, cencosud: 1400000, falabella: 1520000, olimpica: 1480000 },
-            "reno14f": { name: "OPPO Reno 14F", alkosto: 1600000, exito: 1680000, cencosud: 1600000, falabella: 1750000, olimpica: 1710000 },
-            "reno14": { alkosto: 2100000, exito: 2200000, cencosud: 2100000, falabella: 2300000, olimpica: 2250000 },
+            "a6": { alkosto: 1499900, exito: 0, cencosud: 0, falabella: 1499900, olimpica: 0 },
+            "a6c": { alkosto: 799900, exito: 899950, cencosud: 699900, falabella: 0, olimpica: 0 },
+            "a6k": { alkosto: 1149900, exito: 1150441, cencosud: 1099900, falabella: 1149900, olimpica: 0 },
+            "a6-pro": { alkosto: 2199900, exito: 0, cencosud: 0, falabella: 1899900, olimpica: 0 },
+            "reno14f": { alkosto: 2099900, exito: 2327897, cencosud: 0, falabella: 2099900, olimpica: 0 },
+            "reno14": { alkosto: 0, exito: 0, cencosud: 0, falabella: 3499900, olimpica: 0 },
 
             // RIVALES TECNO
-            "sparkgo3": { alkosto: 410000, exito: 430000, cencosud: 410000, falabella: 450000, olimpica: 440000 },
-            "spark50": { alkosto: 610000, exito: 640000, cencosud: 610000, falabella: 670000, olimpica: 650000 },
-            "spark50-5g": { alkosto: 850000, exito: 890000, cencosud: 850000, falabella: 920000, olimpica: 900000 },
-            "camon50": { alkosto: 1250000, exito: 1300000, cencosud: 1250000, falabella: 1360000, olimpica: 1330000 },
-            "pova-curve-2": { alkosto: 1450000, exito: 1520000, cencosud: 1450000, falabella: 1590000, olimpica: 1550000 },
+            "sparkgo3": { alkosto: 549900, exito: 549900, cencosud: 0, falabella: 0, olimpica: 0 },
+            "spark50": { alkosto: 839900, exito: 839427, cencosud: 0, falabella: 0, olimpica: 0 },
+            "spark50-5g": { alkosto: 968900, exito: 900909, cencosud: 0, falabella: 0, olimpica: 0 },
+            "camon50": { alkosto: 0, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "pova-curve-2": { alkosto: 1399900, exito: 1699920, cencosud: 1299900, falabella: 0, olimpica: 0 },
 
             // RIVALES XIAOMI / REDMI
-            "redmi15": { alkosto: 720000, exito: 750000, cencosud: 720000, falabella: 780000, olimpica: 760000 },
-            "note15": { alkosto: 1050000, exito: 1100000, cencosud: 1050000, falabella: 1150000, olimpica: 1120000 },
-            "note15-pro": { alkosto: 1450000, exito: 1520000, cencosud: 1450000, falabella: 1590000, olimpica: 1550000 },
-            "note15-pro-plus": { alkosto: 1950000, exito: 2050000, cencosud: 1950000, falabella: 2150000, olimpica: 2100000 },
-            "xiaomi15": { alkosto: 3800000, exito: 3950000, cencosud: 3800000, falabella: 4100000, olimpica: 4000000 },
-            "xiaomi17t": { alkosto: 2400000, exito: 2500000, cencosud: 2400000, falabella: 2650000, olimpica: 2580000 },
-            "xiaomi17t-pro": { alkosto: 3100000, exito: 3250000, cencosud: 3100000, falabella: 3400000, olimpica: 3320000 },
-            "redmi15c": { alkosto: 550000, exito: 580000, cencosud: 550000, falabella: 610000, olimpica: 590000 }
+            "redmi15": { alkosto: 799050, exito: 779948, cencosud: 789900, falabella: 0, olimpica: 0 },
+            "note15": { alkosto: 1099050, exito: 1087932, cencosud: 0, falabella: 999900, olimpica: 0 },
+            "note15-pro": { alkosto: 1149050, exito: 2699900, cencosud: 1079050, falabella: 1149900, olimpica: 0 },
+            "note15-pro-plus": { alkosto: 2299050, exito: 0, cencosud: 0, falabella: 2399900, olimpica: 0 },
+            "xiaomi15": { alkosto: 0, exito: 0, cencosud: 0, falabella: 0, olimpica: 0 },
+            "xiaomi17t": { alkosto: 3999050, exito: 4014927, cencosud: 2799050, falabella: 3999900, olimpica: 0 },
+            "xiaomi17t-pro": { alkosto: 0, exito: 0, cencosud: 0, falabella: 4799900, olimpica: 0 },
+            "redmi15c": { alkosto: 449050, exito: 440951, cencosud: 459900, falabella: 0, olimpica: 0 }
         };
-
         // Simplificamos la función para que use esta base maestra directa e ininterrumpida
         async function loadRemotePrices() {
             try {
@@ -3056,12 +3058,21 @@ const buttons = ['btn-tab-comparativa', 'btn-tab-argumentos', 'btn-tab-quiz', 'b
             }
         }
         function getPricesForModel(modelId, isInfinix) {
-            if (remotePricesDatabase[modelId]) return remotePricesDatabase[modelId];
-            if (appState.prices && appState.prices[modelId]) return appState.prices[modelId];
-            let defaults = {};
-            RETAILERS.forEach(r => { defaults[r.id] = 0; });
-            return defaults;
-        }
+    // 1. PRIMERO: Buscar si hay un precio manual sincronizado por el administrador (Prioridad máxima)
+    if (appState.prices && appState.prices[modelId]) {
+        return appState.prices[modelId];
+    }
+    
+    // 2. SEGUNDO: Si no hay un precio manual, usar la base de datos quemada en el código
+    if (remotePricesDatabase[modelId]) {
+        return remotePricesDatabase[modelId];
+    }
+    
+    // 3. TERCERO: Si no está en ningún lado, mostrar 0
+    let defaults = {};
+    RETAILERS.forEach(r => { defaults[r.id] = 0; });
+    return defaults;
+}
 
         function updateShoppingPrices(inf, riv) {
             const tbody = document.getElementById('shopping-tbody');
