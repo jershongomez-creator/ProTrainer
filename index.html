@@ -259,10 +259,21 @@
                 <span class="text-blue-400 text-sm">📈</span>
                 <span class="text-blue-400">Tendencias Nacionales</span>
             </button>
+            <!-- Pestaña Calculadora Asesor -->
+            <button onclick="switchTab('tab-calculadora'); renderCalculadoraAsesor();" id="btn-tab-calculadora" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
+                <span class="text-infinix text-lg drop-shadow-[0_0_5px_rgba(57,255,20,0.5)]">💰</span>
+                <span>Calculadora</span>
+            </button>
+            
+            <!-- Pestaña Calculadora Admin -->
+            <button onclick="switchTab('tab-admin-calculadora'); renderAdminCalcModels();" id="btn-tab-admin-calculadora" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
+                <span class="text-cyberMagenta text-lg drop-shadow-[0_0_5px_rgba(255,0,127,0.5)]">🧮</span>
+                <span>Admin Pay</span>
+            </button>
         </div>
     </div>
 
-    <section class="max-w-6xl mx-auto w-full px-4 mt-6">
+    <section id="consola-selectores" class="max-w-6xl mx-auto w-full px-4 mt-6 transition-all duration-500">
         <div class="bg-darkCard border-2 border-infinix/40 rounded-3xl p-5 sm:p-6 shadow-[0_10px_30px_rgba(0,209,0,0.15)] relative overflow-hidden">
             <div class="absolute -right-24 -bottom-24 w-48 h-48 bg-infinix/5 rounded-full blur-3xl select-none pointer-events-none"></div>
             
@@ -712,6 +723,111 @@
             <!-- Grid de Tarjetas por Cadena (Organizadas de dos en dos: lg:grid-cols-2) -->
             <div id="tendencias-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6">
                 <!-- Inyectado dinámicamente por JavaScript -->
+            </div>
+        </section>
+        <!-- SECCIÓN: CALCULADORA ASESOR -->
+        <section id="tab-calculadora" class="hidden space-y-6 relative pb-24">
+            <div class="bg-darkCard p-6 rounded-3xl border-2 border-infinix/40 shadow-[0_0_30px_rgba(57,255,20,0.1)] relative">
+                <h3 class="text-lg font-black text-white orbitron mb-4 text-center border-b border-darkBorder pb-2">SIMULADOR DE COMISIONES</h3>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="text-[10px] font-black text-infinix uppercase tracking-widest orbitron mb-1 block">Meta (Target)</label>
+                        <input type="number" id="calc-target" oninput="calcularComisiones()" class="w-full bg-black border border-darkBorder rounded-xl p-3 text-white text-sm focus:border-infinix outline-none transition-all" placeholder="Ej: 70">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-infinix uppercase tracking-widest orbitron mb-1 block">Cadena Retail</label>
+                        <select id="calc-cadena" onchange="calcularComisiones()" class="w-full bg-black border border-darkBorder rounded-xl p-3 text-white text-sm focus:border-infinix outline-none transition-all cursor-pointer">
+                            <option value="">Seleccione...</option>
+                            <!-- Inyectado por JS -->
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="border-t border-darkBorder pt-4 space-y-1 max-h-[40vh] overflow-y-auto custom-scrollbar pr-2" id="calc-models-container">
+                    <!-- Inyectado por JS -->
+                </div>
+
+                <div class="mt-4 border-t border-darkBorder pt-4">
+                    <div class="flex justify-between text-[10px] font-bold text-gray-400 mb-2 uppercase orbitron">
+                        <span>Cumplimiento KPI</span>
+                        <span id="calc-progress-text" class="text-white">0%</span>
+                    </div>
+                    <div class="w-full bg-black rounded-full h-2.5 border border-darkBorder overflow-hidden">
+                        <div id="calc-progress-bar" class="bg-infinix h-full rounded-full transition-all duration-500 shadow-[0_0_10px_#39FF14]" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between items-center mt-3">
+                        <span class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Unidades: <strong id="calc-total-units" class="text-white text-sm">0</strong></span>
+                        <span id="calc-kpi-status" class="text-[9px] bg-red-500/20 text-red-500 px-2 py-1 rounded border border-red-500/30 font-black uppercase tracking-widest">KPI Bloqueado</span>
+                    </div>
+                    <div class="mt-3 text-center bg-black/40 p-2 rounded-xl border border-darkBorder">
+                        <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Acelerador Actual: </span>
+                        <span id="calc-roi-status" class="text-[11px] font-black text-yellow-500 tracking-wider">Esperando Umbral</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BANNER FIJO INFERIOR (Oculto por defecto, se maneja por JS) -->
+            <div id="calc-fixed-banner" class="hidden fixed bottom-0 left-0 w-full bg-[#050811]/95 backdrop-blur-md border-t-2 border-infinix p-4 z-[60] flex justify-between items-center shadow-[0_-10px_40px_rgba(57,255,20,0.15)]">
+                <div class="max-w-6xl mx-auto w-full flex justify-between items-center px-4">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] sm:text-xs font-black text-infinix uppercase tracking-widest orbitron flex items-center gap-1.5"><span class="w-2 h-2 bg-infinix rounded-full animate-ping"></span> Pago Estimado</span>
+                        <span class="text-gray-400 text-[9px] sm:text-[10px] uppercase font-bold">Unidades + Bono Target</span>
+                    </div>
+                    <div class="text-2xl sm:text-4xl font-black text-white orbitron tracking-wider drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" id="calc-grand-total">
+                        $0
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: CALCULADORA ADMIN (MATRIZ) -->
+        <section id="tab-admin-calculadora" class="hidden space-y-6">
+            <div class="bg-darkCard p-6 rounded-3xl border-2 border-cyberMagenta/50 shadow-[0_0_40px_rgba(255,0,127,0.15)] relative">
+                <h3 class="text-lg font-black text-white orbitron mb-1 text-center flex items-center justify-center gap-2">
+                    <span class="text-cyberMagenta">🧮</span> MATRIZ DE COMISIONES
+                </h3>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center mb-6 border-b border-darkBorder pb-4">Control Global de Pagos por Cadena</p>
+                
+                <div class="mb-6">
+                    <label class="text-[10px] font-black text-cyberMagenta uppercase tracking-widest orbitron mb-1 block">1. Seleccionar Cadena a Editar</label>
+                    <select id="admin-calc-cadena" onchange="renderAdminCalcInputs()" class="w-full bg-black border border-cyberMagenta/50 rounded-xl p-3 text-white text-sm font-bold focus:border-cyberMagenta outline-none transition-all cursor-pointer">
+                        <option value="">Seleccione cadena...</option>
+                        <!-- Inyectado por JS -->
+                    </select>
+                </div>
+
+                <div id="admin-calc-config-area" class="hidden">
+                    <label class="text-[10px] font-black text-cyberMagenta uppercase tracking-widest orbitron mb-1 block">2. Umbrales para esta cadena</label>
+                    <div class="grid grid-cols-3 gap-3 mb-6 bg-black/40 p-4 rounded-xl border border-darkBorder">
+                        <div>
+                            <label class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Unidades ROI 1</label>
+                            <input type="number" id="admin-t-roi1" class="w-full bg-black border border-darkBorder rounded p-2 text-white text-xs mt-1 font-mono focus:border-cyberMagenta outline-none" placeholder="25">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Unidades ROI 2</label>
+                            <input type="number" id="admin-t-roi2" class="w-full bg-black border border-darkBorder rounded p-2 text-white text-xs mt-1 font-mono focus:border-cyberMagenta outline-none" placeholder="50">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Bono KPI ($)</label>
+                            <input type="number" id="admin-t-kpi" class="w-full bg-black border border-darkBorder rounded p-2 text-white text-xs mt-1 font-mono focus:border-cyberMagenta outline-none" placeholder="400000">
+                        </div>
+                    </div>
+
+                    <label class="text-[10px] font-black text-cyberMagenta uppercase tracking-widest orbitron mb-1 block">3. Valores por Referencia</label>
+                    <div class="grid grid-cols-12 gap-2 mb-2 px-2">
+                        <div class="col-span-4 text-[9px] text-gray-500 font-black uppercase">Referencia</div>
+                        <div class="col-span-4 text-[9px] text-cyberMagenta font-black uppercase text-center">Pago ROI 1 ($)</div>
+                        <div class="col-span-4 text-[9px] text-cyberMagenta font-black uppercase text-center">Pago ROI 2 ($)</div>
+                    </div>
+
+                    <div id="admin-calc-models-container" class="space-y-2 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2 pb-4">
+                        <!-- Inyectado por JS -->
+                    </div>
+
+                    <button onclick="saveComisionesData()" class="w-full mt-2 py-4 bg-cyberMagenta text-white font-black rounded-xl uppercase tracking-widest orbitron hover:shadow-[0_0_25px_#ff007f] transition-all transform active:scale-95 animate-cyber-flicker">
+                        🚀 GUARDAR Y SINCRONIZAR CADENA
+                    </button>
+                </div>
             </div>
         </section>
     </main>
@@ -2846,8 +2962,8 @@ if (rivDeviceImg) {
             });
         }  
         function switchTab(tabId) {
-            // Actualizamos la lista de pestañas
-            const tabs = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping', 'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales'];
+            // 1. Ocultar todas las pestañas
+            const tabs = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping', 'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-calculadora', 'tab-admin-calculadora'];
             tabs.forEach(t => {
                 const el = document.getElementById(t);
                 if (el) el.classList.add('hidden');
@@ -2857,7 +2973,28 @@ if (rivDeviceImg) {
                 renderTendenciasNacionalesTab();
             }
 
-            // Ocultar/Mostrar los selectores de la competencia dinámicamente
+            // 2. Control de visibilidad del Banner Fijo de la Calculadora
+            const calcBanner = document.getElementById('calc-fixed-banner');
+            if (calcBanner) {
+                if (tabId === 'tab-calculadora') calcBanner.classList.remove('hidden');
+                else calcBanner.classList.add('hidden');
+            }
+
+            // 3. CONTROL MAESTRO DE LA CONSOLA SUPERIOR (NUEVO)
+            const consolaSelectores = document.getElementById('consola-selectores');
+            if (consolaSelectores) {
+                // Lista blanca: Pestañas donde SÍ se necesita elegir equipos
+                const tabsWithConsole = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-shopping', 'tab-cortex'];
+                
+                if (tabsWithConsole.includes(tabId)) {
+                    consolaSelectores.classList.remove('hidden');
+                } else {
+                    // Oculta la consola en Calculadora, Tendencias, Xchool, etc.
+                    consolaSelectores.classList.add('hidden'); 
+                }
+            }
+
+            // 4. Ocultar/Mostrar los selectores de la competencia dinámicamente
             const containerRivalBrand = document.getElementById('container-rival-brand');
             const containerRivalModel = document.getElementById('container-rival-model');
             const selectorsGrid = document.getElementById('top-selectors-grid');
@@ -2874,46 +3011,40 @@ if (rivDeviceImg) {
 
             const hwEditorBtn = document.getElementById('admin-hardware-editor-btn');
             if (hwEditorBtn) {
-                if (tabId === 'tab-comparativa' && currentUserRole === 'ADMIN') {
-                    hwEditorBtn.classList.remove('hidden');
-                } else {
-                    hwEditorBtn.classList.add('hidden');
-                }
+                if (tabId === 'tab-comparativa' && currentUserRole === 'ADMIN') hwEditorBtn.classList.remove('hidden');
+                else hwEditorBtn.classList.add('hidden');
             }
 
-            // Actualizamos la lista de botones
-            const buttons = ['btn-tab-comparativa', 'btn-tab-radar-caracteristicas', 'btn-tab-quiz', 'btn-tab-shopping', 'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales'];
+            // 5. Reiniciar estilos de TODOS los botones y ocultarlos según permisos
+            const buttons = ['btn-tab-comparativa', 'btn-tab-radar-caracteristicas', 'btn-tab-quiz', 'btn-tab-shopping', 'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales', 'btn-tab-calculadora', 'btn-tab-admin-calculadora'];
+            
             buttons.forEach(btnId => {
                 const element = document.getElementById(btnId);
                 if (element) {
+                    // Resetear a estado inactivo
                     element.className = "py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap";
                     
-                    if (btnId === 'btn-tab-shopping' && !['GERENTE', 'SUPERVISOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) {
-                        element.classList.add('hidden');
-                    }
-                    if (btnId === 'btn-tab-cortex' && currentUserRole !== 'ADMIN') {
-                        element.classList.add('hidden');
-                    }
-                    if (btnId === 'btn-tab-alertas-master' && currentUserRole !== 'ADMIN') {
-                        element.classList.add('hidden');
-                    }
-                    if (btnId === 'btn-tab-tendencias-nacionales' && !['GERENTE', 'SUPERVISOR', 'TRAINER'].includes(currentUserRole)) {
-                        element.classList.add('hidden');
-                    }
-                    if (btnId === 'btn-tab-radar-caracteristicas' && ['GERENTE', 'SUPERVISOR'].includes(currentUserRole)) {
-                        element.classList.add('hidden');
-                    }
-                    if (btnId === 'btn-tab-quiz' && currentUserRole === 'GERENTE') {
-                        element.classList.add('hidden');
-                    }
+                    // REGLAS ESTRICTAS DE VISIBILIDAD
+                    if (btnId === 'btn-tab-shopping' && !['GERENTE', 'SUPERVISOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
+                    if (btnId === 'btn-tab-cortex' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
+                    if (btnId === 'btn-tab-alertas-master' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
+                    if (btnId === 'btn-tab-tendencias-nacionales' && !['GERENTE', 'SUPERVISOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
+                    if (btnId === 'btn-tab-radar-caracteristicas' && ['GERENTE', 'SUPERVISOR'].includes(currentUserRole)) element.classList.add('hidden');
+                    if (btnId === 'btn-tab-quiz' && currentUserRole === 'GERENTE') element.classList.add('hidden');
+                    
+                    // REGLAS CALCULADORA
+                    if (btnId === 'btn-tab-calculadora' && currentUserRole !== 'ASESOR') element.classList.add('hidden');
+                    if (btnId === 'btn-tab-admin-calculadora' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
                 }
             });
+
+            // 6. Mostrar pestaña objetivo y resaltar su botón
             const targetTab = document.getElementById(tabId);
             if (targetTab) targetTab.classList.remove('hidden');
 
             const activeButton = document.getElementById('btn-' + tabId);
             if (activeButton) {
-                if (tabId === 'tab-cortex' || tabId === 'tab-alertas-master' || tabId === 'tab-tendencias-nacionales' || tabId === 'tab-radar-caracteristicas') {
+                if (tabId === 'tab-cortex' || tabId === 'tab-alertas-master' || tabId === 'tab-tendencias-nacionales' || tabId === 'tab-radar-caracteristicas' || tabId === 'tab-admin-calculadora') {
                     activeButton.className = "py-3 px-2 rounded-xl font-black text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-white text-black shadow-lg shadow-white/30 transform scale-105 whitespace-nowrap";
                 } else {
                     activeButton.className = "py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-infinix text-black shadow-lg shadow-infinix/20 transform scale-105 whitespace-nowrap";
@@ -4901,6 +5032,240 @@ const cardHtml = `
             // Si la app está ABIERTA, muestra la notificación como un CyberToast tuyo
             messaging.onMessage((payload) => {
                 triggerCyberToast(payload.notification.title, payload.notification.body, true);
+            });
+        }
+       // ==========================================
+        // MÓDULO CALCULADORA COMERCIAL (V2.0)
+        // ==========================================
+
+        let comisionesData = JSON.parse(localStorage.getItem('infinix_comisiones')) || { cadenas: {} };
+
+        // Escucha de Firebase en tiempo real para las comisiones
+        const originalInitCloud = typeof initCloudSincronizacion === 'function' ? initCloudSincronizacion : function(){};
+        initCloudSincronizacion = function() {
+            originalInitCloud();
+            db.collection("global").doc("comisiones").onSnapshot((doc) => {
+                if (doc && doc.exists) {
+                    comisionesData = doc.data();
+                    localStorage.setItem('infinix_comisiones', JSON.stringify(comisionesData));
+                    if(!document.getElementById('tab-calculadora').classList.contains('hidden')) calcularComisiones();
+                    if(!document.getElementById('tab-admin-calculadora').classList.contains('hidden')) renderAdminCalcInputs();
+                }
+            });
+        };
+
+        // RENDERIZADO UI ASESOR
+        function renderCalculadoraAsesor() {
+            const container = document.getElementById('calc-models-container');
+            const cadenaSelect = document.getElementById('calc-cadena');
+            if(!container) return;
+
+            if(cadenaSelect.options.length <= 1) {
+                RETAILERS.forEach(r => {
+                    const opt = document.createElement('option');
+                    opt.value = r.id;
+                    opt.textContent = r.name;
+                    cadenaSelect.appendChild(opt);
+                });
+            }
+
+            container.innerHTML = '';
+            Object.keys(infinixDatabase).forEach(key => {
+                const model = infinixDatabase[key];
+                container.innerHTML += `
+                    <div class="flex justify-between items-center py-2.5 border-b border-darkBorder/50 group hover:bg-white/5 transition-colors px-2 rounded-lg">
+                        <div class="text-[11px] sm:text-xs font-bold text-white uppercase w-5/12 truncate flex items-center gap-1.5"><span class="text-infinix/60">▪</span> ${model.name}</div>
+                        <div class="w-3/12 px-1 sm:px-2">
+                            <input type="number" id="calc-unit-${key}" oninput="calcularComisiones()" min="0" class="w-full bg-black border border-darkBorder rounded-lg text-center text-infinix font-mono font-black py-1.5 focus:border-infinix outline-none" placeholder="0">
+                        </div>
+                        <div class="w-4/12 text-right text-[10px] sm:text-xs font-mono font-bold text-gray-500 group-hover:text-gray-300 transition-colors" id="calc-subtotal-${key}">
+                            $0
+                        </div>
+                    </div>
+                `;
+            });
+            calcularComisiones();
+        }
+
+        // MOTOR DE CÁLCULO ASESOR
+        function calcularComisiones() {
+            const target = parseInt(document.getElementById('calc-target').value) || 0;
+            const cadena = document.getElementById('calc-cadena').value;
+            
+            let totalUnits = 0;
+            let totalEarnings = 0;
+
+            // Extraemos los umbrales específicos de la cadena (o usamos por defecto)
+            const chainConfig = (cadena && comisionesData.cadenas[cadena]) ? comisionesData.cadenas[cadena] : {};
+            const tRoi1 = parseInt(chainConfig.thresholds?.roi1) || 25;
+            const tRoi2 = parseInt(chainConfig.thresholds?.roi2) || 50;
+            const kpiVal = parseInt(chainConfig.thresholds?.kpi) || 400000;
+
+            // 1. Sumar unidades
+            Object.keys(infinixDatabase).forEach(key => {
+                const input = document.getElementById(`calc-unit-${key}`);
+                if(input) totalUnits += parseInt(input.value) || 0;
+            });
+
+            // 2. Determinar ROI Activo
+            let activeRoi = 0;
+            let roiStatusText = cadena ? `Faltan unidades para ROI 1 (${tRoi1} UND)` : "Seleccione cadena";
+            let roiStatusClass = "text-gray-500";
+
+            if (cadena) {
+                if (totalUnits >= tRoi2) {
+                    activeRoi = 2;
+                    roiStatusText = `🔥 ROI 2 ACTIVADO (+${tRoi2} UND)`;
+                    roiStatusClass = "text-infinix drop-shadow-[0_0_5px_rgba(57,255,20,0.8)] animate-pulse";
+                } else if (totalUnits >= tRoi1) {
+                    activeRoi = 1;
+                    roiStatusText = `⚡ ROI 1 ACTIVADO (+${tRoi1} UND)`;
+                    roiStatusClass = "text-yellow-500";
+                }
+            }
+
+            document.getElementById('calc-total-units').textContent = totalUnits;
+            const statusEl = document.getElementById('calc-roi-status');
+            statusEl.textContent = roiStatusText;
+            statusEl.className = `text-[11px] font-black tracking-wider ${roiStatusClass}`;
+
+            // 3. Calcular ganancias por modelo
+            Object.keys(infinixDatabase).forEach(key => {
+                const input = document.getElementById(`calc-unit-${key}`);
+                const subtotalEl = document.getElementById(`calc-subtotal-${key}`);
+                if(input && subtotalEl) {
+                    const units = parseInt(input.value) || 0;
+                    const payData = (chainConfig.models && chainConfig.models[key]) ? chainConfig.models[key] : {roi1:0, roi2:0};
+                    
+                    let payPerUnit = 0;
+                    if(activeRoi === 1) payPerUnit = parseInt(payData.roi1) || 0;
+                    if(activeRoi === 2) payPerUnit = parseInt(payData.roi2) || 0;
+                    
+                    let subtotal = units * payPerUnit;
+                    totalEarnings += subtotal;
+                    
+                    subtotalEl.textContent = formatPrice(subtotal);
+                    subtotalEl.classList.toggle('text-infinix', subtotal > 0);
+                    subtotalEl.classList.toggle('text-gray-500', subtotal === 0);
+                }
+            });
+
+            // 4. Calcular KPI
+            let kpiBonus = 0;
+            let progress = 0;
+            const kpiStatus = document.getElementById('calc-kpi-status');
+
+            if(target > 0 && cadena) {
+                progress = Math.min((totalUnits / target) * 100, 100);
+                if (totalUnits >= target) {
+                    kpiBonus = kpiVal;
+                    kpiStatus.textContent = `+ ${formatPrice(kpiBonus)} KPI LOGRADO`;
+                    kpiStatus.className = "text-[9px] bg-infinix/20 text-infinix px-2 py-1 rounded border border-infinix/40 font-black uppercase tracking-widest shadow-[0_0_8px_rgba(57,255,20,0.4)]";
+                } else {
+                    kpiStatus.textContent = "KPI BLOQUEADO";
+                    kpiStatus.className = "text-[9px] bg-red-500/20 text-red-500 px-2 py-1 rounded border border-red-500/30 font-black uppercase tracking-widest";
+                }
+            } else {
+                kpiStatus.textContent = cadena ? "INGRESE META" : "ESPERANDO CADENA";
+                kpiStatus.className = "text-[9px] bg-gray-800 text-gray-400 px-2 py-1 rounded font-bold uppercase tracking-widest";
+            }
+
+            document.getElementById('calc-progress-bar').style.width = `${progress}%`;
+            document.getElementById('calc-progress-text').textContent = `${Math.floor(progress)}%`;
+            if(progress >= 100) document.getElementById('calc-progress-text').classList.add('text-infinix', 'animate-pulse');
+            else document.getElementById('calc-progress-text').classList.remove('text-infinix', 'animate-pulse');
+
+            totalEarnings += kpiBonus;
+            document.getElementById('calc-grand-total').textContent = formatPrice(totalEarnings);
+        }
+
+        // RENDERIZADO UI ADMIN (MATRIZ POR CADENA)
+        function renderAdminCalcModels() {
+            const cadenaSelect = document.getElementById('admin-calc-cadena');
+            if(cadenaSelect && cadenaSelect.options.length <= 1) {
+                RETAILERS.forEach(r => {
+                    const opt = document.createElement('option');
+                    opt.value = r.id;
+                    opt.textContent = r.name;
+                    cadenaSelect.appendChild(opt);
+                });
+            }
+        }
+
+        function renderAdminCalcInputs() {
+            const cadena = document.getElementById('admin-calc-cadena').value;
+            const container = document.getElementById('admin-calc-models-container');
+            const configArea = document.getElementById('admin-calc-config-area');
+            
+            if(!cadena) {
+                configArea.classList.add('hidden');
+                return;
+            }
+
+            configArea.classList.remove('hidden');
+            
+            // Cargar umbrales específicos de la cadena (o por defecto si es nueva)
+            const chainConfig = comisionesData.cadenas[cadena] || { thresholds: { roi1: 25, roi2: 50, kpi: 400000 }, models: {} };
+            document.getElementById('admin-t-roi1').value = chainConfig.thresholds?.roi1 || 25;
+            document.getElementById('admin-t-roi2').value = chainConfig.thresholds?.roi2 || 50;
+            document.getElementById('admin-t-kpi').value = chainConfig.thresholds?.kpi || 400000;
+
+            container.innerHTML = '';
+            Object.keys(infinixDatabase).forEach(key => {
+                const model = infinixDatabase[key];
+                const data = (chainConfig.models && chainConfig.models[key]) ? chainConfig.models[key] : {roi1: '', roi2: ''};
+                
+                container.innerHTML += `
+                    <div class="grid grid-cols-12 gap-2 items-center bg-black/40 p-2.5 rounded-xl border border-darkBorder/50 hover:border-cyberMagenta/30 transition-colors">
+                        <div class="col-span-4 text-[10px] sm:text-xs font-bold text-gray-300 pl-1 truncate">${model.name}</div>
+                        <div class="col-span-4 relative">
+                            <span class="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-cyberMagenta font-bold text-xs">$</span>
+                            <input type="number" id="admin-c-${key}-roi1" value="${data.roi1}" class="w-full bg-[#0d0d11] border border-cyberMagenta/30 rounded-lg pl-6 pr-2 py-2 text-cyberMagenta font-mono text-[10px] sm:text-xs focus:border-cyberMagenta outline-none" placeholder="0">
+                        </div>
+                        <div class="col-span-4 relative">
+                            <span class="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-cyberMagenta font-bold text-xs">$</span>
+                            <input type="number" id="admin-c-${key}-roi2" value="${data.roi2}" class="w-full bg-[#0d0d11] border border-cyberMagenta/30 rounded-lg pl-6 pr-2 py-2 text-cyberMagenta font-mono text-[10px] sm:text-xs focus:border-cyberMagenta outline-none" placeholder="0">
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function saveComisionesData() {
+            const cadena = document.getElementById('admin-calc-cadena').value;
+            if(!cadena) return;
+
+            if(!comisionesData.cadenas[cadena]) comisionesData.cadenas[cadena] = {};
+            
+            // Guardar umbrales específicos en la cadena
+            comisionesData.cadenas[cadena].thresholds = {
+                roi1: parseInt(document.getElementById('admin-t-roi1').value) || 25,
+                roi2: parseInt(document.getElementById('admin-t-roi2').value) || 50,
+                kpi: parseInt(document.getElementById('admin-t-kpi').value) || 400000
+            };
+
+            // Guardar modelos en la cadena
+            if(!comisionesData.cadenas[cadena].models) comisionesData.cadenas[cadena].models = {};
+            
+            Object.keys(infinixDatabase).forEach(key => {
+                const inputR1 = document.getElementById(`admin-c-${key}-roi1`);
+                const inputR2 = document.getElementById(`admin-c-${key}-roi2`);
+                if(inputR1 && inputR2) {
+                    comisionesData.cadenas[cadena].models[key] = {
+                        roi1: parseInt(inputR1.value) || 0,
+                        roi2: parseInt(inputR2.value) || 0
+                    };
+                }
+            });
+
+            localStorage.setItem('infinix_comisiones', JSON.stringify(comisionesData));
+            
+            db.collection("global").doc("comisiones").set(comisionesData, { merge: true })
+            .then(() => {
+                triggerCyberToast('CADENA SINCRONIZADA', `Los pagos de ${cadena.toUpperCase()} están actualizados a nivel nacional.`, true);
+            })
+            .catch(() => {
+                showCustomAlert('Guardado Local', 'Datos guardados localmente. Error de conexión con Firebase.');
             });
         }
     </script>
