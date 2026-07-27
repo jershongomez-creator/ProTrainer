@@ -1144,7 +1144,8 @@
         });
 
         // --- FUNCIÓN DE LOGIN BLINDADA ---
-        function handleLogin() {
+    // --- FUNCIÓN DE LOGIN BLINDADA ---
+    function handleLogin() {
             const codeInputElem = document.getElementById('login-code');
             const passInputElem = document.getElementById('login-pass');
             
@@ -1152,13 +1153,7 @@
 
             const codeInput = codeInputElem.value.trim().toUpperCase();
             const passInput = passInputElem.value;
-            const rememberCheck = document.getElementById('login-remember')?.checked;
-            const errorMsg = document.getElementById('login-error');
-
-            const dbAsesores = typeof baseDatosAsesores !== 'undefined' ? baseDatosAsesores : {
-                "ADMIN": { pass: "admin", role: "ADMIN", nombre: "Administrador" },
-                "ASESOR": { pass: "ventas2026", role: "ASESOR", nombre: "Asesor Elite" }
-            };
+            // ... (resto de tus variables)
 
             if (dbAsesores[codeInput] && dbAsesores[codeInput].pass === passInput) {
                 if(errorMsg) errorMsg.classList.add('hidden');
@@ -1166,9 +1161,16 @@
                 currentUserRole = dbAsesores[codeInput].role || 'ASESOR';
                 currentUserName = dbAsesores[codeInput].nombre || codeInput;
 
+                // ---> ¡AQUÍ ESTÁ LA MAGIA! <---
+                // Llama al permiso justo cuando el login es exitoso
+                if (typeof activarNotificaciones === 'function') {
+                    activarNotificaciones();
+                }
+
                 if (typeof applyRolePermissions === 'function') {
                     applyRolePermissions(currentUserRole);
                 }
+         
                 
                 if (typeof initCloudSincronizacion === 'function') {
                     try { initCloudSincronizacion(); } catch(err) { console.log("Cloud sync ya activa"); }
