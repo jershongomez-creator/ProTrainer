@@ -1161,16 +1161,19 @@
                 currentUserRole = dbAsesores[codeInput].role || 'ASESOR';
                 currentUserName = dbAsesores[codeInput].nombre || codeInput;
 
-                // ---> ¡AQUÍ ESTÁ LA MAGIA! <---
-                // Llama al permiso justo cuando el login es exitoso
-                if (typeof activarNotificaciones === 'function') {
-                    activarNotificaciones();
+                // ---> CÓDIGO BLINDADO PARA NOTIFICACIONES <---
+                try {
+                    if (typeof activarNotificaciones === 'function') {
+                        activarNotificaciones();
+                    }
+                } catch (error) {
+                    console.warn("Las notificaciones fueron bloqueadas por el entorno, pero el login continúa.", error);
                 }
+                // ---------------------------------------------
 
                 if (typeof applyRolePermissions === 'function') {
                     applyRolePermissions(currentUserRole);
                 }
-         
                 
                 if (typeof initCloudSincronizacion === 'function') {
                     try { initCloudSincronizacion(); } catch(err) { console.log("Cloud sync ya activa"); }
