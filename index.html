@@ -1143,9 +1143,8 @@
             }
         });
 
-        // --- FUNCIÓN DE LOGIN BLINDADA ---
-    // --- FUNCIÓN DE LOGIN BLINDADA ---
-    function handleLogin() {
+// --- FUNCIÓN DE LOGIN BLINDADA ---
+function handleLogin() {
             const codeInputElem = document.getElementById('login-code');
             const passInputElem = document.getElementById('login-pass');
             
@@ -1153,7 +1152,14 @@
 
             const codeInput = codeInputElem.value.trim().toUpperCase();
             const passInput = passInputElem.value;
-            // ... (resto de tus variables)
+            const rememberCheck = document.getElementById('login-remember') ? document.getElementById('login-remember').checked : false;
+            const errorMsg = document.getElementById('login-error');
+
+            // AQUÍ ESTABA EL ERROR: Faltaba definir la base de datos local para el login
+            const dbAsesores = typeof baseDatosAsesores !== 'undefined' ? baseDatosAsesores : {
+                "ADMIN": { pass: "admin", role: "ADMIN", nombre: "Administrador" },
+                "ASESOR": { pass: "ventas2026", role: "ASESOR", nombre: "Asesor Elite" }
+            };
 
             if (dbAsesores[codeInput] && dbAsesores[codeInput].pass === passInput) {
                 if(errorMsg) errorMsg.classList.add('hidden');
@@ -1161,15 +1167,15 @@
                 currentUserRole = dbAsesores[codeInput].role || 'ASESOR';
                 currentUserName = dbAsesores[codeInput].nombre || codeInput;
 
-                // ---> CÓDIGO BLINDADO PARA NOTIFICACIONES <---
+                // --- INTENTO SEGURO DE NOTIFICACIONES ---
                 try {
                     if (typeof activarNotificaciones === 'function') {
                         activarNotificaciones();
                     }
-                } catch (error) {
-                    console.warn("Las notificaciones fueron bloqueadas por el entorno, pero el login continúa.", error);
+                } catch (err) {
+                    console.log("Notificaciones saltadas por entorno local", err);
                 }
-                // ---------------------------------------------
+                // ----------------------------------------
 
                 if (typeof applyRolePermissions === 'function') {
                     applyRolePermissions(currentUserRole);
@@ -1199,6 +1205,7 @@
             } else {
                 if(errorMsg) errorMsg.classList.remove('hidden');
             }
+        }
           // --- SISTEMA DE NOTIFICACIONES PUSH ---
         function activarNotificaciones() {
             const messaging = firebase.messaging();
@@ -1227,7 +1234,6 @@
                 triggerCyberToast(payload.notification.title, payload.notification.body, true);
             });
         }  
-        }
 
         function applyRolePermissions(role) {
             currentUserRole = role;
