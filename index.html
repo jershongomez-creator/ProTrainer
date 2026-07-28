@@ -885,6 +885,24 @@
                 </div>
                 <h3 class="text-3xl font-black text-white orbitron tracking-wider">Salón de la Fama</h3>
                 <p class="text-sm text-gray-400">Top de los mejores asesores del país en tiempo real según unidades facturadas.</p>
+                <!-- FILTRO DE ZONA PARA RANKING -->
+<div class="text-center mt-4 mb-4">
+    <select id="filtro-zona-ranking" class="bg-black text-yellow-500 border border-yellow-600 rounded p-2 text-sm font-bold" onchange="renderSalonFama()">
+        <option value="TODAS">Ranking Nacional (Todas las Zonas)</option>
+        <option value="Nariño & Santander">Nariño & Santander</option>
+        <option value="Antioquia Norte">Antioquia Norte</option>
+        <option value="Antioquia Sur">Antioquia Sur</option>
+        <option value="Valle">Valle</option>
+        <option value="Costa Norte">Costa Norte</option>
+        <option value="Costa Sur">Costa Sur</option>
+        <option value="Exito Centro Sur">Éxito Centro Sur</option>
+        <option value="Exito Centro Norte">Éxito Centro Norte</option>
+        <option value="Alkosto Centro Sur">Alkosto Centro Sur</option>
+        <option value="Alkosto Centro Norte">Alkosto Centro Norte</option>
+        <option value="Eje Cafetero">Eje Cafetero</option>
+        <option value="Wom Centro">Wom Centro</option>
+    </select>
+</div>
             </div>
 
             <!-- Podio de los 3 Mejores -->
@@ -932,6 +950,22 @@
 <div id="inv-controles-lideres" class="hidden flex flex-col md:flex-row justify-between items-center gap-4 mb-4 bg-[#0d0d11] p-4 rounded-2xl border border-darkBorder">
     <div class="w-full md:w-1/3">
         <input type="text" id="filtro-stock-input" onkeyup="filtrarTablaStock()" placeholder="🔍 Filtrar por tienda o asesor..." class="w-full bg-black border border-darkBorder rounded-xl px-4 py-2.5 text-xs text-white focus:border-infinix outline-none uppercase font-mono">
+       <!-- FILTRO DE ZONA PARA STOCK -->
+       <select id="filtro-zona-stock" class="bg-black text-gray-300 border border-gray-600 rounded p-2 text-sm font-bold ml-2" onchange="renderInventarioAdminTable()">
+    <option value="TODAS">Nacional (Todas las Zonas)</option>
+    <option value="Nariño & Santander">Nariño & Santander</option>
+    <option value="Antioquia Norte">Antioquia Norte</option>
+    <option value="Antioquia Sur">Antioquia Sur</option>
+    <option value="Valle">Valle</option>
+    <option value="Costa Norte">Costa Norte</option>
+    <option value="Costa Sur">Costa Sur</option>
+    <option value="Exito Centro Sur">Éxito Centro Sur</option>
+    <option value="Exito Centro Norte">Éxito Centro Norte</option>
+    <option value="Alkosto Centro Sur">Alkosto Centro Sur</option>
+    <option value="Alkosto Centro Norte">Alkosto Centro Norte</option>
+    <option value="Eje Cafetero">Eje Cafetero</option>
+    <option value="Wom Centro">Wom Centro</option>
+</select> 
     </div>
     <div>
         <button onclick="descargarInventarioExcel()" class="px-5 py-2.5 bg-infinix hover:bg-infinix-light text-black font-black text-xs rounded-xl transition-all shadow-lg shadow-infinix/20 uppercase tracking-widest orbitron flex items-center gap-2">
@@ -1484,6 +1518,7 @@
 
         let currentUserRole = 'ASESOR'; 
         let currentUserName = 'Invitado';
+        let currentUserZone = 'TODAS';
         document.body.style.overflow = 'hidden';
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1622,6 +1657,7 @@
         function ejecutarAcceso(rol, nombre, codigo, tienda, zona, remember, pass) {
             currentUserRole = rol || 'ASESOR';
             currentUserName = nombre || codigo;
+            currentUserZone = zona || 'TODAS';
 
             // Activar permisos y sincronización
             try { activarNotificaciones(); } catch (err) {}
@@ -1652,7 +1688,7 @@
                 setTimeout(() => {
                     overlay.style.display = 'none';
                     document.body.style.overflow = 'auto';
-                    showCustomAlert("¡Acceso Concedido!", `Bienvenido, ${currentUserName}.\nRol: ${currentUserRole}\nTienda: ${tienda || 'Global'}`);
+                    showCustomAlert("¡Acceso Concedido!", `Bienvenido, ${currentUserName}.\nRol: ${currentUserRole}\nTienda: ${tienda || 'Global'}\nZona: ${zona || 'Sin asignar'}`);
                 }, 300);
             }
         }
@@ -1681,41 +1717,41 @@
             lineas.forEach(linea => {
                 if(linea.trim() === '') return;
                 
-                let partes = linea.split('\t'); // El texto viene separado por tabulaciones de Excel
-                let docId, payload;
+                let partes = linea.split('\t'); // El texto viene separado por tabulaciones
+    let docId, payload;
 
-                // Si la línea tiene 3 columnas (Es de la lista de ASESORES)
-                if (partes.length === 3) {
-                    docId = partes[1].trim().toUpperCase(); // El código DCR
-                    payload = {
-                        nombre: partes[0].trim(),
-                        tienda: partes[2].trim(),
-                        zona: "Pendiente", // Se ajustará luego
-                        rol: "ASESOR",
-                        password: clavesGenericas["ASESOR"],
-                        primer_ingreso: true
-                    };
-                } 
-                // Si la línea tiene 4 columnas (Es de la lista de LÍDERES)
-                else if (partes.length >= 4) {
-                    docId = partes[0].trim().toUpperCase(); // Código
-                    let rolCrudo = partes[3].trim().toUpperCase();
-                    let rolLimpio = "ASESOR";
-                    
-                    if (rolCrudo.includes("TRAINER")) rolLimpio = "TRAINER";
-                    else if (rolCrudo.includes("SUPERVISOR")) rolLimpio = "SUPERVISOR";
-                    else if (rolCrudo.includes("COORDINADOR")) rolLimpio = "COORDINADOR";
-                    else if (rolCrudo.includes("GERNTE") || rolCrudo.includes("GERENTE")) rolLimpio = "GERENTE";
-
-                    payload = {
-                        nombre: partes[2].trim(),
-                        tienda: "Global",
-                        zona: partes[1].trim(), // Zona
-                        rol: rolLimpio,
-                        password: clavesGenericas[rolLimpio],
-                        primer_ingreso: true
-                    };
-                }
+    // 1. Si la línea tiene 5 columnas (NUEVA LISTA DE ASESORES)
+    // Orden del TXT: [0]Cédula, [1]Nombre, [2]Código, [3]Tienda, [4]Zona
+    if (partes.length === 5) {
+        docId = partes[0].trim(); // Usamos la Cédula como ID en Firebase
+        
+        payload = {
+            nombre: partes[1].trim(),
+            codigo: partes[2].trim(), // Guardamos el código (Ej: CO2026141)
+            tienda: partes[3].trim(),
+            zona: partes[4].trim(),   // ¡Aquí se captura la zona correctamente!
+            rol: "ASESOR",
+            password: clavesGenericas["ASESOR"],
+            primer_ingreso: true
+        };
+    }
+    
+    // 2. Si la línea tiene 4 columnas (LISTA DE SUPERVISORES, TRAINERS, ETC)
+    // Orden del TXT: [0]Código, [1]Zona, [2]Nombre, [3]Rol
+    else if (partes.length === 4) {
+        docId = partes[0].trim(); // Usamos el código como ID (Ej: TRC0003)
+        
+        let rolDetectado = partes[3].trim().toUpperCase();
+        
+        payload = {
+            nombre: partes[2].trim(),
+            tienda: "Global",         // Tienda general para líderes
+            zona: partes[1].trim(),   // Zona del líder
+            rol: rolDetectado,
+            password: clavesGenericas[rolDetectado] || "infinix2026",
+            primer_ingreso: true
+        };
+    }
 
                 if (docId && payload) {
                     let ref = db.collection("usuarios_auth").doc(docId);
@@ -5803,13 +5839,33 @@ db.collection("ranking_ventas").doc(asesorCode).set({
             podioContainer.innerHTML = '';
             listContainer.innerHTML = '';
 
-            if (rankingNacional.length === 0) {
-                listContainer.innerHTML = '<div class="text-center text-gray-500 font-mono py-8">La competencia acaba de iniciar. Aún no hay ventas registradas.</div>';
-                return;
-            }
+         // === LÓGICA DE FILTRO DE ZONA ===
+    let zonaFiltro = "TODAS";
+    const selectRanking = document.getElementById('filtro-zona-ranking');
 
-            // Generar Podio (Top 3) - Orden: 2, 1, 3 para diseño visual
-            const top3 = [rankingNacional[1], rankingNacional[0], rankingNacional[2]];
+    if (selectRanking) zonaFiltro = selectRanking.value;
+
+    if (currentUserRole === 'SUPERVISOR' || currentUserRole === 'COORDINADOR') {
+        zonaFiltro = currentUserZone;
+        if (selectRanking) {
+            selectRanking.value = currentUserZone;
+            selectRanking.disabled = true;
+        }
+    }
+
+    let rankingFiltrado = rankingNacional;
+    if (zonaFiltro !== "TODAS") {
+        rankingFiltrado = rankingNacional.filter(asesor => asesor.zona === zonaFiltro);
+    }
+    // ================================
+
+    if (rankingFiltrado.length === 0) {
+        listContainer.innerHTML = '<div class="text-center text-gray-500 font-mono py-8">Aún no hay ventas registradas en esta zona.</div>';
+        return;
+    }
+
+    // Generar Podio (Top 3) - Orden: 2, 1, 3 para diseño visual
+    const top3 = [rankingFiltrado[1], rankingFiltrado[0], rankingFiltrado[2]];
             const alturas = ['h-[160px]', 'h-[220px]', 'h-[130px]'];
             const medallas = ['🥈', '🥇', '🥉'];
 
@@ -5831,7 +5887,7 @@ db.collection("ranking_ventas").doc(asesorCode).set({
             });
 
             // Generar Lista (Top 4 al 10)
-            const restos = rankingNacional.slice(3);
+            const restos = rankingFiltrado.slice(3);
             if(restos.length === 0) {
                 listContainer.innerHTML = '<div class="text-center text-gray-600 font-mono text-[10px]">Esperando más guerreros...</div>';
             } else {
@@ -6088,10 +6144,27 @@ db.collection("ranking_ventas").doc(asesorCode).set({
                 totalText.textContent = "0";
                 return;
             }
+               // === LÓGICA DE FILTRO DE ZONA ===
+    let zonaFiltro = "TODAS";
+    const selectStock = document.getElementById('filtro-zona-stock');
+    
+    if (selectStock) zonaFiltro = selectStock.value;
 
-            inventarioNacionalLog.forEach(inv => {
-                granTotal += (inv.totalUnits || 0);
-                
+    // Si es líder, lo forzamos a su zona y bloqueamos el menú
+    if (currentUserRole === 'SUPERVISOR' || currentUserRole === 'COORDINADOR') {
+        zonaFiltro = currentUserZone;
+        if (selectStock) {
+            selectStock.value = currentUserZone;
+            selectStock.disabled = true; 
+        }
+    }
+    // ================================
+
+    inventarioNacionalLog.forEach(inv => {
+        // EL CANDADO: Si la zona del asesor no coincide con el filtro, la saltamos
+        if (zonaFiltro !== "TODAS" && inv.zona !== zonaFiltro) return;
+
+        granTotal += (inv.totalUnits || 0);
                 // Formatear el desglose para que se vea bien en la tabla
                 let detalleHtml = '';
                 if(inv.desglose) {
