@@ -16,6 +16,7 @@
     <!-- SDK de Firebase (¡Cargando primero y fuera de las etiquetas de estilo!) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
     <script>
@@ -140,52 +141,76 @@
             height: auto !important;
         }
     </style>
+    <!-- Librería para descargar Excel -->
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
 </head>
-<body class="bg-darkBg text-gray-100 selection:bg-infinix selection:text-black relative">
-    <div id="login-overlay" class="fixed inset-0 bg-darkBg z-[99999] flex items-center justify-center p-4 transition-opacity duration-500">
-        <div class="bg-darkCard border-2 border-infinix/40 rounded-3xl p-8 w-full max-w-md shadow-[0_0_50px_rgba(57,255,20,0.15)] relative overflow-hidden">
-            <div class="absolute -top-24 -right-24 w-48 h-48 bg-infinix/10 rounded-full blur-3xl pointer-events-none"></div>
+<div id="login-overlay" class="fixed inset-0 bg-darkBg z-[99999] flex items-center justify-center p-4 transition-opacity duration-500 overflow-y-auto">
+    <div class="bg-darkCard border-2 border-infinix/40 rounded-3xl p-8 w-full max-w-md shadow-[0_0_50px_rgba(57,255,20,0.15)] relative overflow-hidden my-auto">
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-infinix/10 rounded-full blur-3xl pointer-events-none"></div>
 
-            <div class="text-center mb-8 relative z-10">
-                <img src="logo infinix.png" alt="Infinix Logo" class="h-12 mx-auto mb-4 filter drop-shadow-[0_0_8px_rgba(57,255,20,0.3)]">
-                <h2 class="text-2xl font-black text-white orbitron tracking-widest">PRO TRAINER</h2>
-                <p class="text-xs text-infinix font-bold tracking-widest uppercase mt-1">Acceso Restringido</p>
-                <p class="text-[10px] text-gray-400 mt-2">Usa credenciales autorizadas para ingresar.</p>
+        <div class="text-center mb-8 relative z-10">
+            <img src="logo infinix.png" alt="Infinix Logo" class="h-12 mx-auto mb-4 filter drop-shadow-[0_0_8px_rgba(57,255,20,0.3)]">
+            <h2 class="text-2xl font-black text-white orbitron tracking-widest">PRO TRAINER</h2>
+            <p class="text-xs text-infinix font-bold tracking-widest uppercase mt-1" id="login-subtitle">Acceso Restringido</p>
+            <p class="text-[10px] text-gray-400 mt-2" id="login-description">Usa tus credenciales oficiales para ingresar.</p>
+        </div>
+
+        <!-- VISTA 1: LOGIN NORMAL -->
+        <form id="login-form" class="space-y-5 relative z-10">
+            <div>
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron mb-1.5 block">Código DSR / Usuario</label>
+                <input type="text" id="login-code" class="w-full bg-black border border-darkBorder rounded-xl px-4 py-3 text-white focus:border-infinix focus:ring-1 focus:ring-infinix transition-all outline-none uppercase font-mono" placeholder="Ej: CO2026141">
+            </div>
+            <div>
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron mb-1.5 block">Contraseña</label>
+                <input type="password" id="login-pass" class="w-full bg-black border border-darkBorder rounded-xl px-4 py-3 text-white focus:border-infinix focus:ring-1 focus:ring-infinix transition-all outline-none" placeholder="••••••••">
+            </div>
+            
+            <div class="flex items-center mt-2 mb-2">
+                <label class="flex items-center cursor-pointer group">
+                    <div class="relative flex items-center justify-center w-5 h-5 bg-black border-2 border-darkBorder rounded-md group-hover:border-infinix transition-colors">
+                        <input type="checkbox" id="login-remember" class="peer absolute opacity-0 w-full h-full cursor-pointer">
+                        <svg class="w-3 h-3 text-infinix opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <span class="ml-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest orbitron group-hover:text-gray-300 transition-colors">Recordar mis credenciales</span>
+                </label>
             </div>
 
-            <form id="login-form" class="space-y-5 relative z-10">
-                <div>
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron mb-1.5 block">Código de Asesor / Cédula</label>
-                    <input type="text" id="login-code" class="w-full bg-black border border-darkBorder rounded-xl px-4 py-3 text-white focus:border-infinix focus:ring-1 focus:ring-infinix transition-all outline-none uppercase font-mono" placeholder="Ej: INF-001">
-                </div>
-                <div>
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron mb-1.5 block">Contraseña</label>
-                    <input type="password" id="login-pass" class="w-full bg-black border border-darkBorder rounded-xl px-4 py-3 text-white focus:border-infinix focus:ring-1 focus:ring-infinix transition-all outline-none" placeholder="••••••••">
-                </div>
-                
-                <div class="flex items-center mt-2 mb-2">
-                    <label class="flex items-center cursor-pointer group">
-                        <div class="relative flex items-center justify-center w-5 h-5 bg-black border-2 border-darkBorder rounded-md group-hover:border-infinix transition-colors">
-                            <input type="checkbox" id="login-remember" class="peer absolute opacity-0 w-full h-full cursor-pointer">
-                            <svg class="w-3 h-3 text-infinix opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                        </div>
-                        <span class="ml-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest orbitron group-hover:text-gray-300 transition-colors">Recordar mis credenciales</span>
-                    </label>
-                </div>
-
-                <div id="login-error" class="text-red-500 text-xs font-bold text-center hidden bg-red-500/10 py-2 rounded-lg border border-red-500/20">
-                    Credenciales incorrectas o no autorizadas.
-                </div>
-                <button type="button" onclick="handleLogin()" class="w-full py-3.5 bg-infinix hover:bg-infinix-light text-black font-black rounded-xl transition-all duration-300 transform active:scale-95 shadow-lg shadow-infinix/20 uppercase tracking-widest orbitron mt-4">
-                    Iniciar Sesión
-                </button>
-            </form>
-            <div class="mt-6 text-center text-[10px] text-gray-500 relative z-10 flex flex-col gap-1">
-                <span>Terminal de Combate de Ventas Elite</span>
-                <span>Sistema de Validación Local • V2.0</span>
+            <div id="login-error" class="text-red-500 text-xs font-bold text-center hidden bg-red-500/10 py-2 rounded-lg border border-red-500/20">
+                Credenciales incorrectas. Verifica tu código o contraseña.
             </div>
+            <button type="button" id="btn-iniciar-sesion" onclick="handleLogin()" class="w-full py-3.5 bg-infinix hover:bg-infinix-light text-black font-black rounded-xl transition-all duration-300 transform active:scale-95 shadow-lg shadow-infinix/20 uppercase tracking-widest orbitron mt-4">
+                Iniciar Sesión
+            </button>
+        </form>
+
+        <!-- VISTA 2: CAMBIO DE CONTRASEÑA OBLIGATORIO -->
+        <form id="new-password-form" class="space-y-5 relative z-10 hidden">
+            <div class="bg-blue-500/10 border border-blue-500/30 p-3 rounded-xl mb-4">
+                <p class="text-xs text-blue-400 font-bold text-center">🔐 Por seguridad, debes crear una nueva contraseña personal para tu cuenta.</p>
+            </div>
+            <div>
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron mb-1.5 block">Nueva Contraseña</label>
+                <input type="password" id="new-pass-1" class="w-full bg-black border border-darkBorder rounded-xl px-4 py-3 text-white focus:border-infinix transition-all outline-none" placeholder="Mínimo 6 caracteres">
+            </div>
+            <div>
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron mb-1.5 block">Confirmar Nueva Contraseña</label>
+                <input type="password" id="new-pass-2" class="w-full bg-black border border-darkBorder rounded-xl px-4 py-3 text-white focus:border-infinix transition-all outline-none" placeholder="Repite la contraseña">
+            </div>
+            <div id="password-error" class="text-red-500 text-xs font-bold text-center hidden bg-red-500/10 py-2 rounded-lg border border-red-500/20">
+                Las contraseñas no coinciden.
+            </div>
+            <button type="button" id="btn-guardar-pass" onclick="guardarNuevaContrasena()" class="w-full py-3.5 bg-blue-500 hover:bg-blue-400 text-white font-black rounded-xl transition-all duration-300 transform active:scale-95 shadow-lg shadow-blue-500/20 uppercase tracking-widest orbitron mt-4">
+                Guardar y Entrar
+            </button>
+        </form>
+
+        <div class="mt-6 text-center text-[10px] text-gray-500 relative z-10 flex flex-col gap-1">
+            <span>Terminal de Combate de Ventas Elite</span>
+            <span>Sistema de Validación en Nube • V3.0</span>
         </div>
     </div>
+</div>
 
     <header class="border-b-2 border-infinix/20 bg-darkBg/95 backdrop-blur sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 py-3.5 flex justify-between items-center">
@@ -264,13 +289,30 @@
                 <span class="text-infinix text-lg drop-shadow-[0_0_5px_rgba(57,255,20,0.5)]">💰</span>
                 <span>Calculadora</span>
             </button>
-            
             <!-- Pestaña Calculadora Admin -->
             <button onclick="switchTab('tab-admin-calculadora'); renderAdminCalcModels();" id="btn-tab-admin-calculadora" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
                 <span class="text-cyberMagenta text-lg drop-shadow-[0_0_5px_rgba(255,0,127,0.5)]">🧮</span>
                 <span>Admin Pay</span>
             </button>
-        </div>
+            <!-- Pestaña Salón de la Fama (Visible para todos) -->
+            <button onclick="switchTab('tab-salon-fama'); renderSalonFama();" id="btn-tab-salon-fama" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
+                <span class="text-yellow-500 text-lg drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]">🏆</span>
+                <span>Ranking</span>
+            </button>
+           <!-- Pestaña Inventario -->
+           <button onclick="switchTab('tab-inventario'); initInventarioView();" id="btn-tab-inventario" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
+            <span class="text-blue-500 text-lg drop-shadow-[0_0_5px_rgba(59,130,246,0.5)]">📦</span>
+            <span>Stock</span>
+        </button>  
+        <!-- Botón para el Trainer (Cargar Shopping) -->
+<button id="btn-tab-shopping-trainer" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap" onclick="switchTab('tab-shopping-trainer')">
+    📸 Cargar Shopping
+</button>
+
+<!-- Botón para el Admin/Coordinador (Descargar Excel) -->
+<button id="btn-tab-shopping-admin" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap" onclick="switchTab('tab-shopping-admin')">
+    📥 Descargar Excel
+</button>
     </div>
 
     <section id="consola-selectores" class="max-w-6xl mx-auto w-full px-4 mt-6 transition-all duration-500">
@@ -763,6 +805,11 @@
                         <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Acelerador Actual: </span>
                         <span id="calc-roi-status" class="text-[11px] font-black text-yellow-500 tracking-wider">Esperando Umbral</span>
                     </div>
+                    <!-- Botón Guardar Ventas -->
+                    <button onclick="guardarVentasCalculadora()" class="w-full mt-4 py-3.5 bg-infinix text-black font-black rounded-xl uppercase tracking-widest orbitron hover:bg-infinix-light transition-all transform active:scale-95 shadow-[0_0_15px_rgba(57,255,20,0.3)] flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        Guardar Ventas y Actualizar Ranking
+                    </button>
                 </div>
             </div>
 
@@ -830,6 +877,196 @@
                 </div>
             </div>
         </section>
+        <!-- SECCIÓN: SALÓN DE LA FAMA (RANKING NACIONAL) -->
+        <section id="tab-salon-fama" class="hidden space-y-6">
+            <div class="text-center max-w-2xl mx-auto space-y-3 mb-6">
+                <div class="flex justify-center items-center space-x-2">
+                    <span class="text-xs font-black text-yellow-500 uppercase tracking-widest orbitron block animate-pulse">ELITE BOARD</span>
+                </div>
+                <h3 class="text-3xl font-black text-white orbitron tracking-wider">Salón de la Fama</h3>
+                <p class="text-sm text-gray-400">Top de los mejores asesores del país en tiempo real según unidades facturadas.</p>
+            </div>
+
+            <!-- Podio de los 3 Mejores -->
+            <div class="flex flex-col md:flex-row items-end justify-center gap-4 mb-10 mt-12 min-h-[250px]" id="podio-container">
+                <!-- Inyectado por JS -->
+            </div>
+
+            <!-- Lista del Top 4 al 10 -->
+            <div class="bg-darkCard border-2 border-darkBorder rounded-3xl p-6 shadow-2xl relative overflow-hidden max-w-4xl mx-auto">
+                <h4 class="text-white font-bold orbitron text-sm mb-4 border-b border-darkBorder pb-2 flex items-center gap-2">
+                    <span class="text-yellow-500">⭐</span> TOP 10 NACIONAL
+                </h4>
+                <div class="space-y-3" id="ranking-list-container">
+                    <!-- Inyectado por JS -->
+                </div>
+            </div>
+        </section>
+        <!-- SECCIÓN: CARGA Y AUDITORÍA DE INVENTARIO -->
+        <section id="tab-inventario" class="hidden space-y-6 pb-24">
+            
+            <!-- VISTA ASESOR: FORMULARIO DE CARGA -->
+            <div id="inventario-asesor-view" class="hidden bg-darkCard p-6 rounded-3xl border-2 border-blue-500/40 shadow-[0_0_30px_rgba(59,130,246,0.15)] relative max-w-2xl mx-auto">
+                <h3 class="text-lg font-black text-white orbitron mb-4 text-center border-b border-darkBorder pb-2 flex items-center justify-center gap-2">
+                    <span class="text-blue-500">📦</span> REPORTE DE STOCK EN PDV
+                </h3>
+                
+                <div class="mb-6">
+                    <label class="text-[10px] font-black text-blue-400 uppercase tracking-widest orbitron mb-1 block">Cadena / Tienda Actual</label>
+                    <select id="inv-cadena" class="w-full bg-black border border-darkBorder rounded-xl p-3 text-white text-sm focus:border-blue-500 outline-none transition-all cursor-pointer">
+                        <option value="">Seleccione su PDV...</option>
+                        <!-- Inyectado por JS -->
+                    </select>
+                </div>
+
+                <div class="border-t border-darkBorder pt-4 space-y-2 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2" id="inv-models-container">
+                    <!-- Inyectado por JS -->
+                </div>
+
+                <button onclick="guardarInventario()" class="w-full mt-6 py-4 bg-blue-600 text-white font-black rounded-xl uppercase tracking-widest orbitron hover:bg-blue-500 transition-all transform active:scale-95 shadow-[0_0_15px_rgba(59,130,246,0.4)] flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    SUBIR REPORTE DE INVENTARIO
+                </button>
+            </div>
+<!-- CONTROLES DE AUDITORÍA EXCLUSIVOS PARA LÍDERES -->
+<div id="inv-controles-lideres" class="hidden flex flex-col md:flex-row justify-between items-center gap-4 mb-4 bg-[#0d0d11] p-4 rounded-2xl border border-darkBorder">
+    <div class="w-full md:w-1/3">
+        <input type="text" id="filtro-stock-input" onkeyup="filtrarTablaStock()" placeholder="🔍 Filtrar por tienda o asesor..." class="w-full bg-black border border-darkBorder rounded-xl px-4 py-2.5 text-xs text-white focus:border-infinix outline-none uppercase font-mono">
+    </div>
+    <div>
+        <button onclick="descargarInventarioExcel()" class="px-5 py-2.5 bg-infinix hover:bg-infinix-light text-black font-black text-xs rounded-xl transition-all shadow-lg shadow-infinix/20 uppercase tracking-widest orbitron flex items-center gap-2">
+            📥 Descargar Reporte Stock (Excel)
+        </button>
+    </div>
+</div>
+  <!-- VISTA LÍDERES: TABLA DE AUDITORÍA NACIONAL -->
+            <div id="inventario-admin-view" class="hidden bg-darkCard p-6 rounded-3xl border-2 border-blue-500/40 shadow-[0_0_30px_rgba(59,130,246,0.15)] relative">
+                <h3 class="text-lg font-black text-white orbitron mb-1 text-center flex items-center justify-center gap-2">
+                    <span class="text-blue-500">📊</span> AUDITORÍA DE INVENTARIO NACIONAL
+                </h3>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center mb-6 border-b border-darkBorder pb-4">Stock en vitrina reportado por la red de asesores</p>
+                
+                <div class="flex justify-between items-center mb-4">
+                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest orbitron">Equipos Disponibles País: <span id="inv-total-nacional" class="text-blue-400 text-sm">0</span></div>
+                    <button onclick="clearInventarioNacional()" class="px-3 py-1.5 bg-red-950/50 border border-red-500/50 text-red-500 text-[9px] font-black uppercase tracking-widest orbitron rounded hover:bg-red-600 hover:text-white transition-all shadow-md hidden" id="btn-wipe-inv">
+                        WIPE INVENTARIO
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-darkBorder">
+                    <table class="w-full text-left border-collapse whitespace-nowrap">
+                        <thead class="bg-black/40 text-[9px] sm:text-xs font-bold uppercase tracking-wider text-gray-300 border-b border-darkBorder">
+                            <tr>
+                                <th class="p-3 pl-4">Asesor / Zona</th>
+                                <th class="p-3">Cadena (PDV)</th>
+                                <th class="p-3 text-blue-400 text-center">Total UD</th>
+                                <th class="p-3 text-center">Última Act.</th>
+                                <th class="p-3">Detalle Stock (Ref)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-darkBorder/50 text-xs font-mono" id="inv-admin-tbody">
+                            <!-- Inyectado por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <!-- BOTÓN OCULTO PARA MIGRACIÓN DE USUARIOS (SOLO ADMIN) -->
+        <div id="panel-migracion-master" class="hidden mt-6 p-4 border border-red-500 rounded-xl ... (deja el resto de clases que ya tenías)">
+            <h3 class="text-red-500 font-bold mb-2">HERRAMIENTA DE MIGRACIÓN MÁSTER</h3>
+            <textarea id="migrator-data" rows="5" class="w-full bg-black text-xs text-white p-2 rounded border border-red-500/50 mb-2" placeholder="Pega aquí el TXT con los usuarios..."></textarea>
+            <button onclick="migrarUsuariosAFirebase()" class="px-4 py-2 bg-red-600 text-white font-bold rounded">INYECCIÓN MASIVA A FIREBASE</button>
+        </div>
+    </div>
+   <!-- ========================================== -->
+<!-- PANEL: SHOPPING DIARIO (TRAINER/SUPERVISOR)-->
+<!-- ========================================== -->
+<div id="tab-shopping-trainer" class="hidden">
+    <div class="p-4 bg-darkCard rounded-2xl border border-darkBorder mb-4 shadow-xl">
+        <h2 class="text-xl font-bold text-white mb-4 text-center">Cargar Shopping Diario</h2>
+        
+        <label class="block text-gray-400 text-sm mb-3 text-center">Selecciona la cadena donde te encuentras:</label>
+        
+        <!-- Input oculto para que el sistema recuerde la selección -->
+        <input type="hidden" id="cadenaSeleccionada" value="">
+
+        <!-- Botones de las cadenas -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 mb-6" id="botones-cadenas-container">
+            <button class="btn-cadena py-2 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-700 transition-all text-sm font-bold shadow-md" data-cadena="Alkosto">Alkosto</button>
+            <button class="btn-cadena py-2 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-700 transition-all text-sm font-bold shadow-md" data-cadena="Exito">Éxito</button>
+            <button class="btn-cadena py-2 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-700 transition-all text-sm font-bold shadow-md" data-cadena="Cencosud">Cencosud</button>
+            <button class="btn-cadena py-2 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-700 transition-all text-sm font-bold shadow-md" data-cadena="Falabella">Falabella</button>
+            <button class="btn-cadena py-2 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-700 transition-all text-sm font-bold shadow-md" data-cadena="Alkomprar">Alkomprar</button>
+        </div>
+
+        <!-- Aquí aparecerán los teléfonos automáticamente -->
+        <div id="listaTelefonosShopping" class="flex flex-col gap-4"></div>
+
+        <button id="btnGuardarShopping" class="hidden w-full mt-6 py-4 rounded-xl font-bold text-black bg-infinix hover:bg-opacity-80 transition-all shadow-lg transform hover:scale-[1.02]">
+            📸 Subir Fotos y Guardar Shopping
+        </button>
+    </div>
+</div>
+<!-- ========================================== -->
+<!-- PANEL: VISOR Y DESCARGA SHOPPING (ADMIN/COORD) -->
+<!-- ========================================== -->
+<div id="tab-shopping-admin" class="hidden">
+    <div class="p-4 bg-darkCard rounded-2xl border border-darkBorder mb-4 shadow-xl">
+        <h2 class="text-xl font-bold text-white mb-2 text-center">Auditoría de Shopping Diario</h2>
+        <p class="text-gray-400 text-sm mb-6 text-center">Selecciona una cadena para ver las fotos en pantalla o exportar los datos.</p>
+        
+        <!-- Cuadrícula de opciones por cadena -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+            
+            <!-- Alkosto -->
+            <div class="bg-[#1E293B] p-3 rounded-xl border border-gray-700 flex flex-col gap-2 shadow-lg">
+                <h3 class="text-white font-bold text-center uppercase tracking-wider text-sm mb-1">Alkosto</h3>
+                <button onclick="verReportePantalla('Alkosto')" class="py-2 text-xs rounded-lg font-bold bg-infinix text-black hover:bg-opacity-80 transition-all">👁️ Ver Fotos</button>
+                <button onclick="descargarExcelShopping('Alkosto')" class="py-2 text-xs rounded-lg font-bold bg-white text-black hover:bg-gray-200 transition-all">📥 Excel</button>
+            </div>
+
+            <!-- Éxito -->
+            <div class="bg-[#1E293B] p-3 rounded-xl border border-gray-700 flex flex-col gap-2 shadow-lg">
+                <h3 class="text-white font-bold text-center uppercase tracking-wider text-sm mb-1">Éxito</h3>
+                <button onclick="verReportePantalla('Exito')" class="py-2 text-xs rounded-lg font-bold bg-infinix text-black hover:bg-opacity-80 transition-all">👁️ Ver Fotos</button>
+                <button onclick="descargarExcelShopping('Exito')" class="py-2 text-xs rounded-lg font-bold bg-white text-black hover:bg-gray-200 transition-all">📥 Excel</button>
+            </div>
+
+            <!-- Cencosud -->
+            <div class="bg-[#1E293B] p-3 rounded-xl border border-gray-700 flex flex-col gap-2 shadow-lg">
+                <h3 class="text-white font-bold text-center uppercase tracking-wider text-sm mb-1">Cencosud</h3>
+                <button onclick="verReportePantalla('Cencosud')" class="py-2 text-xs rounded-lg font-bold bg-infinix text-black hover:bg-opacity-80 transition-all">👁️ Ver Fotos</button>
+                <button onclick="descargarExcelShopping('Cencosud')" class="py-2 text-xs rounded-lg font-bold bg-white text-black hover:bg-gray-200 transition-all">📥 Excel</button>
+            </div>
+
+            <!-- Falabella -->
+            <div class="bg-[#1E293B] p-3 rounded-xl border border-gray-700 flex flex-col gap-2 shadow-lg">
+                <h3 class="text-white font-bold text-center uppercase tracking-wider text-sm mb-1">Falabella</h3>
+                <button onclick="verReportePantalla('Falabella')" class="py-2 text-xs rounded-lg font-bold bg-infinix text-black hover:bg-opacity-80 transition-all">👁️ Ver Fotos</button>
+                <button onclick="descargarExcelShopping('Falabella')" class="py-2 text-xs rounded-lg font-bold bg-white text-black hover:bg-gray-200 transition-all">📥 Excel</button>
+            </div>
+
+            <!-- Alkomprar -->
+            <div class="bg-[#1E293B] p-3 rounded-xl border border-gray-700 flex flex-col gap-2 shadow-lg">
+                <h3 class="text-white font-bold text-center uppercase tracking-wider text-sm mb-1">Alkomprar</h3>
+                <button onclick="verReportePantalla('Alkomprar')" class="py-2 text-xs rounded-lg font-bold bg-infinix text-black hover:bg-opacity-80 transition-all">👁️ Ver Fotos</button>
+                <button onclick="descargarExcelShopping('Alkomprar')" class="py-2 text-xs rounded-lg font-bold bg-white text-black hover:bg-gray-200 transition-all">📥 Excel</button>
+            </div>
+
+        </div>
+
+        <!-- AQUÍ SE MOSTRARÁN LAS FOTOS (Visor Oculto por defecto) -->
+        <div id="visor-shopping-container" class="hidden border-t border-gray-700 pt-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="titulo-visor" class="text-infinix font-bold text-lg uppercase tracking-wider">Cargando...</h3>
+                <button onclick="document.getElementById('visor-shopping-container').classList.add('hidden')" class="text-gray-400 hover:text-white text-sm font-bold">✖ Cerrar Visor</button>
+            </div>
+            <!-- La cuadrícula donde inyectaremos las tarjetas con fotos -->
+            <div id="contenido-visor" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+        </div>
+
+    </div>
+</div>
     </main>
 
     <footer class="bg-black/80 border-t-2 border-darkBorder py-6 mt-auto">
@@ -1259,67 +1496,247 @@
             }
         });
 
-// --- FUNCIÓN DE LOGIN BLINDADA ---
-function handleLogin() {
+// ==========================================
+        // MÓDULO DE AUTENTICACIÓN EN NUBE (FIRESTORE)
+        // ==========================================
+        
+        let tempUserDocId = null; // Guarda temporalmente el ID para el cambio de clave
+
+        function handleLogin() {
             const codeInputElem = document.getElementById('login-code');
             const passInputElem = document.getElementById('login-pass');
-            
             if (!codeInputElem || !passInputElem) return;
 
             const codeInput = codeInputElem.value.trim().toUpperCase();
             const passInput = passInputElem.value;
             const rememberCheck = document.getElementById('login-remember') ? document.getElementById('login-remember').checked : false;
             const errorMsg = document.getElementById('login-error');
+            const btnLogin = document.getElementById('btn-iniciar-sesion');
 
-            // AQUÍ ESTABA EL ERROR: Faltaba definir la base de datos local para el login
-            const dbAsesores = typeof baseDatosAsesores !== 'undefined' ? baseDatosAsesores : {
-                "ADMIN": { pass: "admin", role: "ADMIN", nombre: "Administrador" },
-                "ASESOR": { pass: "ventas2026", role: "ASESOR", nombre: "Asesor Elite" }
+            if (!codeInput || !passInput) {
+                if(errorMsg) { errorMsg.textContent = "Llena ambos campos."; errorMsg.classList.remove('hidden'); }
+                return;
+            }
+// ==========================================
+            // PUENTE GENÉRICO MAESTRO (ACCESO DIRECTO FIJO)
+            // ==========================================
+            const cuentasGenericas = {
+                "SUPERVISOR": { pass: "spv2026", nombre: "Supervisor Global (Master)", rol: "SUPERVISOR", tienda: "Global", zona: "Nacional" },
+                "TRAINER": { pass: "trainer2026", nombre: "Trainer Global (Master)", rol: "TRAINER", tienda: "Global", zona: "Nacional" },
+                "ASESOR": { pass: "VENTAS2026", nombre: "Asesor Global (Master)", rol: "ASESOR", tienda: "Global", zona: "Nacional" },
+                "COORDINADOR": { pass: "city2026", nombre: "Coordinador Global (Master)", rol: "COORDINADOR", tienda: "Global", zona: "Nacional" },
+                "GERENTE": { pass: "gerencia2026", nombre: "Gerencia Global (Master)", rol: "GERENTE", tienda: "Global", zona: "Nacional" },
+                "ADMIN": { pass: "admin", nombre: "Jgmz242520", rol: "ADMIN", tienda: "Sede Central", zona: "Nacional" } // O tu clave de admin personalizada
             };
 
-            if (dbAsesores[codeInput] && dbAsesores[codeInput].pass === passInput) {
-                if(errorMsg) errorMsg.classList.add('hidden');
-                
-                currentUserRole = dbAsesores[codeInput].role || 'ASESOR';
-                currentUserName = dbAsesores[codeInput].nombre || codeInput;
-
-                // --- INTENTO SEGURO DE NOTIFICACIONES ---
-                try {
-                    if (typeof activarNotificaciones === 'function') {
-                        activarNotificaciones();
-                    }
-                } catch (err) {
-                    console.log("Notificaciones saltadas por entorno local", err);
-                }
-                // ----------------------------------------
-
-                if (typeof applyRolePermissions === 'function') {
-                    applyRolePermissions(currentUserRole);
-                }
-                
-                if (typeof initCloudSincronizacion === 'function') {
-                    try { initCloudSincronizacion(); } catch(err) { console.log("Cloud sync ya activa"); }
-                }
-
-                if (rememberCheck) {
-                    localStorage.setItem('infinix_code', codeInput);
-                    localStorage.setItem('infinix_pass', passInput);
+            if (cuentasGenericas[codeInput]) {
+                const genUser = cuentasGenericas[codeInput];
+                if (genUser.pass === passInput) {
+                    if(errorMsg) errorMsg.classList.add('hidden');
+                    ejecutarAcceso(genUser.rol, genUser.nombre, codeInput, genUser.tienda, genUser.zona, rememberCheck, passInput);
                 } else {
-                    localStorage.removeItem('infinix_code');
-                    localStorage.removeItem('infinix_pass');
+                    if(errorMsg) { errorMsg.textContent = "Contraseña incorrecta."; errorMsg.classList.remove('hidden'); }
+                }
+                return; 
+            }
+         
+    
+            btnLogin.innerHTML = "Validando en Nube...";
+            btnLogin.disabled = true;
+
+            // Consultar en Firebase
+            db.collection("usuarios_auth").doc(codeInput).get().then((doc) => {
+                if (doc.exists) {
+                    const userData = doc.data();
+                    
+                    if (userData.password === passInput) {
+                        if(errorMsg) errorMsg.classList.add('hidden');
+
+                        // ¿Es su primer ingreso con la clave genérica?
+                        if (userData.primer_ingreso === true) {
+                            document.getElementById('login-form').classList.add('hidden');
+                            document.getElementById('new-password-form').classList.remove('hidden');
+                            document.getElementById('login-subtitle').textContent = `¡Hola, ${userData.nombre.split(' ')[0]}!`;
+                            document.getElementById('login-description').textContent = "Configura tu cuenta para continuar.";
+                            tempUserDocId = codeInput; // Guardamos el código para actualizarlo
+                        } else {
+                            // Ingreso Normal
+                            ejecutarAcceso(userData.rol, userData.nombre, codeInput, userData.tienda, userData.zona, rememberCheck, passInput);
+                        }
+                    } else {
+                        if(errorMsg) { errorMsg.textContent = "Contraseña incorrecta."; errorMsg.classList.remove('hidden'); }
+                    }
+                } else {
+                    if(errorMsg) { errorMsg.textContent = "Usuario no encontrado en la base de datos."; errorMsg.classList.remove('hidden'); }
+                }
+            }).catch((error) => {
+                if(errorMsg) { errorMsg.textContent = "Error de red. Revisa tu conexión."; errorMsg.classList.remove('hidden'); }
+                console.error("Error login:", error);
+            }).finally(() => {
+                btnLogin.innerHTML = "Iniciar Sesión";
+                btnLogin.disabled = false;
+            });
+        }
+
+        function guardarNuevaContrasena() {
+            const pass1 = document.getElementById('new-pass-1').value;
+            const pass2 = document.getElementById('new-pass-2').value;
+            const errorMsg = document.getElementById('password-error');
+            const btn = document.getElementById('btn-guardar-pass');
+
+            if (pass1.length < 6) {
+                errorMsg.textContent = "La contraseña debe tener al menos 6 caracteres.";
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            if (pass1 !== pass2) {
+                errorMsg.textContent = "Las contraseñas no coinciden.";
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            errorMsg.classList.add('hidden');
+            btn.innerHTML = "Guardando...";
+            btn.disabled = true;
+
+            // Actualizamos en Firebase
+            db.collection("usuarios_auth").doc(tempUserDocId).update({
+                password: pass1,
+                primer_ingreso: false
+            }).then(() => {
+                // Leer datos actualizados para entrar
+                db.collection("usuarios_auth").doc(tempUserDocId).get().then((doc) => {
+                    const ud = doc.data();
+                    const rememberCheck = document.getElementById('login-remember') ? document.getElementById('login-remember').checked : false;
+                    ejecutarAcceso(ud.rol, ud.nombre, tempUserDocId, ud.tienda, ud.zona, rememberCheck, pass1);
+                });
+            }).catch((error) => {
+                errorMsg.textContent = "Error al guardar. Intenta de nuevo.";
+                errorMsg.classList.remove('hidden');
+                btn.innerHTML = "Guardar y Entrar";
+                btn.disabled = false;
+            });
+        }
+
+        function ejecutarAcceso(rol, nombre, codigo, tienda, zona, remember, pass) {
+            currentUserRole = rol || 'ASESOR';
+            currentUserName = nombre || codigo;
+
+            // Activar permisos y sincronización
+            try { activarNotificaciones(); } catch (err) {}
+            if (typeof applyRolePermissions === 'function') applyRolePermissions(currentUserRole);
+            if (typeof initCloudSincronizacion === 'function') {
+                try { initCloudSincronizacion(); } catch(err) {}
+            }
+
+            // Mostrar el botón de migración si es el admin maestro
+            if (codigo === 'ADMIN') {
+                const migBtn = document.getElementById('admin-migrator-btn');
+                if(migBtn) migBtn.classList.remove('hidden');
+            }
+
+            // Guardar credenciales si marcó la casilla
+            if (remember) {
+                localStorage.setItem('infinix_code', codigo);
+                localStorage.setItem('infinix_pass', pass);
+            } else {
+                localStorage.removeItem('infinix_code');
+                localStorage.removeItem('infinix_pass');
+            }
+
+            // Cerrar Overlay
+            const overlay = document.getElementById('login-overlay');
+            if(overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    showCustomAlert("¡Acceso Concedido!", `Bienvenido, ${currentUserName}.\nRol: ${currentUserRole}\nTienda: ${tienda || 'Global'}`);
+                }, 300);
+            }
+        }
+
+        // ==========================================
+        // HERRAMIENTA DE MIGRACIÓN MASIVA (USO ÚNICO)
+        // ==========================================
+        function migrarUsuariosAFirebase() {
+            const dataText = document.getElementById('migrator-data').value;
+            if(!dataText) return alert("Pega el texto primero");
+
+            const lineas = dataText.split('\n');
+            let batch = db.batch();
+            let count = 0;
+            let commits = 0;
+
+            // Contraseñas genéricas por rol
+            const clavesGenericas = {
+                "ASESOR": "VENTAS2026",
+                "TRAINER": "trainer2026",
+                "SUPERVISOR": "spv2026",
+                "COORDINADOR": "city2026",
+                "GERENTE": "gerencia2026"
+            };
+
+            lineas.forEach(linea => {
+                if(linea.trim() === '') return;
+                
+                let partes = linea.split('\t'); // El texto viene separado por tabulaciones de Excel
+                let docId, payload;
+
+                // Si la línea tiene 3 columnas (Es de la lista de ASESORES)
+                if (partes.length === 3) {
+                    docId = partes[1].trim().toUpperCase(); // El código DCR
+                    payload = {
+                        nombre: partes[0].trim(),
+                        tienda: partes[2].trim(),
+                        zona: "Pendiente", // Se ajustará luego
+                        rol: "ASESOR",
+                        password: clavesGenericas["ASESOR"],
+                        primer_ingreso: true
+                    };
+                } 
+                // Si la línea tiene 4 columnas (Es de la lista de LÍDERES)
+                else if (partes.length >= 4) {
+                    docId = partes[0].trim().toUpperCase(); // Código
+                    let rolCrudo = partes[3].trim().toUpperCase();
+                    let rolLimpio = "ASESOR";
+                    
+                    if (rolCrudo.includes("TRAINER")) rolLimpio = "TRAINER";
+                    else if (rolCrudo.includes("SUPERVISOR")) rolLimpio = "SUPERVISOR";
+                    else if (rolCrudo.includes("COORDINADOR")) rolLimpio = "COORDINADOR";
+                    else if (rolCrudo.includes("GERNTE") || rolCrudo.includes("GERENTE")) rolLimpio = "GERENTE";
+
+                    payload = {
+                        nombre: partes[2].trim(),
+                        tienda: "Global",
+                        zona: partes[1].trim(), // Zona
+                        rol: rolLimpio,
+                        password: clavesGenericas[rolLimpio],
+                        primer_ingreso: true
+                    };
                 }
 
-                const overlay = document.getElementById('login-overlay');
-                if(overlay) {
-                    overlay.style.opacity = '0';
-                    setTimeout(() => {
-                        overlay.style.display = 'none';
-                        document.body.style.overflow = 'auto';
-                        showCustomAlert("¡Acceso Concedido!", `Bienvenido, ${currentUserName}. Terminal activada.`);
-                    }, 300);
+                if (docId && payload) {
+                    let ref = db.collection("usuarios_auth").doc(docId);
+                    batch.set(ref, payload);
+                    count++;
+
+                    // Firestore solo permite batches de 500
+                    if (count === 490) {
+                        batch.commit();
+                        batch = db.batch();
+                        count = 0;
+                        commits++;
+                    }
                 }
-            } else {
-                if(errorMsg) errorMsg.classList.remove('hidden');
+            });
+
+            if (count > 0) {
+                batch.commit().then(() => {
+                    alert(`¡Migración Exitosa! Se crearon todas las cuentas.`);
+                    document.getElementById('migrator-data').value = '';
+                }).catch(err => alert("Error: " + err));
             }
         }
           // --- SISTEMA DE NOTIFICACIONES PUSH ---
@@ -1350,96 +1767,206 @@ function handleLogin() {
                 triggerCyberToast(payload.notification.title, payload.notification.body, true);
             });
         }  
+// ==========================================
+        // FUNCIONES MAESTRAS DE NAVEGACIÓN Y ROLES
+        // ==========================================
 
         function applyRolePermissions(role) {
             currentUserRole = role;
             
             const btnArena = document.getElementById('btn-tab-comparativa');
-            const btnObjeciones = document.getElementById('btn-tab-argumentos');
+            const btnRadar = document.getElementById('btn-tab-radar-caracteristicas');
             const btnQuiz = document.getElementById('btn-tab-quiz');
             const btnShopping = document.getElementById('btn-tab-shopping');
             const btnCortex = document.getElementById('btn-tab-cortex');
             const btnAlertasMaster = document.getElementById('btn-tab-alertas-master');
             const btnTendenciasNacionales = document.getElementById('btn-tab-tendencias-nacionales');
-if (btnTendenciasNacionales) btnTendenciasNacionales.classList.add('hidden');
+            const btnCalculadora = document.getElementById('btn-tab-calculadora');
+            const btnAdminCalculadora = document.getElementById('btn-tab-admin-calculadora');
+            const btnSalonFama = document.getElementById('btn-tab-salon-fama');
+            const btnInventario = document.getElementById('btn-tab-inventario');
             
-            const whatsappCard = document.getElementById('whatsapp-share-card');
+            const btnShoppingTrainer = document.getElementById('btn-tab-shopping-trainer');
+            const btnShoppingAdmin = document.getElementById('btn-tab-shopping-admin');
+            
             const tabsContainer = document.getElementById('main-tabs-container');
-
             const btnAlertRiv = document.getElementById('btn-alert-rival');
             const btnVentaRiv = document.getElementById('btn-venta-rival');
             const adminBell = document.getElementById('admin-notification-bell');
             const adminVentaBell = document.getElementById('admin-ventas-bell');
-
             const btnObjEditor = document.getElementById('admin-add-objection-btn');
             const btnQuizEditor = document.getElementById('admin-quiz-editor-btn');
 
             let visibleTabs = 0;
 
-            if (btnArena) { btnArena.classList.remove('hidden'); visibleTabs++; } 
-            if (btnObjeciones) btnObjeciones.classList.add('hidden');
-            if (btnQuiz) btnQuiz.classList.add('hidden');
-            if (btnShopping) btnShopping.classList.add('hidden');
-            if (btnCortex) btnCortex.classList.add('hidden');
-            if (btnAlertasMaster) btnAlertasMaster.classList.add('hidden');
-            if (whatsappCard) whatsappCard.classList.add('hidden');
+            // 1. OCULTAMOS TODOS LOS BOTONES POR DEFECTO
+            const allButtons = [btnArena, btnRadar, btnQuiz, btnShopping, btnCortex, btnAlertasMaster, btnTendenciasNacionales, btnCalculadora, btnAdminCalculadora, btnSalonFama, btnInventario, btnShoppingTrainer, btnShoppingAdmin];
+            allButtons.forEach(b => { if(b) b.classList.add('hidden'); });
             
             if (btnAlertRiv) btnAlertRiv.classList.add('hidden');
             if (btnVentaRiv) btnVentaRiv.classList.add('hidden');
             if (adminBell) adminBell.classList.add('hidden');
             if (adminVentaBell) adminVentaBell.classList.add('hidden');
-            
             if (btnObjEditor) btnObjEditor.classList.add('hidden');
             if (btnQuizEditor) btnQuizEditor.classList.add('hidden');
 
-            if (['ASESOR', 'TRAINER', 'SUPERVISOR', 'ADMIN'].includes(role)) {
+            // 2. PESTAÑAS VISIBLES PARA TODOS (SIN EXCEPCIÓN)
+            if (btnArena) { btnArena.classList.remove('hidden'); visibleTabs++; }
+            if (btnRadar) { btnRadar.classList.remove('hidden'); visibleTabs++; } 
+            if (btnSalonFama) { btnSalonFama.classList.remove('hidden'); visibleTabs++; }
+            if (btnInventario) { btnInventario.classList.remove('hidden'); visibleTabs++; }
+
+            // 3. LÓGICA ESTRICTA POR ROLES
+            if (['ASESOR', 'TRAINER', 'SUPERVISOR', 'COORDINADOR', 'ADMIN'].includes(role)) {
                 if (btnAlertRiv) btnAlertRiv.classList.remove('hidden');
                 if (btnVentaRiv) btnVentaRiv.classList.remove('hidden');
             }
+
             if (role === 'ADMIN') {
-                if (btnObjeciones) { btnObjeciones.classList.remove('hidden'); visibleTabs++; }
                 if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
                 if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
                 if (btnCortex) { btnCortex.classList.remove('hidden'); visibleTabs++; }
                 if (btnAlertasMaster) { btnAlertasMaster.classList.remove('hidden'); visibleTabs++; }
-                if (whatsappCard) whatsappCard.classList.add('hidden');
+                if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
+                if (btnAdminCalculadora) { btnAdminCalculadora.classList.remove('hidden'); visibleTabs++; }
+                if (btnShoppingAdmin) { btnShoppingAdmin.classList.remove('hidden'); visibleTabs++; }
                 
                 if (btnObjEditor) btnObjEditor.classList.remove('hidden');
                 if (btnQuizEditor) btnQuizEditor.classList.remove('hidden');
-
                 if (adminBell) { adminBell.classList.remove('hidden'); updateAdminBellCounter(); }
                 if (adminVentaBell) { adminVentaBell.classList.remove('hidden'); updateAdminVentasCounter(); }
             }
             else if (role === 'GERENTE') {
-                // PANEL EJECUTIVO GERENTES: Solo Arena, Shopping y Tendencias (Sin Xschool)
                 if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
                 if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
-                if (btnQuiz) { btnQuiz.classList.add('hidden'); } // Oculto para directivos
+                if (btnRadar) { btnRadar.classList.add('hidden'); visibleTabs--; } 
+                if (btnShoppingAdmin) { btnShoppingAdmin.classList.remove('hidden'); visibleTabs++; }
             }
-            else if (role === 'SUPERVISOR') {
+            else if (role === 'SUPERVISOR' || role === 'COORDINADOR' || role === 'TRAINER') {
                 if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
                 if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
                 if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
-            }
-            else if (role === 'TRAINER') {
-                if (btnObjeciones) { btnObjeciones.classList.remove('hidden'); visibleTabs++; }
-                if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
-                if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
-                if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
-                if (whatsappCard) whatsappCard.classList.add('hidden');
+                
+                if ((role === 'SUPERVISOR' || role === 'COORDINADOR') && btnRadar) { btnRadar.classList.add('hidden'); visibleTabs--; }
+                
+                // 👇 Panel de CARGA (SOLO Trainer y Supervisor. Se excluyó al Coordinador) 👇
+                if ((role === 'SUPERVISOR' || role === 'TRAINER') && btnShoppingTrainer) { 
+                    btnShoppingTrainer.classList.remove('hidden'); 
+                    visibleTabs++; 
+                }
+                
+                // 👇 Panel de DESCARGA (Solo Supervisor y Coordinador) 👇
+                if ((role === 'SUPERVISOR' || role === 'COORDINADOR') && btnShoppingAdmin) { 
+                    btnShoppingAdmin.classList.remove('hidden'); 
+                    visibleTabs++; 
+                }
             }
             else if (role === 'ASESOR') {
-                if (btnObjeciones) { btnObjeciones.classList.remove('hidden'); visibleTabs++; }
                 if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
-                if (whatsappCard) whatsappCard.classList.add('hidden');
+                if (btnCalculadora) { btnCalculadora.classList.remove('hidden'); visibleTabs++; }
             }
 
             if (tabsContainer) {
-                let gridClass = `grid-cols-${visibleTabs}`;
-                if(visibleTabs > 4) gridClass = `grid-cols-3 md:grid-cols-${visibleTabs}`;
+                let maxCols = Math.min(visibleTabs, 6);
+                let gridClass = `grid-cols-${maxCols}`;
+                if(visibleTabs > 4) gridClass = `grid-cols-3 md:grid-cols-${maxCols}`;
                 tabsContainer.className = `grid ${gridClass} gap-2 p-1.5 bg-darkCard rounded-2xl border border-darkBorder shadow-2xl transition-all duration-500 overflow-x-auto`;
             }
             switchTab('tab-comparativa');
+        }
+
+        function switchTab(tabId) {
+            // 1. OCULTAR TODAS LAS SECCIONES HTML
+            const tabs = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping', 'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-calculadora', 'tab-admin-calculadora', 'tab-salon-fama', 'tab-inventario', 'tab-simulador', 'tab-shopping-trainer', 'tab-shopping-admin'];
+            
+            tabs.forEach(t => {
+                const el = document.getElementById(t);
+                if (el) el.classList.add('hidden');
+            });
+
+            if (tabId === 'tab-tendencias-nacionales') renderTendenciasNacionalesTab();
+            if (tabId === 'tab-inventario') initInventarioView();
+
+            const calcBanner = document.getElementById('calc-fixed-banner');
+            if (calcBanner) {
+                if (tabId === 'tab-calculadora') calcBanner.classList.remove('hidden');
+                else calcBanner.classList.add('hidden');
+            }
+
+            const consolaSelectores = document.getElementById('consola-selectores');
+            if (consolaSelectores) {
+                const tabsWithConsole = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-shopping', 'tab-cortex'];
+                if (tabsWithConsole.includes(tabId)) consolaSelectores.classList.remove('hidden');
+                else consolaSelectores.classList.add('hidden'); 
+            }
+
+            const containerRivalBrand = document.getElementById('container-rival-brand');
+            const containerRivalModel = document.getElementById('container-rival-model');
+            const selectorsGrid = document.getElementById('top-selectors-grid');
+            
+            if (tabId === 'tab-radar-caracteristicas') {
+                if(containerRivalBrand) containerRivalBrand.classList.add('hidden');
+                if(containerRivalModel) containerRivalModel.classList.add('hidden');
+                if(selectorsGrid) selectorsGrid.className = "grid grid-cols-1 gap-4 max-w-sm mx-auto transition-all duration-500";
+            } else {
+                if(containerRivalBrand) containerRivalBrand.classList.remove('hidden');
+                if(containerRivalModel) containerRivalModel.classList.remove('hidden');
+                if(selectorsGrid) selectorsGrid.className = "grid grid-cols-1 md:grid-cols-3 gap-4 transition-all duration-500";
+            }
+
+            const hwEditorBtn = document.getElementById('admin-hardware-editor-btn');
+            if (hwEditorBtn) {
+                if (tabId === 'tab-comparativa' && currentUserRole === 'ADMIN') hwEditorBtn.classList.remove('hidden');
+                else hwEditorBtn.classList.add('hidden');
+            }
+
+            const panelMigracion = document.getElementById('panel-migracion-master');
+            if (panelMigracion) {
+                if (tabId === 'tab-comparativa' && currentUserRole === 'ADMIN') {
+                    panelMigracion.classList.remove('hidden');
+                } else {
+                    panelMigracion.classList.add('hidden');
+                }
+            }
+
+            // 2. APAGAR ESTILOS DE TODOS LOS BOTONES Y APLICAR RESTRICCIONES DE ROL
+            const buttons = ['btn-tab-comparativa', 'btn-tab-radar-caracteristicas', 'btn-tab-quiz', 'btn-tab-shopping', 'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales', 'btn-tab-calculadora', 'btn-tab-admin-calculadora', 'btn-tab-salon-fama', 'btn-tab-inventario', 'btn-tab-simulador', 'btn-tab-shopping-trainer', 'btn-tab-shopping-admin'];
+            
+            buttons.forEach(btnId => {
+                const element = document.getElementById(btnId);
+                if (element) {
+                    element.className = "py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap";
+                    
+                    if (btnId === 'btn-tab-shopping' && !['GERENTE', 'SUPERVISOR', 'COORDINADOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
+                    if (btnId === 'btn-tab-cortex' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
+                    if (btnId === 'btn-tab-alertas-master' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
+                    if (btnId === 'btn-tab-tendencias-nacionales' && !['GERENTE', 'SUPERVISOR', 'COORDINADOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
+                    if (btnId === 'btn-tab-radar-caracteristicas' && ['GERENTE', 'SUPERVISOR', 'COORDINADOR'].includes(currentUserRole)) element.classList.add('hidden');
+                    if (btnId === 'btn-tab-quiz' && currentUserRole === 'GERENTE') element.classList.add('hidden');
+                    
+                    if (btnId === 'btn-tab-calculadora' && currentUserRole !== 'ASESOR') element.classList.add('hidden');
+                    if (btnId === 'btn-tab-simulador' && currentUserRole !== 'ASESOR') element.classList.add('hidden');
+                    if (btnId === 'btn-tab-admin-calculadora' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
+
+                    // 👇 RESTRICCIÓN ESTRICTA: El botón de carga solo lo ven Supervisor y Trainer 👇
+                    if (btnId === 'btn-tab-shopping-trainer' && !['SUPERVISOR', 'TRAINER'].includes(currentUserRole)) element.classList.add('hidden');
+                    
+                    if (btnId === 'btn-tab-shopping-admin' && !['ADMIN', 'GERENTE', 'SUPERVISOR', 'COORDINADOR'].includes(currentUserRole)) element.classList.add('hidden');
+                }
+            });
+
+            // 3. MOSTRAR SECCIÓN OBJETIVO Y ENCENDER SU BOTÓN
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) targetTab.classList.remove('hidden');
+
+            const activeButton = document.getElementById('btn-' + tabId);
+            if (activeButton) {
+                if (['tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-radar-caracteristicas', 'tab-admin-calculadora', 'tab-salon-fama', 'tab-inventario', 'tab-simulador', 'tab-shopping-trainer', 'tab-shopping-admin'].includes(tabId)) {
+                    activeButton.className = "py-3 px-2 rounded-xl font-black text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-white text-black shadow-lg shadow-white/30 transform scale-105 whitespace-nowrap";
+                } else {
+                    activeButton.className = "py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-infinix text-black shadow-lg shadow-infinix/20 transform scale-105 whitespace-nowrap";
+                }
+            }
         }
 // --- BASE DE DATOS DE INGENIERÍA LOCAL (NIVEL LIDERAZGO) ---
 let advancedSpecsDatabase = {
@@ -2534,7 +3061,7 @@ if (rivDeviceImg) {
                 infBullets.innerHTML = '';
                 inf.highlights.forEach(h => {
                     const li = document.createElement('li');
-                    li.className = "flex items-start gap-2 text-xs sm:text-sm";
+                    li.className = "flex items-start gap-2 text-xs sm:text-sm text-gray-300";
                     li.innerHTML = `<span class="text-infinix font-bold">✔</span> <span>${h}</span>`;
                     infBullets.appendChild(li);
                 });
@@ -2961,97 +3488,6 @@ if (rivDeviceImg) {
                 triggerCyberToast("GUARDADO LOCAL", "Actualizado localmente por falla de red.", true);
             });
         }  
-        function switchTab(tabId) {
-            // 1. Ocultar todas las pestañas
-            const tabs = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping', 'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-calculadora', 'tab-admin-calculadora'];
-            tabs.forEach(t => {
-                const el = document.getElementById(t);
-                if (el) el.classList.add('hidden');
-            });
-
-            if (tabId === 'tab-tendencias-nacionales') {
-                renderTendenciasNacionalesTab();
-            }
-
-            // 2. Control de visibilidad del Banner Fijo de la Calculadora
-            const calcBanner = document.getElementById('calc-fixed-banner');
-            if (calcBanner) {
-                if (tabId === 'tab-calculadora') calcBanner.classList.remove('hidden');
-                else calcBanner.classList.add('hidden');
-            }
-
-            // 3. CONTROL MAESTRO DE LA CONSOLA SUPERIOR (NUEVO)
-            const consolaSelectores = document.getElementById('consola-selectores');
-            if (consolaSelectores) {
-                // Lista blanca: Pestañas donde SÍ se necesita elegir equipos
-                const tabsWithConsole = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-shopping', 'tab-cortex'];
-                
-                if (tabsWithConsole.includes(tabId)) {
-                    consolaSelectores.classList.remove('hidden');
-                } else {
-                    // Oculta la consola en Calculadora, Tendencias, Xchool, etc.
-                    consolaSelectores.classList.add('hidden'); 
-                }
-            }
-
-            // 4. Ocultar/Mostrar los selectores de la competencia dinámicamente
-            const containerRivalBrand = document.getElementById('container-rival-brand');
-            const containerRivalModel = document.getElementById('container-rival-model');
-            const selectorsGrid = document.getElementById('top-selectors-grid');
-            
-            if (tabId === 'tab-radar-caracteristicas') {
-                if(containerRivalBrand) containerRivalBrand.classList.add('hidden');
-                if(containerRivalModel) containerRivalModel.classList.add('hidden');
-                if(selectorsGrid) selectorsGrid.className = "grid grid-cols-1 gap-4 max-w-sm mx-auto transition-all duration-500";
-            } else {
-                if(containerRivalBrand) containerRivalBrand.classList.remove('hidden');
-                if(containerRivalModel) containerRivalModel.classList.remove('hidden');
-                if(selectorsGrid) selectorsGrid.className = "grid grid-cols-1 md:grid-cols-3 gap-4 transition-all duration-500";
-            }
-
-            const hwEditorBtn = document.getElementById('admin-hardware-editor-btn');
-            if (hwEditorBtn) {
-                if (tabId === 'tab-comparativa' && currentUserRole === 'ADMIN') hwEditorBtn.classList.remove('hidden');
-                else hwEditorBtn.classList.add('hidden');
-            }
-
-            // 5. Reiniciar estilos de TODOS los botones y ocultarlos según permisos
-            const buttons = ['btn-tab-comparativa', 'btn-tab-radar-caracteristicas', 'btn-tab-quiz', 'btn-tab-shopping', 'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales', 'btn-tab-calculadora', 'btn-tab-admin-calculadora'];
-            
-            buttons.forEach(btnId => {
-                const element = document.getElementById(btnId);
-                if (element) {
-                    // Resetear a estado inactivo
-                    element.className = "py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap";
-                    
-                    // REGLAS ESTRICTAS DE VISIBILIDAD
-                    if (btnId === 'btn-tab-shopping' && !['GERENTE', 'SUPERVISOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
-                    if (btnId === 'btn-tab-cortex' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
-                    if (btnId === 'btn-tab-alertas-master' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
-                    if (btnId === 'btn-tab-tendencias-nacionales' && !['GERENTE', 'SUPERVISOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
-                    if (btnId === 'btn-tab-radar-caracteristicas' && ['GERENTE', 'SUPERVISOR'].includes(currentUserRole)) element.classList.add('hidden');
-                    if (btnId === 'btn-tab-quiz' && currentUserRole === 'GERENTE') element.classList.add('hidden');
-                    
-                    // REGLAS CALCULADORA
-                    if (btnId === 'btn-tab-calculadora' && currentUserRole !== 'ASESOR') element.classList.add('hidden');
-                    if (btnId === 'btn-tab-admin-calculadora' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
-                }
-            });
-
-            // 6. Mostrar pestaña objetivo y resaltar su botón
-            const targetTab = document.getElementById(tabId);
-            if (targetTab) targetTab.classList.remove('hidden');
-
-            const activeButton = document.getElementById('btn-' + tabId);
-            if (activeButton) {
-                if (tabId === 'tab-cortex' || tabId === 'tab-alertas-master' || tabId === 'tab-tendencias-nacionales' || tabId === 'tab-radar-caracteristicas' || tabId === 'tab-admin-calculadora') {
-                    activeButton.className = "py-3 px-2 rounded-xl font-black text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-white text-black shadow-lg shadow-white/30 transform scale-105 whitespace-nowrap";
-                } else {
-                    activeButton.className = "py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-infinix text-black shadow-lg shadow-infinix/20 transform scale-105 whitespace-nowrap";
-                }
-            }
-        }
-
         function copiarPitchWhatsApp() {
             const inf = infinixDatabase[activeInfinixId];
             const riv = competitorsDatabase[activeRivalBrand].models[activeRivalId];
@@ -5268,6 +5704,861 @@ const cardHtml = `
                 showCustomAlert('Guardado Local', 'Datos guardados localmente. Error de conexión con Firebase.');
             });
         }
+        // ==========================================
+        // MÓDULO SALÓN DE LA FAMA (RANKING)
+        // ==========================================
+        
+        let rankingNacional = [];
+
+        // Escucha en tiempo real de Firebase para el Ranking
+        // Anclamos esto a tu función de inicio en la nube existente
+        const startRankingSync = () => {
+            db.collection("ventas_calculadora").orderBy("totalUnits", "desc").limit(10).onSnapshot((snap) => {
+                rankingNacional = [];
+                if (snap) {
+                    snap.forEach(doc => { rankingNacional.push(doc.data()); });
+                }
+                if(!document.getElementById('tab-salon-fama').classList.contains('hidden')) {
+                    renderSalonFama();
+                }
+            });
+        };
+        // Lo disparamos después de que cargue la página
+        setTimeout(startRankingSync, 2000); 
+
+        // Guardar las ventas desde la calculadora
+        function guardarVentasCalculadora() {
+            const cadena = document.getElementById('calc-cadena').value;
+            const target = parseInt(document.getElementById('calc-target').value) || 0;
+            
+            if (!cadena) {
+                showCustomAlert("Faltan Datos", "Selecciona una cadena retail antes de guardar tus ventas.");
+                return;
+            }
+
+            let totalUnits = 0;
+            let desglose = {};
+
+            Object.keys(infinixDatabase).forEach(key => {
+                const input = document.getElementById(`calc-unit-${key}`);
+                if (input && parseInt(input.value) > 0) {
+                    const units = parseInt(input.value);
+                    totalUnits += units;
+                    desglose[key] = units;
+                }
+            });
+
+            if (totalUnits === 0) {
+                showCustomAlert("Sin Ventas", "Debes ingresar al menos una unidad vendida para registrar en el ranking.");
+                return;
+            }
+
+            const asesorCode = document.getElementById('login-code') ? document.getElementById('login-code').value.trim().toUpperCase() : 'INVITADO';
+            const payload = {
+                asesorCode: asesorCode,
+                nombre: currentUserName,
+                cadena: document.getElementById('calc-cadena').options[document.getElementById('calc-cadena').selectedIndex].text,
+                zona: 'Pendiente Asignación', 
+                target: target,
+                totalUnits: totalUnits,
+                desglose: desglose,
+                timestamp: Date.now(),
+                fechaFormato: new Date().toLocaleDateString()
+            };
+// Sincronizar automáticamente con el Salón de la Fama / Ranking Nacional
+db.collection("ranking_ventas").doc(asesorCode).set({
+                asesorCode: asesorCode,
+                nombre: payload.nombre || "Asesor Infinix",
+                cadena: payload.cadena || "PDV General",
+                zona: payload.zona || "Zona Nacional",
+                totalUnidades: totalUnits,
+                cumplimiento: target > 0 ? Math.round((totalUnits / target) * 100) : 0,
+                timestampRaw: Date.now()
+            }).then(() => {
+                console.log("Ranking actualizado con éxito.");
+            }).catch((error) => {
+                console.error("Error al actualizar el ranking:", error);
+            });
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `⏱️ Guardando...`;
+
+            db.collection("ventas_calculadora").doc(asesorCode).set(payload)
+                .then(() => {
+                    triggerCyberToast("VENTAS GUARDADAS", "Tus números se han actualizado en el Ranking Nacional.", true);
+                    btn.innerHTML = originalText;
+                })
+                .catch((error) => {
+                    showCustomAlert("Error de Red", "No se pudo sincronizar el ranking.");
+                    btn.innerHTML = originalText;
+                });
+        }
+
+        // Dibuja el Podio y la Lista del Ranking
+        function renderSalonFama() {
+            const podioContainer = document.getElementById('podio-container');
+            const listContainer = document.getElementById('ranking-list-container');
+            if (!podioContainer || !listContainer) return;
+
+            podioContainer.innerHTML = '';
+            listContainer.innerHTML = '';
+
+            if (rankingNacional.length === 0) {
+                listContainer.innerHTML = '<div class="text-center text-gray-500 font-mono py-8">La competencia acaba de iniciar. Aún no hay ventas registradas.</div>';
+                return;
+            }
+
+            // Generar Podio (Top 3) - Orden: 2, 1, 3 para diseño visual
+            const top3 = [rankingNacional[1], rankingNacional[0], rankingNacional[2]];
+            const alturas = ['h-[160px]', 'h-[220px]', 'h-[130px]'];
+            const medallas = ['🥈', '🥇', '🥉'];
+
+            top3.forEach((asesor, index) => {
+                if (!asesor) return;
+                podioContainer.innerHTML += `
+                    <div class="flex flex-col items-center justify-end w-28 sm:w-36 transition-all transform hover:scale-105">
+                        <div class="text-center mb-3">
+                            <div class="text-3xl drop-shadow-lg mb-1">${medallas[index]}</div>
+                            <div class="font-black text-white text-xs sm:text-sm truncate w-full px-1">${asesor.nombre}</div>
+                            <div class="text-[9px] text-gray-400 uppercase tracking-widest">${asesor.cadena}</div>
+                            <div class="font-mono text-infinix font-black text-lg mt-1">${asesor.totalUnits} <span class="text-[10px] text-white">UD</span></div>
+                        </div>
+                        <div class="w-full ${alturas[index]} rounded-t-xl bg-gradient-to-t from-darkCard to-[#131b2f] border-t-4 border-l border-r border-darkBorder relative flex items-center justify-center overflow-hidden shadow-2xl" style="border-top-color: ${index === 1 ? '#eab308' : (index === 0 ? '#9ca3af' : '#c2410c')}">
+                            <span class="text-6xl font-black opacity-10 absolute bottom-4">${index === 1 ? '1' : (index === 0 ? '2' : '3')}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Generar Lista (Top 4 al 10)
+            const restos = rankingNacional.slice(3);
+            if(restos.length === 0) {
+                listContainer.innerHTML = '<div class="text-center text-gray-600 font-mono text-[10px]">Esperando más guerreros...</div>';
+            } else {
+                restos.forEach((asesor, index) => {
+                    const pos = index + 4;
+                    listContainer.innerHTML += `
+                        <div class="flex items-center justify-between bg-black/40 p-3 rounded-xl border border-darkBorder hover:border-infinix/40 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="w-8 h-8 rounded-full bg-darkBg border border-darkBorder flex items-center justify-center font-black text-gray-400 font-mono">${pos}</div>
+                                <div>
+                                    <div class="font-bold text-white text-xs sm:text-sm">${asesor.nombre}</div>
+                                    <div class="text-[9px] text-gray-500 uppercase tracking-widest">${asesor.cadena} • Zona: ${asesor.zona}</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm font-black text-infinix font-mono">${asesor.totalUnits} UD</div>
+                                <div class="text-[9px] text-gray-400">Meta: ${asesor.target}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+        // ==========================================
+        // 2. SINCRONIZACIÓN Y RENDERIZADO DEL SALÓN DE LA FAMA (RANKING)
+        // ==========================================
+        function hookRankingSync() {
+            db.collection("ranking_ventas").orderBy("totalUnidades", "desc").onSnapshot((snapshot) => {
+                let rankingLog = [];
+                snapshot.forEach(doc => {
+                    rankingLog.push(doc.data());
+                });
+
+                renderSalonDeLaFama(rankingLog);
+            });
+        }
+
+        function renderSalonDeLaFama(dataArray) {
+            const container = document.getElementById('ranking-list-container');
+            if (!container) return;
+
+            if (dataArray.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-gray-500 font-mono text-xs">Aún no hay registros de ventas en la calculadora.</div>`;
+                return;
+            }
+
+            let html = `
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-darkBorder text-[10px] text-gray-400 uppercase font-mono">
+                                <th class="p-3">Puesto</th>
+                                <th class="p-3">Asesor</th>
+                                <th class="p-3">Tienda / PDV</th>
+                                <th class="p-3 text-center">Unidades</th>
+                                <th class="p-3 text-center">Cumplimiento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            dataArray.forEach((item, index) => {
+                let medalla = `#${index + 1}`;
+                if (index === 0) medalla = '🥇 1°';
+                if (index === 1) medalla = '🥈 2°';
+                if (index === 2) medalla = '🥉 3°';
+
+                html += `
+                    <tr class="border-b border-darkBorder/50 hover:bg-darkBorder/20 transition-all text-xs">
+                        <td class="p-3 font-bold text-infinix font-mono">${medalla}</td>
+                        <td class="p-3 font-bold text-white">${item.nombre || 'Sin Nombre'}</td>
+                        <td class="p-3 text-gray-300 uppercase">${item.cadena || 'N/A'}</td>
+                        <td class="p-3 text-center font-black text-white font-mono text-sm">${item.totalUnidades || 0}</td>
+                        <td class="p-3 text-center font-bold text-infinix font-mono">${item.cumplimiento || 0}%</td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table></div>`;
+            container.innerHTML = html;
+        }
+
+        // Enganchar la sincronización al iniciar la aplicación (con un pequeño retraso para asegurar Firebase)
+        setTimeout(hookRankingSync, 2500);
+        // ==========================================
+        // MÓDULO CARGA Y AUDITORÍA DE INVENTARIO
+        // ==========================================
+        
+        let inventarioNacionalLog = [];
+
+        // Inicialización y ruteo visual dependiendo del rol
+        function initInventarioView() {
+            const asesorView = document.getElementById('inventario-asesor-view');
+            const adminView = document.getElementById('inventario-admin-view');
+            const btnWipe = document.getElementById('btn-wipe-inv');
+
+            if (currentUserRole === 'ASESOR') {
+                if (asesorView) asesorView.classList.remove('hidden');
+                if (adminView) adminView.classList.add('hidden');
+                renderInventarioAsesorForm();
+            } else {
+                // Líderes (Trainer, Supervisor, Gerente, Admin)
+                if (asesorView) asesorView.classList.add('hidden');
+                if (adminView) adminView.classList.remove('hidden');
+                
+                // Solo el ADMIN puede purgar el inventario nacional
+                if (btnWipe) {
+                    if (currentUserRole === 'ADMIN') btnWipe.classList.remove('hidden');
+                    else btnWipe.classList.add('hidden');
+                }
+                renderInventarioAdminTable();
+            }
+        }
+
+        function renderInventarioAsesorForm() {
+            const container = document.getElementById('inv-models-container');
+            const selectCadena = document.getElementById('inv-cadena');
+            if (!container) return;
+
+            // Obtenemos el código del asesor que inició sesión
+            const asesorCode = document.getElementById('login-code') ? document.getElementById('login-code').value.trim().toUpperCase() : '';
+
+            if (selectCadena) {
+                selectCadena.innerHTML = '<option value="">Cargando tienda asignada...</option>';
+                selectCadena.disabled = true;
+
+                // Consultamos su tienda real directamente desde Firestore
+                db.collection("usuarios_auth").doc(asesorCode).get().then((docUser) => {
+                    if (docUser.exists) {
+                        const userData = docUser.data();
+                        const tiendaAsignada = userData.tienda || "Tienda no especificada";
+
+                        selectCadena.innerHTML = '';
+                        const opt = document.createElement('option');
+                        opt.value = tiendaAsignada;
+                        opt.textContent = tiendaAsignada; // Aquí mostrará el nombre exacto de la tienda (ej: EXITO ORIENTAL...)
+                        opt.selected = true;
+                        selectCadena.appendChild(opt);
+                    } else {
+                        selectCadena.innerHTML = '<option value="General">Tienda General</option>';
+                    }
+                }).catch(() => {
+                    selectCadena.innerHTML = '<option value="General">Tienda General</option>';
+                });
+            }
+
+            container.innerHTML = '';
+            Object.keys(infinixDatabase).forEach(key => {
+                const model = infinixDatabase[key];
+                container.innerHTML += `
+                    <div class="flex justify-between items-center py-2.5 px-3 bg-black/40 rounded-xl border border-darkBorder hover:border-blue-500/50 transition-colors">
+                        <div class="text-xs font-bold text-white uppercase w-7/12 truncate flex items-center gap-2">
+                            <span class="text-blue-500 drop-shadow-[0_0_5px_rgba(59,130,246,0.8)]">▪</span> ${model.name}
+                        </div>
+                        <div class="w-4/12 flex items-center gap-2">
+                            <input type="number" id="inv-unit-${key}" min="0" class="w-full bg-[#0d0d11] border border-darkBorder rounded-lg text-center text-blue-400 font-mono font-black py-2 focus:border-blue-500 outline-none" placeholder="0">
+                            <span class="text-[9px] text-gray-500 font-bold">UD</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Asesor: Guarda el inventario en Firebase
+        function guardarInventario() {
+            const selectCadena = document.getElementById('inv-cadena');
+            const cadenaInput = selectCadena ? selectCadena.value : "";
+            
+            if (!cadenaInput || cadenaInput.includes("Cargando")) {
+                showCustomAlert("Faltan Datos", "Espere a que cargue su tienda asignada o seleccione una válida.");
+                return;
+            }
+
+            let totalUnits = 0;
+            let desglose = {};
+
+            Object.keys(infinixDatabase).forEach(key => {
+                const input = document.getElementById(`inv-unit-${key}`);
+                if (input && parseInt(input.value) > 0) {
+                    const units = parseInt(input.value);
+                    totalUnits += units;
+                    desglose[infinixDatabase[key].name] = units;
+                }
+            });
+
+            if (totalUnits === 0) {
+                showCustomAlert("Inventario Vacío", "Debe ingresar al menos una unidad para subir el reporte.");
+                return;
+            }
+
+            const asesorCode = document.getElementById('login-code') ? document.getElementById('login-code').value.trim().toUpperCase() : 'INVITADO';
+            
+            // Consultamos los datos del usuario autenticado actual para asegurar trazabilidad perfecta
+            db.collection("usuarios_auth").doc(asesorCode).get().then((docUser) => {
+                const dataUser = docUser.exists ? docUser.data() : {};
+                
+                const payload = {
+                    asesorCode: asesorCode,
+                    nombre: dataUser.nombre || currentUserName,
+                    cadena: cadenaInput, // Tienda exacta vinculada
+                    zona: dataUser.zona || "Zona Nacional",
+                    totalUnits: totalUnits,
+                    desglose: desglose,
+                    timestampRaw: Date.now(),
+                    fechaStr: new Date().toLocaleString()
+                };
+
+                // Enviamos directamente a Firestore
+                db.collection("inventario_nacional").doc(asesorCode).set(payload)
+                    .then(() => {
+                        // Alerta visual obligatoria para que sepas que SÍ se subió con éxito
+                        showCustomAlert("¡Reporte Exitoso!", `Se han subido ${totalUnits} unidades de inventario para la tienda: ${cadenaInput}.`);
+                        
+                        // Limpiar campos del formulario de stock
+                        Object.keys(infinixDatabase).forEach(key => {
+                            const input = document.getElementById(`inv-unit-${key}`);
+                            if(input) input.value = '';
+                        });
+                    })
+                    .catch((error) => {
+                        showCustomAlert("Error de Red", "No se pudo sincronizar el inventario con Firebase: " + error.message);
+                    });
+            }).catch((error) => {
+                showCustomAlert("Error de Sesión", "No se pudo verificar el perfil del usuario.");
+            });
+        }
+
+        // Sincronización en Tiempo Real de Inventario para Líderes
+        const hookInventarioSync = () => {
+            db.collection("inventario_nacional").orderBy("timestampRaw", "desc").onSnapshot((snap) => {
+                inventarioNacionalLog = [];
+                if (snap) {
+                    snap.forEach(doc => { inventarioNacionalLog.push(doc.data()); });
+                }
+                if(!document.getElementById('tab-inventario').classList.contains('hidden') && currentUserRole !== 'ASESOR') {
+                    renderInventarioAdminTable();
+                }
+            });
+        };
+        setTimeout(hookInventarioSync, 2500); // Enganchar después de carga inicial
+
+        // Líderes: Renderiza la tabla con los reportes
+        function renderInventarioAdminTable() {
+            document.getElementById('inv-controles-lideres').classList.remove('hidden');
+            const tbody = document.getElementById('inv-admin-tbody');
+            const totalText = document.getElementById('inv-total-nacional');
+            if (!tbody || !totalText) return;
+
+            tbody.innerHTML = '';
+            let granTotal = 0;
+
+            if (inventarioNacionalLog.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-500 font-mono text-xs">No hay reportes de inventario en el sistema.</td></tr>`;
+                totalText.textContent = "0";
+                return;
+            }
+
+            inventarioNacionalLog.forEach(inv => {
+                granTotal += (inv.totalUnits || 0);
+                
+                // Formatear el desglose para que se vea bien en la tabla
+                let detalleHtml = '';
+                if(inv.desglose) {
+                    Object.keys(inv.desglose).forEach(modelo => {
+                        detalleHtml += `<span class="inline-block bg-black/50 border border-darkBorder px-2 py-1 rounded mr-1 mb-1 text-[9px]"><span class="text-white">${modelo}:</span> <span class="text-blue-400 font-bold">${inv.desglose[modelo]}</span></span>`;
+                    });
+                }
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-darkBorder/20 transition-all border-b border-darkBorder/50">
+                        <td class="p-3 pl-4">
+                            <div class="font-bold text-white text-[10px] sm:text-xs truncate w-32 sm:w-auto">${inv.nombre}</div>
+                            <div class="text-[8px] text-gray-500 uppercase">ZONA: ${inv.zona}</div>
+                        </td>
+                        <td class="p-3 text-gray-300 uppercase tracking-widest text-[9px] font-bold">${inv.cadena}</td>
+                        <td class="p-3 text-center font-black text-blue-500 text-sm bg-blue-500/5">${inv.totalUnits}</td>
+                        <td class="p-3 text-center text-gray-400 text-[9px]">${inv.fechaStr}</td>
+                        <td class="p-3 max-w-[200px] whitespace-normal leading-tight">${detalleHtml}</td>
+                    </tr>
+                `;
+            });
+
+            totalText.textContent = granTotal.toLocaleString();
+        }
+
+        function clearInventarioNacional() {
+            if(confirm("🛑 ATENCIÓN ADMIN: ¿Deseas purgar TODO el inventario reportado por los asesores en la base de datos nacional?")) {
+                db.collection("inventario_nacional").get().then((snapshot) => {
+                    let batch = db.batch();
+                    snapshot.forEach((doc) => { batch.delete(doc.ref); });
+                    batch.commit().then(() => {
+                        inventarioNacionalLog = [];
+                        renderInventarioAdminTable();
+                        triggerCyberToast("WIPE DE INVENTARIO", "La base de datos de stock fue limpiada exitosamente.", false);
+                    });
+                });
+            }
+        }
+        // ==========================================
+        // MÓDULO SIMULADOR DE COMBATE (GEMINI AI)
+        // ==========================================
+        
+        let simuladorHistorialContexto = [];
+
+        function initSimulador() {
+            // Se ejecuta al abrir la pestaña para scroll automático
+            const chatWindow = document.getElementById('sim-chat-window');
+            if(chatWindow) chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function limpiarChatSimulador() {
+            simuladorHistorialContexto = [];
+            const chatWindow = document.getElementById('sim-chat-window');
+            if (chatWindow) {
+                chatWindow.innerHTML = `
+                    <div class="self-start bg-darkBorder/30 border border-darkBorder text-gray-300 p-3 rounded-2xl rounded-tl-sm max-w-[85%] shadow-lg animate-fade-in-up">
+                        <div class="text-[9px] text-red-400 font-black mb-1 orbitron uppercase flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Cliente IA</div>
+                        <div class="text-sm">¡Hola! He cambiado mi perfil. A ver si tienes argumentos suficientes para convencerme de comprar un Infinix.</div>
+                    </div>
+                `;
+            }
+        }
+        // ==========================================
+        // FILTRO Y EXPORTACIÓN DE STOCK
+        // ==========================================
+
+        function filtrarTablaStock() {
+            const filtro = document.getElementById('filtro-stock-input').value.toUpperCase();
+        const filas = document.querySelectorAll('#inv-admin-tbody tr');
+
+            filas.forEach(fila => {
+                const textoFila = fila.textContent.toUpperCase();
+                if (textoFila.includes(filtro)) {
+                    fila.style.display = "";
+                } else {
+                    fila.style.display = "none";
+                }
+            });
+        }
+        function descargarInventarioExcel() {
+            db.collection("inventario_nacional").get().then((querySnapshot) => {
+                if (querySnapshot.empty) {
+                    alert("No hay registros de inventario para descargar.");
+                    return;
+                }
+
+                // 1. Recolectar dinámicamente TODOS los nombres de modelos que realmente existen en los reportes
+                let setModelosUnicos = new Set();
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.desglose) {
+                        Object.keys(data.desglose).forEach(modelo => setModelosUnicos.add(modelo));
+                    }
+                });
+                const columnasModelos = Array.from(setModelosUnicos);
+
+                // 2. Construir la estructura de la tabla HTML para Excel
+                let htmlExcel = `
+                    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                    <head><meta charset="utf-8"></head>
+                    <body>
+                    <table border="1">
+                        <tr style="background-color: #00FF66; font-weight: bold; text-align: center;">
+                            <th>Código DSR</th>
+                            <th>Asesor</th>
+                            <th>Tienda / PDV</th>
+                            <th>Zona</th>
+                            <th>Total Unidades</th>
+                            <th>Fecha de Reporte</th>
+                `;
+
+                // Crear columnas automáticas por cada referencia encontrada en los registros
+                columnasModelos.forEach(modelo => {
+                    htmlExcel += `<th>${modelo}</th>`;
+                });
+                htmlExcel += `</tr>`;
+
+                // 3. Rellenar los datos de cada tienda
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const desglose = data.desglose || {};
+
+                    htmlExcel += `<tr>`;
+                    htmlExcel += `<td>${data.asesorCode || ''}</td>`;
+                    htmlExcel += `<td>${data.nombre || ''}</td>`;
+                    htmlExcel += `<td>${data.cadena || ''}</td>`;
+                    htmlExcel += `<td>${data.zona || ''}</td>`;
+                    htmlExcel += `<td style="text-align: center;">${data.totalUnits || 0}</td>`;
+                    htmlExcel += `<td>${data.fechaStr || ''}</td>`;
+
+                    // Poner la cantidad exacta que se guardó en el desglose para cada referencia
+                    columnasModelos.forEach(modelo => {
+                        const cant = desglose[modelo] || 0;
+                        htmlExcel += `<td style="text-align: center;">${cant}</td>`;
+                    });
+
+                    htmlExcel += `</tr>`;
+                });
+
+                htmlExcel += `</table></body></html>`;
+
+                // 4. Descargar archivo .xls limpio para Excel
+                const blob = new Blob([htmlExcel], { type: 'application/vnd.ms-excel;charset=utf-8' });
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = `Reporte_Auditoria_Stock_${new Date().toISOString().slice(0,10)}.xls`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            }).catch((error) => {
+                alert("Error al generar el reporte: " + error.message);
+            });
+        }  
+// ==========================================
+// MÓDULO: MOTOR DE SHOPPING DIARIO (CON BOTONES)
+// ==========================================
+
+const telefonosInfinix = [
+    "Infinix Smart 20",
+    "Infinix Hot 60i",
+    "Infinix Hot 70",
+    "Infinix Hot 60 Pro+",
+    "Infinix Note Edge",
+    "Infinix Note 60",
+    "Infinix Note 60 Pro",
+    "Infinix Note 60 Ultra",
+    "Infinix Gt 5 Pro",
+    "Infinix Xpad 30E"
+    
+    // Agrega aquí más referencias si lo necesitas
+];
+
+const listaTelefonosShopping = document.getElementById('listaTelefonosShopping');
+const btnGuardarShopping = document.getElementById('btnGuardarShopping');
+const inputCadenaSeleccionada = document.getElementById('cadenaSeleccionada');
+const botonesCadenas = document.querySelectorAll('.btn-cadena');
+
+// 1. Escuchar los clics en los botones de cadenas
+if (botonesCadenas) {
+    botonesCadenas.forEach(boton => {
+        boton.addEventListener('click', (e) => {
+            // A. Apagar todos los botones (volverlos grises)
+            botonesCadenas.forEach(b => {
+                b.classList.remove('bg-infinix', 'text-black', 'border-infinix');
+                b.classList.add('border-gray-600', 'text-gray-300');
+            });
+
+            // B. Encender el botón que el usuario clickeó (ponerlo verde Infinix)
+            const botonClickeado = e.target;
+            botonClickeado.classList.remove('border-gray-600', 'text-gray-300');
+            botonClickeado.classList.add('bg-infinix', 'text-black', 'border-infinix');
+
+            // C. Guardar el nombre de la cadena en el input oculto
+            const nombreCadena = botonClickeado.getAttribute('data-cadena');
+            inputCadenaSeleccionada.value = nombreCadena;
+
+            // D. Mostrar los celulares
+            renderizarCelularesShopping();
+        });
+    });
+}
+
+// Función para pintar la lista de celulares
+function renderizarCelularesShopping() {
+    listaTelefonosShopping.innerHTML = ''; 
+    
+    telefonosInfinix.forEach((telefono, index) => {
+        const cajon = document.createElement('div');
+        cajon.className = "p-4 bg-[#0B1120] border border-darkBorder rounded-xl";
+        // Le di un estilo más oscuro y elegante a los inputs para que combinen con tu app
+        cajon.innerHTML = `
+            <h4 class="font-bold text-white mb-3 text-lg">${telefono}</h4>
+            <input type="number" id="precio_${index}" placeholder="Ej: 899900" class="w-full p-3 mb-4 rounded-xl bg-[#1E293B] text-white border border-gray-700 focus:border-infinix focus:ring-1 focus:ring-infinix outline-none transition-all" required>
+            <label class="text-xs text-gray-400 block mb-2 uppercase tracking-wider font-bold">Fotografía del Precio:</label>
+            <input type="file" id="foto_${index}" accept="image/*" capture="environment" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-infinix file:text-black hover:file:bg-opacity-80 transition-all cursor-pointer" required>
+        `;
+        listaTelefonosShopping.appendChild(cajon);
+    });
+    
+    btnGuardarShopping.classList.remove('hidden');
+}
+// 2. Guardar precios y fotos en Firebase (BLINDADO Y CON FILTRO DE INVENTARIO)
+if(btnGuardarShopping) {
+    btnGuardarShopping.addEventListener('click', async (e) => {
+        e.preventDefault(); // Evita recargas fantasma en el navegador
+        
+        try {
+            const cadena = inputCadenaSeleccionada.value; 
+            if(!cadena) {
+                alert("Por favor, selecciona una cadena en la parte superior.");
+                return;
+            }
+
+            // Bloqueamos el botón para que el usuario espere
+            btnGuardarShopping.disabled = true;
+            btnGuardarShopping.innerText = "⏳ Analizando y subiendo, por favor espera...";
+
+            // Extraemos el usuario actual
+            let emailUsuario = "Entrenador Desconocido";
+            let uidUsuario = "UID_Sin_Registro";
+            
+            if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
+                emailUsuario = firebase.auth().currentUser.email;
+                uidUsuario = firebase.auth().currentUser.uid;
+            }
+
+            const fechaHoy = new Date().toLocaleDateString('es-CO'); 
+            let datosAGuardar = [];
+            let equiposRegistrados = 0; // Contador de equipos válidos
+
+            for (let i = 0; i < telefonosInfinix.length; i++) {
+                const precioInput = document.getElementById(`precio_${i}`);
+                const fotoInput = document.getElementById(`foto_${i}`);
+                
+                if (!precioInput || !fotoInput) continue; 
+                
+                const precio = precioInput.value;
+                const archivoFoto = fotoInput.files[0];
+
+                // FILTRO INTELIGENTE: Si está en 0 (o vacío) y NO hay foto, lo ignoramos por completo
+                if ((!precio || precio === "0") && !archivoFoto) {
+                    continue; 
+                }
+
+                // ANTITRAMPAS: Si puso precio pero no foto, o viceversa, lo bloqueamos
+                if ((precio > 0 && !archivoFoto) || (archivoFoto && (!precio || precio === "0"))) {
+                    alert(`⚠️ Registro incompleto en el equipo: ${telefonosInfinix[i]}.\nSi hay precio, debe haber foto (y viceversa).`);
+                    btnGuardarShopping.disabled = false;
+                    btnGuardarShopping.innerText = "📸 Subir Fotos y Guardar Shopping";
+                    return; // Aborta todo el guardado
+                }
+
+                // Subir la foto a Firebase Storage
+                const storageRef = firebase.storage().ref();
+                const ruta = storageRef.child(`shopping_diario/${cadena}/${uidUsuario}_${i}_${Date.now()}.jpg`);
+                await ruta.put(archivoFoto);
+                const linkFoto = await ruta.getDownloadURL(); 
+
+                // Agregar a la lista maestra para Firestore
+                datosAGuardar.push({
+                    modelo: telefonosInfinix[i],
+                    precio: Number(precio),
+                    fotoURL: linkFoto
+                });
+                
+                equiposRegistrados++;
+            }
+
+            // SEGURIDAD FINAL: Si ignoró todos los teléfonos y no cargó ninguno válido
+            if (equiposRegistrados === 0) {
+                alert("No ingresaste ningún precio ni foto. Debes registrar al menos un equipo para enviar el Shopping.");
+                btnGuardarShopping.disabled = false;
+                btnGuardarShopping.innerText = "📸 Subir Fotos y Guardar Shopping";
+                return;
+            }
+
+            // Guardar en Firestore
+            await firebase.firestore().collection('ShoppingDiario').add({
+                cadena: cadena,
+                fecha: fechaHoy,
+                emailEntrenador: emailUsuario,
+                productos: datosAGuardar,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            alert("¡Shopping cargado exitosamente! ✅");
+            
+            // Limpiar la pantalla para el siguiente uso
+            inputCadenaSeleccionada.value = ""; 
+            listaTelefonosShopping.innerHTML = ""; 
+            btnGuardarShopping.classList.add('hidden');
+            
+            botonesCadenas.forEach(b => {
+                b.classList.remove('bg-infinix', 'text-black', 'border-infinix');
+                b.classList.add('border-gray-600', 'text-gray-300');
+            });
+
+        } catch (error) {
+            console.error("⛔ ERROR GRAVE DURANTE EL PROCESO:", error);
+            alert("Hubo un error guardando los datos. Revisa tu conexión y la consola (F12).");
+        } finally {
+            // Aseguramos que el botón siempre vuelva a su estado original, pase lo que pase
+            btnGuardarShopping.disabled = false;
+            btnGuardarShopping.innerText = "📸 Subir Fotos y Guardar Shopping";
+        }
+    });
+}
+// ==========================================
+// MÓDULO: DESCARGAR EXCEL (ADMIN/COORD)
+// ==========================================
+async function descargarExcelShopping(cadena) {
+    // 1. Mensaje inicial para que el usuario sepa que está trabajando
+    alert(`Buscando registros de ${cadena}... presiona Aceptar y espera un momento.`);
+    
+    try {
+        // 2. Verificar si la herramienta de Excel está instalada en el HTML
+        if (typeof XLSX === 'undefined') {
+            alert("⚠️ Error: El sistema no encuentra la herramienta para armar el Excel. Revisa el Paso 2.");
+            return;
+        }
+
+        // 3. Buscar en la base de datos de Firestore
+        const snapshot = await firebase.firestore().collection('ShoppingDiario')
+            .where('cadena', '==', cadena)
+            .get();
+
+        // 4. Si la base de datos está vacía para esa tienda
+        if (snapshot.empty) {
+            alert(`No hay registros todavía en la base de datos para: ${cadena}`);
+            return;
+        }
+
+        let filasExcel = [];
+
+        // 5. Extraer los datos y aplanarlos para las columnas del Excel
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            
+            // Verificamos que el documento tenga productos
+            if (data.productos && data.productos.length > 0) {
+                data.productos.forEach(prod => {
+                    filasExcel.push({
+                        "Fecha de Registro": data.fecha,
+                        "Cadena Retail": data.cadena,
+                        "Entrenador (Email)": data.emailEntrenador,
+                        "Equipo Infinix": prod.modelo,
+                        "Precio en Tienda": prod.precio,
+                        "Enlace a la Foto": prod.fotoURL
+                    });
+                });
+            }
+        });
+
+        // 6. Si por alguna razón encontró un reporte pero venía vacío
+        if (filasExcel.length === 0) {
+             alert(`Se encontró un reporte de ${cadena}, pero estaba vacío. No se generará el Excel.`);
+             return;
+        }
+
+        // 7. Fabricar el archivo Excel
+        const hoja = XLSX.utils.json_to_sheet(filasExcel);
+        const libro = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(libro, hoja, "Shopping Diario");
+        
+        // 8. Forzar la descarga
+        XLSX.writeFile(libro, `Reporte_Shopping_${cadena}.xlsx`);
+
+    } catch (error) {
+        console.error("⛔ ERROR AL GENERAR EL EXCEL:", error);
+        alert("Ocurrió un error al intentar crear el archivo. Presiona F12 y revisa la consola para más detalles.");
+    }
+}
+// ==========================================
+// MÓDULO: VISOR DE FOTOS EN PANTALLA (ADMIN/COORD)
+// ==========================================
+async function verReportePantalla(cadena) {
+    const contenedorVisor = document.getElementById('visor-shopping-container');
+    const contenidoVisor = document.getElementById('contenido-visor');
+    const tituloVisor = document.getElementById('titulo-visor');
+
+    // Mostramos el contenedor en estado "Cargando"
+    contenedorVisor.classList.remove('hidden');
+    tituloVisor.innerText = `Consultando base de datos de ${cadena}...`;
+    contenidoVisor.innerHTML = '<p class="text-gray-400 col-span-full text-center py-8">⏳ Trayendo fotos desde la nube, por favor espera...</p>';
+
+    try {
+        // Consultamos la base de datos
+        const snapshot = await firebase.firestore().collection('ShoppingDiario')
+            .where('cadena', '==', cadena)
+            .get();
+
+        if (snapshot.empty) {
+            tituloVisor.innerText = `Reporte visual: ${cadena}`;
+            contenidoVisor.innerHTML = `<p class="text-red-400 col-span-full text-center py-8">No hay ningún equipo registrado en ${cadena} todavía.</p>`;
+            return;
+        }
+
+        let htmlTarjetas = '';
+
+        // Recorremos los datos para armar las tarjetas visuales
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            
+            if (data.productos && data.productos.length > 0) {
+                data.productos.forEach(prod => {
+                    // Le damos formato de moneda a tu precio (Ej: 899900 -> 899.900)
+                    const precioFormateado = Number(prod.precio).toLocaleString('es-CO');
+
+                    // Armamos el "cajón" HTML para cada foto
+                    htmlTarjetas += `
+                    <div class="bg-dark border border-gray-700 rounded-xl p-3 flex flex-col shadow-lg relative group">
+                        <div class="text-[10px] text-gray-400 mb-2 flex justify-between border-b border-gray-700 pb-1">
+                            <span>📅 ${data.fecha}</span>
+                            <span class="truncate ml-2" title="${data.emailEntrenador}">👤 ${data.emailEntrenador.split('@')[0]}</span>
+                        </div>
+                        
+                        <h4 class="text-white font-bold text-md leading-tight mb-1">${prod.modelo}</h4>
+                        <span class="text-infinix font-black text-lg mb-3">$ ${precioFormateado}</span>
+                        
+                        <!-- Contenedor de la imagen con efecto al pasar el mouse -->
+                        <div class="w-full h-40 bg-gray-900 rounded-lg overflow-hidden cursor-pointer" onclick="window.open('${prod.fotoURL}', '_blank')" title="Clic para ver en tamaño original">
+                            <img src="${prod.fotoURL}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Foto de ${prod.modelo}" loading="lazy">
+                        </div>
+                        <p class="text-[9px] text-gray-500 text-center mt-2">🔍 Clic en la foto para agrandar</p>
+                    </div>
+                    `;
+                });
+            }
+        });
+
+        // Si se halló el reporte pero estaba en blanco internamente
+        if (htmlTarjetas === '') {
+            tituloVisor.innerText = `Reporte visual: ${cadena}`;
+            contenidoVisor.innerHTML = `<p class="text-gray-400 col-span-full text-center py-8">El reporte existe pero los productos están vacíos.</p>`;
+        } else {
+            // Mostramos las tarjetas terminadas en la pantalla
+            tituloVisor.innerText = `Resultados en: ${cadena}`;
+            contenidoVisor.innerHTML = htmlTarjetas;
+        }
+
+    } catch (error) {
+        console.error("⛔ ERROR AL CARGAR EL VISOR:", error);
+        tituloVisor.innerText = `Error de conexión`;
+        contenidoVisor.innerHTML = `<p class="text-red-500 col-span-full text-center py-8">Hubo un error al traer las fotos. Revisa la consola (F12).</p>`;
+    }
+}
     </script>
 </body>
 </html>
