@@ -1516,9 +1516,10 @@
             "ADMIN": { pass: "admin", nombre: "Bienvenido Mi Creador Jershon", role: "ADMIN" }
         };
 
-        let currentUserRole = 'ASESOR'; 
-        let currentUserName = 'Invitado';
-        let currentUserZone = 'TODAS';
+        let currentUserRole = 'ASESOR';
+let currentUserName = 'Invitado';
+let currentUserCode = '';
+let currentUserZone = 'TODAS';
         document.body.style.overflow = 'hidden';
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1653,11 +1654,11 @@
                 btn.disabled = false;
             });
         }
-
         function ejecutarAcceso(rol, nombre, codigo, tienda, zona, remember, pass) {
-            currentUserRole = rol || 'ASESOR';
-            currentUserName = nombre || codigo;
-            currentUserZone = zona || 'TODAS';
+    currentUserRole = rol;
+    currentUserName = nombre;
+    currentUserCode = codigo; 
+    currentUserZone = zona || 'Sin Zona Asignada';
 
             // Activar permisos y sincronización
             try { activarNotificaciones(); } catch (err) {}
@@ -5789,7 +5790,7 @@ const cardHtml = `
                 return;
             }
 
-            const asesorCode = document.getElementById('login-code') ? document.getElementById('login-code').value.trim().toUpperCase() : 'INVITADO';
+            const asesorCode = currentUserCode;
             const payload = {
                 asesorCode: asesorCode,
                 nombre: currentUserName,
