@@ -1713,84 +1713,99 @@ let currentUserZone = 'TODAS';
         // HERRAMIENTA DE MIGRACIÓN MASIVA (USO ÚNICO)
         // ==========================================
         function migrarUsuariosAFirebase() {
-            const dataText = document.getElementById('migrator-data').value;
-            if(!dataText) return alert("Pega el texto primero");
+    const dataText = document.getElementById('migrator-data').value;
+    if(!dataText) return alert("Pega el texto primero");
 
-            const lineas = dataText.split('\n');
-            let batch = db.batch();
-            let count = 0;
-            let commits = 0;
+    const lineas = dataText.split('\n');
+    let batch = db.batch();
+    let count = 0;
 
-            // Contraseñas genéricas por rol
-            const clavesGenericas = {
-                "ASESOR": "VENTAS2026",
-                "TRAINER": "trainer2026",
-                "SUPERVISOR": "spv2026",
-                "COORDINADOR": "city2026",
-                "GERENTE": "gerencia2026"
+    const clavesGenericas = {
+        "ASESOR": "VENTAS2026",
+        "TRAINER": "trainer2026",
+        "SUPERVISOR": "spv2026",
+        "COORDINADOR": "city2026",
+        "GERENTE": "gerencia2026",
+        "ADMIN": "admin2026"
+    };
+
+    lineas.forEach(linea => {
+        if(linea.trim() === '') return;
+
+        let partes = linea.split('\t'); 
+        let docId, payload;
+
+        // 1. CASO ADMIN / CASOS ESPECIALES (3 columnas: Código, Nombre, Rol)
+        if (partes.length === 3) {
+            docId = partes[0].trim();
+            let rolDetectado = partes[2].trim().toUpperCase();
+            payload = {
+                nombre: partes[1].trim(),
+                codigo: docId,
+                tienda: "Nacional",
+                zona: "Nacional",
+                regional: "Nacional",
+                rol: rolDetectado,
+                password: clavesGenericas[rolDetectado] || "infinix2026",
+                primer_ingreso: true
             };
+        }
+        // 2. CASO ASESORES (6 columnas: Cédula, Nombre, Rol, Tienda, Zona, Regional)
+        else if (partes.length >= 6) {
+            docId = partes[0].trim();
+            let rolDetectado = partes[2].trim().toUpperCase();
+            payload = {
+                nombre: partes[1].trim(),
+                codigo: docId, // Guardamos la cédula o código
+                tienda: partes[3].trim(),
+                zona: partes[4].trim(),
+                regional: partes[5].trim(),
+                rol: rolDetectado,
+                password: clavesGenericas[rolDetectado] || "VENTAS2026",
+                primer_ingreso: true
+            };
+        }
+        // 3. CASO LÍDERES (Trainers, Supervsors, Coordinadores, Gerentes - 5 columnas: Código, Zona/Nombre, Nombre/Rol, Rol, Regional)
+        else if (partes.length === 5 || partes.length === 4) {
+            // Se adapta dinámicamente según el orden que venías manejando
+            docId = partes[0].trim();
+            let rolDetectado = partes[partes.length - 2].trim().toUpperCase();
+            if(!clavesGenericas[rolDetectado]) {
+                rolDetectado = partes[partes.length - 1].trim().toUpperCase();
+            }
+            
+            payload = {
+                nombre: partes[2] ? partes[2].trim() : partes[1].trim(),
+                codigo: docId,
+                tienda: "Global",
+                zona: partes[1].trim(),
+                regional: partes[partes.length - 1].trim(),
+                rol: rolDetectado.includes("ADMIN") ? "ADMIN" : rolDetectado,
+                password: clavesGenericas[rolDetectado] || "infinix2026",
+                primer_ingreso: true
+            };
+        }
 
-            lineas.forEach(linea => {
-                if(linea.trim() === '') return;
-                
-                let partes = linea.split('\t'); // El texto viene separado por tabulaciones
-    let docId, payload;
+        if (docId && payload) {
+            let ref = db.collection("usuarios_auth").doc(docId);
+            batch.set(ref, payload);
+            count++;
 
-    // 1. Si la línea tiene 5 columnas (NUEVA LISTA DE ASESORES)
-    // Orden del TXT: [0]Cédula, [1]Nombre, [2]Código, [3]Tienda, [4]Zona
-    if (partes.length === 5) {
-        docId = partes[0].trim(); // Usamos la Cédula como ID en Firebase
-        
-        payload = {
-            nombre: partes[1].trim(),
-            codigo: partes[2].trim(), // Guardamos el código (Ej: CO2026141)
-            tienda: partes[3].trim(),
-            zona: partes[4].trim(),   // ¡Aquí se captura la zona correctamente!
-            rol: "ASESOR",
-            password: clavesGenericas["ASESOR"],
-            primer_ingreso: true
-        };
-    }
-    
-    // 2. Si la línea tiene 4 columnas (LISTA DE SUPERVISORES, TRAINERS, ETC)
-    // Orden del TXT: [0]Código, [1]Zona, [2]Nombre, [3]Rol
-    else if (partes.length === 4) {
-        docId = partes[0].trim(); // Usamos el código como ID (Ej: TRC0003)
-        
-        let rolDetectado = partes[3].trim().toUpperCase();
-        
-        payload = {
-            nombre: partes[2].trim(),
-            tienda: "Global",         // Tienda general para líderes
-            zona: partes[1].trim(),   // Zona del líder
-            rol: rolDetectado,
-            password: clavesGenericas[rolDetectado] || "infinix2026",
-            primer_ingreso: true
-        };
-    }
-
-                if (docId && payload) {
-                    let ref = db.collection("usuarios_auth").doc(docId);
-                    batch.set(ref, payload);
-                    count++;
-
-                    // Firestore solo permite batches de 500
-                    if (count === 490) {
-                        batch.commit();
-                        batch = db.batch();
-                        count = 0;
-                        commits++;
-                    }
-                }
-            });
-
-            if (count > 0) {
-                batch.commit().then(() => {
-                    alert(`¡Migración Exitosa! Se crearon todas las cuentas.`);
-                    document.getElementById('migrator-data').value = '';
-                }).catch(err => alert("Error: " + err));
+            if (count === 499) {
+                batch.commit();
+                batch = db.batch();
+                count = 0;
             }
         }
+    });
+
+    if (count > 0) {
+        batch.commit().then(() => {
+            alert('¡Migración Exitosa! Se crearon todas las cuentas con sus roles y regionales.');
+            document.getElementById('migrator-data').value = '';
+        }).catch(err => alert("Error: " + err));
+    }
+}
           // --- SISTEMA DE NOTIFICACIONES PUSH ---
         function activarNotificaciones() {
             const messaging = firebase.messaging();
