@@ -1704,7 +1704,39 @@ let currentUserZone = 'TODAS';
                 setTimeout(() => {
                     overlay.style.display = 'none';
                     document.body.style.overflow = 'auto';
-                    showCustomAlert("¡Acceso Concedido!", `Bienvenido, ${currentUserName}.\nRol: ${currentUserRole}\nTienda: ${tienda || 'Global'}\nZona: ${zona || 'Sin asignar'}`);
+                  // Determinamos el detalle según la jerarquía del rol
+// Determinamos el detalle según la jerarquía del rol
+let detalleJerarquico = "";
+        let tituloAcceso = "¡Acceso Concedido!";
+        const rolActual = currentUserRole ? currentUserRole.toUpperCase() : "";
+
+        if (rolActual === 'ADMIN') {
+            tituloAcceso = "🔥 ¡BIENVENIDO, MÁSTER! 🔥";
+            detalleJerarquico = `Rol: ADMINISTRADOR DEL SISTEMA\nCobertura: Acceso Total Global (Root)`;
+        }
+        else if (rolActual === 'COORDINADOR' && (currentUserCode === 'CO1000429' || currentUserName.includes('FERRO'))) {
+            tituloAcceso = "⭐ ¡ACCESO NACIONAL DE ENTRENAMIENTO! ⭐";
+            detalleJerarquico = `Rol: COORDINADOR NACIONAL DE TRAINERS\nCobertura: Todo el País`;
+        }
+        else if (rolActual === 'GERENTE') {
+            tituloAcceso = "👑 ¡ACCESO GERENCIAL RETAIL! 👑";
+            detalleJerarquico = `Rol: GERENTE COMERCIAL\nCobertura: Nacional`;
+        }
+        else if (rolActual === 'ASESOR') {
+            detalleJerarquico = `Rol: ${rolActual}\nTienda: ${tienda || 'Global'}\nZona: ${zona || 'Sin asignar'}\nRegional: ${regional || 'Sin asignar'}`;
+        } 
+        else if (rolActual === 'SUPERVISOR' || rolActual === 'TRAINER') {
+            detalleJerarquico = `Rol: ${rolActual}\nZona: ${zona || 'Sin asignar'}\nRegional: ${regional || 'Sin asignar'}`;
+        } 
+        else if (rolActual === 'COORDINADOR') {
+            detalleJerarquico = `Rol: ${rolActual}\nRegional: ${regional || 'Sin asignar'}`;
+        } 
+        else {
+            detalleJerarquico = `Rol: ${rolActual}\nCobertura: Nacional`;
+        }
+
+        // Mostramos la alerta personalizada con su respectivo título épico
+        showCustomAlert(tituloAcceso, `Bienvenido, ${currentUserName}.\n\n${detalleJerarquico}`);
                 }, 300);
             }
         }
@@ -1765,9 +1797,8 @@ let currentUserZone = 'TODAS';
                 primer_ingreso: true
             };
         }
-        // 3. CASO LÍDERES (Trainers, Supervsors, Coordinadores, Gerentes - 5 columnas: Código, Zona/Nombre, Nombre/Rol, Rol, Regional)
-        else if (partes.length === 5 || partes.length === 4) {
-            // Se adapta dinámicamente según el orden que venías manejando
+       // CASO LÍDERES (Trainers, Supervisors, Coordinadores)
+       else if (partes.length === 5 || partes.length === 4) {
             docId = partes[0].trim();
             let rolDetectado = partes[partes.length - 2].trim().toUpperCase();
             if(!clavesGenericas[rolDetectado]) {
@@ -1777,9 +1808,9 @@ let currentUserZone = 'TODAS';
             payload = {
                 nombre: partes[2] ? partes[2].trim() : partes[1].trim(),
                 codigo: docId,
-                tienda: "Global",
-                zona: partes[1].trim(),
-                regional: partes[partes.length - 1].trim(),
+                tienda: "", // <-- ¡Aquí evitamos que arrastre nombres raros de trainer en tienda!
+                zona: partes[1].trim(), 
+                regional: partes[partes.length - 1].trim(), 
                 rol: rolDetectado.includes("ADMIN") ? "ADMIN" : rolDetectado,
                 password: clavesGenericas[rolDetectado] || "infinix2026",
                 primer_ingreso: true
