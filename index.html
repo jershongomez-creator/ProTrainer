@@ -1706,37 +1706,43 @@ let currentUserZone = 'TODAS';
                     document.body.style.overflow = 'auto';
                   // Determinamos el detalle según la jerarquía del rol
 // Determinamos el detalle según la jerarquía del rol
+// Determinamos el detalle según la jerarquía del rol de forma segura
 let detalleJerarquico = "";
-        let tituloAcceso = "¡Acceso Concedido!";
-        const rolActual = currentUserRole ? currentUserRole.toUpperCase() : "";
+    let tituloAcceso = "¡Acceso Concedido!";
+    const rolActual = currentUserRole ? currentUserRole.toUpperCase() : "";
 
-        if (rolActual === 'ADMIN') {
-            tituloAcceso = "🔥 ¡BIENVENIDO, MÁSTER! 🔥";
-            detalleJerarquico = `Rol: ADMINISTRADOR DEL SISTEMA\nCobertura: Acceso Total Global (Root)`;
-        }
-        else if (rolActual === 'COORDINADOR' && (currentUserCode === 'CO1000429' || currentUserName.includes('FERRO'))) {
-            tituloAcceso = "⭐ ¡ACCESO NACIONAL DE ENTRENAMIENTO! ⭐";
-            detalleJerarquico = `Rol: COORDINADOR NACIONAL DE TRAINERS\nCobertura: Todo el País`;
-        }
-        else if (rolActual === 'GERENTE') {
-            tituloAcceso = "👑 ¡ACCESO GERENCIAL RETAIL! 👑";
-            detalleJerarquico = `Rol: GERENTE COMERCIAL\nCobertura: Nacional`;
-        }
-        else if (rolActual === 'ASESOR') {
-            detalleJerarquico = `Rol: ${rolActual}\nTienda: ${tienda || 'Global'}\nZona: ${zona || 'Sin asignar'}\nRegional: ${regional || 'Sin asignar'}`;
-        } 
-        else if (rolActual === 'SUPERVISOR' || rolActual === 'TRAINER') {
-            detalleJerarquico = `Rol: ${rolActual}\nZona: ${zona || 'Sin asignar'}\nRegional: ${regional || 'Sin asignar'}`;
-        } 
-        else if (rolActual === 'COORDINADOR') {
-            detalleJerarquico = `Rol: ${rolActual}\nRegional: ${regional || 'Sin asignar'}`;
-        } 
-        else {
-            detalleJerarquico = `Rol: ${rolActual}\nCobertura: Nacional`;
-        }
+    // Obtenemos las variables de forma segura por si alguna es undefined
+    const tLocal = window.tienda || userData?.tienda || '';
+    const zLocal = window.zona || userData?.zona || 'Sin asignar';
+    const rLocal = window.regional || userData?.regional || 'Sin asignar';
 
-        // Mostramos la alerta personalizada con su respectivo título épico
-        showCustomAlert(tituloAcceso, `Bienvenido, ${currentUserName}.\n\n${detalleJerarquico}`);
+    if (rolActual === 'ADMIN') {
+        tituloAcceso = "🔥 ¡BIENVENIDO, MÁSTER! 🔥";
+        detalleJerarquico = `Rol: ADMINISTRADOR DEL SISTEMA\nCobertura: Acceso Total Global (Root)`;
+    }
+    else if (rolActual === 'COORDINADOR' && (currentUserCode === 'CO1000429' || currentUserName?.includes('FERRO'))) {
+        tituloAcceso = "⭐ ¡ACCESO NACIONAL DE ENTRENAMIENTO! ⭐";
+        detalleJerarquico = `Rol: COORDINADOR NACIONAL DE TRAINERS\nCobertura: Todo el País`;
+    }
+    else if (rolActual === 'GERENTE') {
+        tituloAcceso = "👑 ¡ACCESO GERENCIAL RETAIL! 👑";
+        detalleJerarquico = `Rol: GERENTE COMERCIAL\nCobertura: Nacional`;
+    }
+    else if (rolActual === 'ASESOR') {
+        detalleJerarquico = `Rol: ${rolActual}\nTienda: ${tLocal}\nZona: ${zLocal}\nRegional: ${rLocal}`;
+    } 
+    else if (rolActual === 'SUPERVISOR' || rolActual === 'TRAINER') {
+        detalleJerarquico = `Rol: ${rolActual}\nZona: ${zLocal}\nRegional: ${rLocal}`;
+    } 
+    else if (rolActual === 'COORDINADOR') {
+        detalleJerarquico = `Rol: ${rolActual}\nRegional: ${rLocal}`;
+    } 
+    else {
+        detalleJerarquico = `Rol: ${rolActual}\nCobertura: Nacional`;
+    }
+
+    // Mostramos la alerta de forma limpia
+    showCustomAlert(tituloAcceso, `Bienvenido, ${currentUserName || 'Usuario'}.\n\n${detalleJerarquico}`);
                 }, 300);
             }
         }
@@ -1764,60 +1770,30 @@ let detalleJerarquico = "";
     lineas.forEach(linea => {
         if(linea.trim() === '') return;
 
-        let partes = linea.split('\t'); 
-        let docId, payload;
-
-        // 1. CASO ADMIN / CASOS ESPECIALES (3 columnas: Código, Nombre, Rol)
-        if (partes.length === 3) {
-            docId = partes[0].trim();
+        // Limpiamos y separamos por tabulaciones
+        let partes = linea.split('\t');
+        
+        if (partes.length >= 3) {
+            let docId = partes[0].trim();
+            let nombre = partes[1].trim();
             let rolDetectado = partes[2].trim().toUpperCase();
-            payload = {
-                nombre: partes[1].trim(),
-                codigo: docId,
-                tienda: "Nacional",
-                zona: "Nacional",
-                regional: "Nacional",
-                rol: rolDetectado,
-                password: clavesGenericas[rolDetectado] || "infinix2026",
-                primer_ingreso: true
-            };
-        }
-        // 2. CASO ASESORES (6 columnas: Cédula, Nombre, Rol, Tienda, Zona, Regional)
-        else if (partes.length >= 6) {
-            docId = partes[0].trim();
-            let rolDetectado = partes[2].trim().toUpperCase();
-            payload = {
-                nombre: partes[1].trim(),
-                codigo: docId, // Guardamos la cédula o código
-                tienda: partes[3].trim(),
-                zona: partes[4].trim(),
-                regional: partes[5].trim(),
-                rol: rolDetectado,
-                password: clavesGenericas[rolDetectado] || "VENTAS2026",
-                primer_ingreso: true
-            };
-        }
-       // CASO LÍDERES (Trainers, Supervisors, Coordinadores)
-       else if (partes.length === 5 || partes.length === 4) {
-            docId = partes[0].trim();
-            let rolDetectado = partes[partes.length - 2].trim().toUpperCase();
-            if(!clavesGenericas[rolDetectado]) {
-                rolDetectado = partes[partes.length - 1].trim().toUpperCase();
-            }
             
-            payload = {
-                nombre: partes[2] ? partes[2].trim() : partes[1].trim(),
+            // Posiciones fijas garantizadas por columnas vacías si es necesario
+            let tienda = partes[3] ? partes[3].trim() : "";
+            let zona = partes[4] ? partes[4].trim() : "Nacional";
+            let regional = partes[5] ? partes[5].trim() : "Nacional";
+
+            let payload = {
+                nombre: nombre,
                 codigo: docId,
-                tienda: "", // <-- ¡Aquí evitamos que arrastre nombres raros de trainer en tienda!
-                zona: partes[1].trim(), 
-                regional: partes[partes.length - 1].trim(), 
-                rol: rolDetectado.includes("ADMIN") ? "ADMIN" : rolDetectado,
+                tienda: tienda, // Si no aplica, se guardará estrictamente como "" (vacío)
+                zona: zona,
+                regional: regional,
+                rol: rolDetectado,
                 password: clavesGenericas[rolDetectado] || "infinix2026",
                 primer_ingreso: true
             };
-        }
 
-        if (docId && payload) {
             let ref = db.collection("usuarios_auth").doc(docId);
             batch.set(ref, payload);
             count++;
@@ -1832,7 +1808,7 @@ let detalleJerarquico = "";
 
     if (count > 0) {
         batch.commit().then(() => {
-            alert('¡Migración Exitosa! Se crearon todas las cuentas con sus roles y regionales.');
+            alert('¡Migración Masiva Exitosa! Todos los roles distribuidos correctamente.');
             document.getElementById('migrator-data').value = '';
         }).catch(err => alert("Error: " + err));
     }
