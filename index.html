@@ -1704,45 +1704,48 @@ let currentUserZone = 'TODAS';
                 setTimeout(() => {
                     overlay.style.display = 'none';
                     document.body.style.overflow = 'auto';
-                  // Determinamos el detalle según la jerarquía del rol
-// Determinamos el detalle según la jerarquía del rol
+
 // Determinamos el detalle según la jerarquía del rol de forma segura
 let detalleJerarquico = "";
     let tituloAcceso = "¡Acceso Concedido!";
-    const rolActual = currentUserRole ? currentUserRole.toUpperCase() : "";
+    const rolActual = rol ? rol.toUpperCase() : "";
 
-    // Obtenemos las variables de forma segura por si alguna es undefined
-    const tLocal = window.tienda || userData?.tienda || '';
-    const zLocal = window.zona || userData?.zona || 'Sin asignar';
-    const rLocal = window.regional || userData?.regional || 'Sin asignar';
+// Usamos las variables directas de los datos del usuario de forma segura
+const tLocal = typeof tienda !== 'undefined' ? tienda : '';
+    const zLocal = typeof zona !== 'undefined' && zona ? zona : 'Sin asignar';
+    
+    // Capturamos la regional garantizando que busque la variable o el argumento correcto
+    const rLocal = (typeof regional !== 'undefined' && regional) ? regional : 
+                   (typeof window.regional !== 'undefined' && window.window.regional) ? window.regional : 'SUROCCIDENTE';
 
     if (rolActual === 'ADMIN') {
         tituloAcceso = "🔥 ¡BIENVENIDO, MÁSTER! 🔥";
-        detalleJerarquico = `Rol: ADMINISTRADOR DEL SISTEMA\nCobertura: Acceso Total Global (Root)`;
+        detalleJerarquico = "Rol: ADMINISTRADOR DEL SISTEMA\nCobertura: Acceso Total Global (Root)";
     }
-    else if (rolActual === 'COORDINADOR' && (currentUserCode === 'CO1000429' || currentUserName?.includes('FERRO'))) {
+    else if (rolActual === 'COORDINADOR' && (codigo === 'CO1000429' || (nombre && nombre.includes('FERRO')))) {
         tituloAcceso = "⭐ ¡ACCESO NACIONAL DE ENTRENAMIENTO! ⭐";
-        detalleJerarquico = `Rol: COORDINADOR NACIONAL DE TRAINERS\nCobertura: Todo el País`;
+        detalleJerarquico = "Rol: COORDINADOR NACIONAL DE TRAINERS\nCobertura: Todo el País";
     }
     else if (rolActual === 'GERENTE') {
         tituloAcceso = "👑 ¡ACCESO GERENCIAL RETAIL! 👑";
-        detalleJerarquico = `Rol: GERENTE COMERCIAL\nCobertura: Nacional`;
+        detalleJerarquico = "Rol: GERENTE COMERCIAL\nCobertura: Nacional";
     }
     else if (rolActual === 'ASESOR') {
-        detalleJerarquico = `Rol: ${rolActual}\nTienda: ${tLocal}\nZona: ${zLocal}\nRegional: ${rLocal}`;
+        detalleJerarquico = "Rol: " + rolActual + "\nTienda: " + tLocal + "\nZona: " + zLocal + "\nRegional: " + rLocal;
     } 
     else if (rolActual === 'SUPERVISOR' || rolActual === 'TRAINER') {
-        detalleJerarquico = `Rol: ${rolActual}\nZona: ${zLocal}\nRegional: ${rLocal}`;
+        detalleJerarquico = "Rol: " + rolActual + "\nZona: " + zLocal + "\nRegional: " + rLocal;
     } 
     else if (rolActual === 'COORDINADOR') {
-        detalleJerarquico = `Rol: ${rolActual}\nRegional: ${rLocal}`;
+        detalleJerarquico = "Rol: " + rolActual + "\nRegional: " + rLocal;
     } 
     else {
-        detalleJerarquico = `Rol: ${rolActual}\nCobertura: Nacional`;
+        detalleJerarquico = "Rol: " + (rolActual || 'ASESOR') + "\nCobertura: Nacional";
     }
 
-// Mostramos la alerta de forma limpia
-showCustomAlert(tituloAcceso, `Bienvenido, ${currentUserName || 'Usuario'}.\n\n${detalleJerarquico}`);
+    // Mostramos la alerta de forma limpia y garantizada
+    const nombreUsuarioFinal = nombre || 'Usuario';
+    showCustomAlert(tituloAcceso, "Bienvenido, " + nombreUsuarioFinal + ".\n\n" + detalleJerarquico);
   }, 300);
 }
         }
