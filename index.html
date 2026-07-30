@@ -904,6 +904,7 @@
         <option value="Alkosto Centro Norte">Alkosto Centro Norte</option>
         <option value="Eje Cafetero">Eje Cafetero</option>
         <option value="Wom Centro">Wom Centro</option>
+        <option value="Falabella / Cencosud & Olimpica Centro">Falabella / Cencosud & Olimpica Centro</option>
     </select>
 </div>
             </div>
@@ -968,6 +969,7 @@
     <option value="Alkosto Centro Norte">Alkosto Centro Norte</option>
     <option value="Eje Cafetero">Eje Cafetero</option>
     <option value="Wom Centro">Wom Centro</option>
+    <option value="Falabella / Cencosud & Olimpica Centro">Falabella / Cencosud & Olimpica Centro</option>
 </select> 
     </div>
     <div>
@@ -1006,6 +1008,24 @@
                         </tbody>
                     </table>
                 </div>
+
+              <!-- INYECTOR DINÁMICO DE REFERENCIAS AL STOCK -->
+        <div id="panel-inyector-admin" class="mt-8 bg-black/40 p-6 rounded-2xl border border-blue-500/30">
+            <h4 class="text-white font-bold orbitron text-sm mb-2 flex items-center gap-2">
+                <span class="text-blue-500">⚙️</span> INYECTOR DE REFERENCIAS
+            </h4>
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-4 border-b border-darkBorder pb-4">
+                Agrega nuevos modelos (Ej: XPAD 30E) para que aparezcan en los reportes de los asesores.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-3 items-center">
+                <input type="text" id="input-nueva-referencia" placeholder="NOMBRE EXACTO DEL EQUIPO..." class="flex-1 w-full bg-black text-white p-3 rounded-xl border border-darkBorder focus:border-blue-500 outline-none text-xs font-bold uppercase tracking-wider">
+                
+                <button onclick="inyectarNuevaReferencia()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.5)] text-xs uppercase tracking-widest">
+                    + Inyectar al Sistema
+                </button>
+            </div>
+        </div>  
             </div>
         </section>
         <!-- BOTÓN OCULTO PARA MIGRACIÓN DE USUARIOS (SOLO ADMIN) -->
@@ -1584,7 +1604,7 @@ let currentUserZone = 'TODAS';
                 const genUser = cuentasGenericas[codeInput];
                 if (genUser.pass === passInput) {
                     if(errorMsg) errorMsg.classList.add('hidden');
-                    ejecutarAcceso(genUser.rol, genUser.nombre, codeInput, genUser.tienda, genUser.zona, rememberCheck, passInput);
+                    ejecutarAcceso(genUser.rol, genUser.nombre, codeInput, genUser.tienda, genUser.zona, 'Nacional', false, genUser.pass);
                 } else {
                     if(errorMsg) { errorMsg.textContent = "Contraseña incorrecta."; errorMsg.classList.remove('hidden'); }
                 }
@@ -1612,7 +1632,7 @@ let currentUserZone = 'TODAS';
                             tempUserDocId = codeInput; // Guardamos el código para actualizarlo
                         } else {
                             // Ingreso Normal
-                            ejecutarAcceso(userData.rol, userData.nombre, codeInput, userData.tienda, userData.zona, rememberCheck, passInput);
+                            ejecutarAcceso(userData.rol, userData.nombre, codeInput, userData.tienda, userData.zona, userData.regional, rememberCheck, passInput);
                         }
                     } else {
                         if(errorMsg) { errorMsg.textContent = "Contraseña incorrecta."; errorMsg.classList.remove('hidden'); }
@@ -1660,7 +1680,7 @@ let currentUserZone = 'TODAS';
                 db.collection("usuarios_auth").doc(tempUserDocId).get().then((doc) => {
                     const ud = doc.data();
                     const rememberCheck = document.getElementById('login-remember') ? document.getElementById('login-remember').checked : false;
-                    ejecutarAcceso(ud.rol, ud.nombre, tempUserDocId, ud.tienda, ud.zona, rememberCheck, pass1);
+                    ejecutarAcceso(ud.rol, ud.nombre, doc.id, ud.tienda, ud.zona, ud.regional, rememberCheck, pass1);
                 });
             }).catch((error) => {
                 errorMsg.textContent = "Error al guardar. Intenta de nuevo.";
@@ -1669,12 +1689,12 @@ let currentUserZone = 'TODAS';
                 btn.disabled = false;
             });
         }
-        function ejecutarAcceso(rol, nombre, codigo, tienda, zona, remember, pass) {
-    currentUserRole = rol;
-    currentUserName = nombre;
-    currentUserCode = codigo; 
-    currentUserZone = zona || 'Sin Zona Asignada';
-
+        function ejecutarAcceso(rol, nombre, codigo, tienda, zona, regional, remember, pass) {
+        currentUserRole = rol;
+        currentUserName = nombre;
+        currentUserCode = codigo;
+        currentUserZone = zona || 'Sin Zona Asignada';
+        window.regional = regional || 'Sin Asignar'; // ¡CLAVE! Guardamos la regional globalmente
             // Activar permisos y sincronización
             try { activarNotificaciones(); } catch (err) {}
             if (typeof applyRolePermissions === 'function') applyRolePermissions(currentUserRole);
@@ -1710,14 +1730,10 @@ let detalleJerarquico = "";
     let tituloAcceso = "¡Acceso Concedido!";
     const rolActual = rol ? rol.toUpperCase() : "";
 
-// Usamos las variables directas de los datos del usuario de forma segura
+// Usamos las variables directas que llegan a la función
 const tLocal = typeof tienda !== 'undefined' ? tienda : '';
     const zLocal = typeof zona !== 'undefined' && zona ? zona : 'Sin asignar';
-    
-    // Capturamos la regional garantizando que busque la variable o el argumento correcto
-    const rLocal = (typeof regional !== 'undefined' && regional) ? regional : 
-                   (typeof window.regional !== 'undefined' && window.window.regional) ? window.regional : 'SUROCCIDENTE';
-
+    const rLocal = window.regional; // Tomamos la regional pura desde Firebase
     if (rolActual === 'ADMIN') {
         tituloAcceso = "🔥 ¡BIENVENIDO, MÁSTER! 🔥";
         detalleJerarquico = "Rol: ADMINISTRADOR DEL SISTEMA\nCobertura: Acceso Total Global (Root)";
@@ -5909,23 +5925,95 @@ db.collection("ranking_ventas").doc(asesorCode).set({
             podioContainer.innerHTML = '';
             listContainer.innerHTML = '';
 
-         // === LÓGICA DE FILTRO DE ZONA ===
-    let zonaFiltro = "TODAS";
+/// === LÓGICA DE FILTRO Y RESTRICCIÓN DE OPCIONES POR ROL Y REGIONAL OFICIAL ===
+let zonaFiltro = "TODAS";
     const selectRanking = document.getElementById('filtro-zona-ranking');
 
-    if (selectRanking) zonaFiltro = selectRanking.value;
+    const rolUpper = (typeof currentUserRole !== 'undefined' ? currentUserRole : '').toUpperCase();
+    const codigoActual = typeof currentUserCode !== 'undefined' ? currentUserCode : '';
+    const nombreActual = typeof currentUserName !== 'undefined' ? currentUserName : '';
+    
+    const miZona = (typeof currentuserZone !== 'undefined' && currentuserZone) ? currentuserZone : 
+                   (typeof zona !== 'undefined' && zona) ? zona : '';
+                   
+    // Leemos la regional directo de la variable global de sesión sin valores forzados erróneos
+    let miRegional = (typeof regional !== 'undefined' && regional) ? regional : 
+                     (typeof window.regional !== 'undefined' && window.regional) ? window.regional : '';
+    miRegional = miRegional.toUpperCase().trim();
 
-    if (currentUserRole === 'SUPERVISOR' || currentUserRole === 'COORDINADOR') {
-        zonaFiltro = currentUserZone;
-        if (selectRanking) {
-            selectRanking.value = currentUserZone;
-            selectRanking.disabled = true;
+    // Mapeo oficial y exacto de las zonas por cada Regional según tu estructura
+    const regionalesMap = {
+        "SUROCCIDENTE": [
+            "Valle", 
+            "Nariño & Santander", 
+            "Nariño & Santander Trainer", 
+            "Valle Trainer"
+        ],
+        "ZONA CENTRO": [
+            "Exito Centro Sur", 
+            "Exito Centro Norte", 
+            "Falabella / Cencosud & Olimpica Centro", 
+            "Alkosto Centro Sur", 
+            "Alkosto Centro Norte", 
+            "ALKOSTO CENTRO TRAINER", 
+            "EXITO CENTRO NORTE TRAINER", 
+            "EXITO CENTRO SUR TRAINER", 
+
+        ],
+        "COSTA": [
+            "Costa Sur", 
+            "Costa Norte", 
+            "Costa Sur Trainer", 
+            "Costa Norte Trainer"
+        ],
+        "ANTIOQUIA": [
+            "Antioquia Norte", 
+            "Antioquia Sur", 
+            "Eje Cafetero", 
+            "Antioquia Norte Trainer", 
+            "Antioquia Sur Trainer"
+        ]
+    };
+
+    const esGerenteOAdmin = (rolUpper === 'ADMIN' || rolUpper === 'GERENTE' || codigoActual === 'CO1000429' || nombreActual.includes('FERRO'));
+
+    if (selectRanking) {
+        if (!esGerenteOAdmin) {
+            const options = selectRanking.options;
+            
+            let zonasPermitidas = [];
+            if (rolUpper === 'COORDINADOR') {
+                zonasPermitidas = regionalesMap[miRegional] || [];
+            } else {
+                zonasPermitidas = [miZona];
+            }
+
+            for (let i = 0; i < options.length; i++) {
+                const optVal = options[i].value;
+                
+                if (optVal === "TODAS") {
+                    options[i].style.display = "block"; // El Ranking Nacional siempre visible para todos
+                    continue;
+                }
+
+                // Verificamos si la zona del select pertenece a las permitidas de su regional/zona
+                const coincide = zonasPermitidas.some(z => z.trim().toLowerCase() === optVal.trim().toLowerCase());
+                options[i].style.display = coincide ? "block" : "none";
+            }
         }
+        zonaFiltro = selectRanking.value;
     }
 
     let rankingFiltrado = rankingNacional;
+
     if (zonaFiltro !== "TODAS") {
-        rankingFiltrado = rankingNacional.filter(asesor => asesor.zona === zonaFiltro);
+        let zonasFiltroActivas = rolUpper === 'COORDINADOR' ? (regionalesMap[miRegional] || [miZona]) : [miZona];
+        
+        rankingFiltrado = rankingNacional.filter(asesor => {
+            const zonaAsesor = (asesor.zona || '').trim().toLowerCase();
+            return zonasFiltroActivas.some(z => z.trim().toLowerCase() === zonaAsesor) ||
+                   zonaAsesor === zonaFiltro.trim().toLowerCase();
+        });
     }
     // ================================
 
@@ -6104,21 +6192,38 @@ db.collection("ranking_ventas").doc(asesorCode).set({
                 });
             }
 
-            container.innerHTML = '';
-            Object.keys(infinixDatabase).forEach(key => {
-                const model = infinixDatabase[key];
-                container.innerHTML += `
-                    <div class="flex justify-between items-center py-2.5 px-3 bg-black/40 rounded-xl border border-darkBorder hover:border-blue-500/50 transition-colors">
-                        <div class="text-xs font-bold text-white uppercase w-7/12 truncate flex items-center gap-2">
-                            <span class="text-blue-500 drop-shadow-[0_0_5px_rgba(59,130,246,0.8)]">▪</span> ${model.name}
-                        </div>
-                        <div class="w-4/12 flex items-center gap-2">
-                            <input type="number" id="inv-unit-${key}" min="0" class="w-full bg-[#0d0d11] border border-darkBorder rounded-lg text-center text-blue-400 font-mono font-black py-2 focus:border-blue-500 outline-none" placeholder="0">
-                            <span class="text-[9px] text-gray-500 font-bold">UD</span>
-                        </div>
-                    </div>
-                `;
-            });
+           // 1. Ponemos un mensaje de carga mientras traemos las inyecciones
+    container.innerHTML = '<div class="text-xs text-center text-gray-500 py-4 orbitron animate-pulse">SINCRONIZANDO REFERENCIAS NUEVAS...</div>';
+
+// 2. Traemos los modelos inyectados desde el panel admin
+db.collection("configuracion_global").doc("parametros_stock").get().then((docSnapshot) => {
+    if (docSnapshot.exists && docSnapshot.data().modelos_activos) {
+        // Fusionamos los modelos nuevos con tu base de datos original
+        docSnapshot.data().modelos_activos.forEach(modelo => {
+            let safeKey = "inyectado_" + modelo.toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (!infinixDatabase[safeKey]) {
+                infinixDatabase[safeKey] = { name: modelo };
+            }
+        });
+    }
+    
+    // 3. Ahora sí, dibujamos TODOS los inputs (los fijos + los inyectados)
+    container.innerHTML = '';
+    Object.keys(infinixDatabase).forEach(key => {
+        const model = infinixDatabase[key];
+        container.innerHTML += `
+        <div class="flex justify-between items-center py-2.5 px-3 bg-black/40 rounded-xl border border-darkBorder hover:border-blue-500/50 transition-colors">
+            <div class="text-xs font-bold text-white uppercase w-7/12 truncate flex items-center gap-2">
+                <span class="text-blue-500 drop-shadow-[0_0_5px_rgba(59,130,246,0.8)]">></span> ${model.name}
+            </div>
+            <div class="w-4/12 flex items-center gap-2">
+                <input type="number" id="inv-unit-${key}" min="0" class="w-full bg-[#0d0d11] border border-darkBorder rounded-lg text-center text-blue-400 font-mono font-black py-2 focus:border-blue-500 outline-none">
+                <span class="text-[9px] text-gray-500 font-bold">UD</span>
+            </div>
+        </div>
+        `;
+    });
+});
         }
 
         // Asesor: Guarda el inventario en Firebase
@@ -6214,26 +6319,65 @@ db.collection("ranking_ventas").doc(asesorCode).set({
                 totalText.textContent = "0";
                 return;
             }
-               // === LÓGICA DE FILTRO DE ZONA ===
+              // === 1. LÓGICA DE FILTRO Y RESTRICCIÓN DE OPCIONES PARA STOCK ===
     let zonaFiltro = "TODAS";
-    const selectStock = document.getElementById('filtro-zona-stock');
+    const selectStock = document.getElementById('filtro-zona-stock'); // <--- EL ESLABÓN PERDIDO ESTÁ AQUÍ
     
-    if (selectStock) zonaFiltro = selectStock.value;
+    const rolUpper = (typeof currentUserRole !== 'undefined' ? currentUserRole : '').toUpperCase();
+    const codigoActual = typeof currentUserCode !== 'undefined' ? currentUserCode : '';
+    const nombreActual = typeof currentUserName !== 'undefined' ? currentUserName : '';
+    
+    const miZona = (typeof currentuserZone !== 'undefined' && currentuserZone) ? currentuserZone : 
+                   (typeof zona !== 'undefined' && zona) ? zona : '';
+                   
+    let miRegional = (typeof window.regional !== 'undefined' && window.regional) ? window.regional : 
+                     (typeof regional !== 'undefined' && regional) ? regional : '';
+    miRegional = miRegional.toUpperCase().trim();
 
-    // Si es líder, lo forzamos a su zona y bloqueamos el menú
-    if (currentUserRole === 'SUPERVISOR' || currentUserRole === 'COORDINADOR') {
-        zonaFiltro = currentUserZone;
-        if (selectStock) {
-            selectStock.value = currentUserZone;
-            selectStock.disabled = true; 
+    // Mapeo oficial unificado (Idéntico al del Ranking)
+    const regionalesMap = {
+        "SUROCCIDENTE": ["Valle", "Nariño & Santander", "Nariño & Santander Trainer", "Valle Trainer"],
+        "ZONA CENTRO": ["Exito Centro Sur", "Exito Centro Norte", "Falabella / Cencosud & Olimpica Centro", "Alkosto Centro Sur", "Alkosto Centro Norte", "Alcosto Centro Trainer", "Exito Centro Sur Trainer", "FALABELLA & CENCOSUD CENTRO TRAINER"],
+        "COSTA": ["Costa Sur", "Costa Norte", "Costa Sur Trainer", "Costa Norte Trainer"],
+        "ANTIOQUIA": ["Antioquia Norte", "Antioquia Sur", "Eje Cafetero", "Antioquia Norte Trainer", "Antioquia Sur Trainer"]
+    };
+
+    const esGerenteOAdmin = (rolUpper === 'ADMIN' || rolUpper === 'GERENTE' || codigoActual === 'CO1000429' || nombreActual.includes('FERRO'));
+
+    // Filtramos las opciones del <select> del Stock
+    if (selectStock) {
+        if (!esGerenteOAdmin) {
+            const options = selectStock.options;
+            let zonasPermitidas = rolUpper === 'COORDINADOR' ? (regionalesMap[miRegional] || []) : [miZona];
+
+            for (let i = 0; i < options.length; i++) {
+                const optVal = options[i].value;
+                if (optVal === "TODAS" || optVal === "") {
+                    options[i].style.display = "block"; // "Todas" o "Nacional" siempre visible
+                    continue;
+                }
+                const coincide = zonasPermitidas.some(z => z.trim().toLowerCase() === optVal.trim().toLowerCase());
+                options[i].style.display = coincide ? "block" : "none";
+            }
         }
+        zonaFiltro = selectStock.value;
     }
-    // ================================
+
+    // Definimos qué zonas puede ver realmente el usuario en la tabla
+    let zonasFiltroActivas = esGerenteOAdmin ? [] : (rolUpper === 'COORDINADOR' ? (regionalesMap[miRegional] || [miZona]) : [miZona]);
 
     inventarioNacionalLog.forEach(inv => {
-        // EL CANDADO: Si la zona del asesor no coincide con el filtro, la saltamos
-        if (zonaFiltro !== "TODAS" && inv.zona !== zonaFiltro) return;
+        const zonaInv = (inv.zona || '').trim().toLowerCase();
+        
+        // === 2. EL CANDADO DE SEGURIDAD DE LA TABLA ===
+        if (!esGerenteOAdmin) {
+            // Si no es admin, la zona del reporte DEBE pertenecer a sus zonas asignadas
+            const perteneceAZonasPermitidas = zonasFiltroActivas.some(z => z.trim().toLowerCase() === zonaInv);
+            if (!perteneceAZonasPermitidas) return; 
+        }
 
+        // Filtro del selector (si eligió una zona específica en el menú)
+        if (zonaFiltro && zonaFiltro !== "TODAS" && zonaInv !== zonaFiltro.trim().toLowerCase()) return;
         granTotal += (inv.totalUnits || 0);
                 // Formatear el desglose para que se vea bien en la tabla
                 let detalleHtml = '';
@@ -6259,6 +6403,36 @@ db.collection("ranking_ventas").doc(asesorCode).set({
 
             totalText.textContent = granTotal.toLocaleString();
         }
+
+// === INYECTOR GLOBAL DE REFERENCIAS DE STOCK ===
+function inyectarNuevaReferencia() {
+    const inputElement = document.getElementById('input-nueva-referencia');
+    const nuevoModelo = inputElement.value.trim().toUpperCase();
+
+    if (!nuevoModelo) {
+        alert("⚠️ Por favor, escribe el nombre del modelo que deseas inyectar.");
+        return;
+    }
+
+    if (!confirm(`¿Estás seguro de inyectar "${nuevoModelo}" al listado nacional de stock?`)) {
+        return;
+    }
+
+    // Creamos o actualizamos un documento maestro de configuración en Firebase
+    const configRef = db.collection("configuracion_global").doc("parametros_stock");
+
+    configRef.set({
+        modelos_activos: firebase.firestore.FieldValue.arrayUnion(nuevoModelo)
+    }, { merge: true })
+    .then(() => {
+        alert(`✅ ¡ÉXITO! La referencia "${nuevoModelo}" se inyectó a nivel nacional.`);
+        inputElement.value = ''; 
+    })
+    .catch(error => {
+        console.error("Error inyectando referencia:", error);
+        alert("❌ Hubo un error de conexión al intentar agregar la referencia.");
+    });
+}
 
         function clearInventarioNacional() {
             if(confirm("🛑 ATENCIÓN ADMIN: ¿Deseas purgar TODO el inventario reportado por los asesores en la base de datos nacional?")) {
