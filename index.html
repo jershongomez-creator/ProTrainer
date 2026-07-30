@@ -50,6 +50,7 @@
     </script>
     
     <style>
+        .hidden { display: none !important; }
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Great+Vibes&display=swap');
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -305,13 +306,15 @@
             <span>Stock</span>
         </button>  
         <!-- Botón para el Trainer (Cargar Shopping) -->
-<button id="btn-tab-shopping-trainer" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap" onclick="switchTab('tab-shopping-trainer')">
-    📸 Cargar Shopping
-</button>
+        <button onclick="switchTab('tab-shopping-trainer')" id="btn-tab-shopping-trainer" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
+            <span>📸</span>
+            <span>Cargar Shopping</span>
+        </button>
 
 <!-- Botón para el Admin/Coordinador (Descargar Excel) -->
-<button id="btn-tab-shopping-admin" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap" onclick="switchTab('tab-shopping-admin')">
-    📥 Descargar Excel
+<button onclick="switchTab('tab-shopping-admin')" id="btn-tab-shopping-admin" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
+    <span>📥</span>
+    <span>Descargar Excel</span>
 </button>
     </div>
 
@@ -1030,7 +1033,8 @@
             <button class="btn-cadena py-2 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-700 transition-all text-sm font-bold shadow-md" data-cadena="Exito">Éxito</button>
             <button class="btn-cadena py-2 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-700 transition-all text-sm font-bold shadow-md" data-cadena="Cencosud">Cencosud</button>
             <button class="btn-cadena py-2 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-700 transition-all text-sm font-bold shadow-md" data-cadena="Falabella">Falabella</button>
-            <button class="btn-cadena py-2 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-700 transition-all text-sm font-bold shadow-md" data-cadena="Alkomprar">Alkomprar</button>
+            <button class="btn-cadena py-2 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-700 transition-all text-sm font-bold shadow-md" data-cadena="Wom">Wom</button>
+            <button class="btn-cadena py-2 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-700 transition-all text-sm font-bold shadow-md" data-cadena="Olimpica">Olimpica</button>
         </div>
 
         <!-- Aquí aparecerán los teléfonos automáticamente -->
@@ -1080,13 +1084,20 @@
                 <button onclick="descargarExcelShopping('Falabella')" class="py-2 text-xs rounded-lg font-bold bg-white text-black hover:bg-gray-200 transition-all">📥 Excel</button>
             </div>
 
-            <!-- Alkomprar -->
+            <!-- Wom -->
             <div class="bg-[#1E293B] p-3 rounded-xl border border-gray-700 flex flex-col gap-2 shadow-lg">
-                <h3 class="text-white font-bold text-center uppercase tracking-wider text-sm mb-1">Alkomprar</h3>
-                <button onclick="verReportePantalla('Alkomprar')" class="py-2 text-xs rounded-lg font-bold bg-infinix text-black hover:bg-opacity-80 transition-all">👁️ Ver Fotos</button>
-                <button onclick="descargarExcelShopping('Alkomprar')" class="py-2 text-xs rounded-lg font-bold bg-white text-black hover:bg-gray-200 transition-all">📥 Excel</button>
+                <h3 class="text-white font-bold text-center uppercase tracking-wider text-sm mb-1">Wom</h3>
+                <button onclick="verReportePantalla('Wom')" class="py-2 text-xs rounded-lg font-bold bg-infinix text-black hover:bg-opacity-80 transition-all">👁️ Ver Fotos</button>
+                <button onclick="descargarExcelShopping('Wom')" class="py-2 text-xs rounded-lg font-bold bg-white text-black hover:bg-gray-200 transition-all">📥 Excel</button>
             </div>
 
+  
+           <!-- Olimpica -->
+          <div class="bg-[#1E293B] p-3 rounded-xl border border-gray-700 flex flex-col gap-2 shadow-lg">
+          <h3 class="text-white font-bold text-center uppercase tracking-wider text-sm mb-1">Olimpica</h3>
+          <button onclick="verReportePantalla('Olimpica')" class="py-2 text-xs rounded-lg font-bold bg-infinix text-black hover:bg-opacity-80 transition-all">👁️ Ver Fotos</button>
+          <button onclick="descargarExcelShopping('Olimpica')" class="py-2 text-xs rounded-lg font-bold bg-white text-black hover:bg-gray-200 transition-all">📥 Excel</button>
+</div>
         </div>
 
         <!-- AQUÍ SE MOSTRARÁN LAS FOTOS (Visor Oculto por defecto) -->
@@ -1494,10 +1505,14 @@
         let historicoVentasNacional = JSON.parse(localStorage.getItem('infinix_historico_ventas')) || [];
 
         const RETAILERS = [
-            { id: 'alkosto', name: 'Alkosto' }, { id: 'cencosud', name: 'Cencosud' },
-            { id: 'exito', name: 'Éxito' }, { id: 'falabella', name: 'Falabella' },
-            { id: 'olimpica', name: 'Olímpica' }
-        ];
+    { id: "Alkosto", name: "Alkosto" },
+    { id: "Exito", name: "Éxito" },
+    { id: "Falabella", name: "Falabella" },
+    { id: "Cencosud", name: "Cencosud" },
+    { id: "Olimpica", name: "Olimpica" },
+    { id: "Alkosto Pasto", name: "Alkosto Pasto" },
+    { id: "Wom", name: "Wom" }
+];
 
         function formatPrice(val) {
     // Si el valor es 0, nulo o indefinido, retorna "No aplica"
@@ -1880,24 +1895,34 @@ let currentUserZone = 'TODAS';
                 if (btnShoppingAdmin) { btnShoppingAdmin.classList.remove('hidden'); visibleTabs++; }
             }
             else if (role === 'SUPERVISOR' || role === 'COORDINADOR' || role === 'TRAINER') {
-                if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
-                if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
-                if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
-                
-                if ((role === 'SUPERVISOR' || role === 'COORDINADOR') && btnRadar) { btnRadar.classList.add('hidden'); visibleTabs--; }
-                
-                // 👇 Panel de CARGA (SOLO Trainer y Supervisor. Se excluyó al Coordinador) 👇
-                if ((role === 'SUPERVISOR' || role === 'TRAINER') && btnShoppingTrainer) { 
-                    btnShoppingTrainer.classList.remove('hidden'); 
-                    visibleTabs++; 
-                }
-                
-                // 👇 Panel de DESCARGA (Solo Supervisor y Coordinador) 👇
-                if ((role === 'SUPERVISOR' || role === 'COORDINADOR') && btnShoppingAdmin) { 
-                    btnShoppingAdmin.classList.remove('hidden'); 
-                    visibleTabs++; 
-                }
-            }
+        
+        // Pestañas generales para los 3 roles
+        if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
+        if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
+        if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
+
+        // Ocultamos el Radar para Supervisor y Coordinador
+        if ((role === 'SUPERVISOR' || role === 'COORDINADOR') && btnRadar) { 
+            btnRadar.classList.add('hidden'); 
+            visibleTabs--; 
+        }
+
+        // 📥 PANEL DE CARGA (Exclusivo y únicamente para TRAINER) 👇
+        if (role === 'TRAINER' && btnShoppingTrainer) {
+            btnShoppingTrainer.classList.remove('hidden');
+            visibleTabs++;
+        } else if (btnShoppingTrainer) {
+            btnShoppingTrainer.classList.add('hidden'); // Seguro extra: Candado para los demás
+        }
+
+        // 📤 PANEL DE DESCARGA EXCEL (Exclusivo y únicamente para COORDINADOR) 👇
+        if (role === 'COORDINADOR' && btnShoppingAdmin) {
+            btnShoppingAdmin.classList.remove('hidden');
+            visibleTabs++;
+        } else if (btnShoppingAdmin) {
+            btnShoppingAdmin.classList.add('hidden'); // Seguro extra: Candado para los demás
+        }
+    }
             else if (role === 'ASESOR') {
                 if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
                 if (btnCalculadora) { btnCalculadora.classList.remove('hidden'); visibleTabs++; }
@@ -1910,7 +1935,26 @@ let currentUserZone = 'TODAS';
                 tabsContainer.className = `grid ${gridClass} gap-2 p-1.5 bg-darkCard rounded-2xl border border-darkBorder shadow-2xl transition-all duration-500 overflow-x-auto`;
             }
             switchTab('tab-comparativa');
+            // CANDADO ABSOLUTO DE BOTONES DE SHOPPING
+    // Cargar Shopping: Exclusivo para TRAINER y ADMIN
+    if (btnShoppingTrainer) {
+        if (role === 'TRAINER' || role === 'ADMIN') {
+            btnShoppingTrainer.classList.remove('hidden');
+        } else {
+            btnShoppingTrainer.classList.add('hidden');
         }
+    }
+
+    // Descargar Excel: Exclusivo para COORDINADOR, GERENTE y ADMIN
+    if (btnShoppingAdmin) {
+        if (role === 'COORDINADOR' || role === 'GERENTE' || role === 'ADMIN') {
+            btnShoppingAdmin.classList.remove('hidden');
+        } else {
+            btnShoppingAdmin.classList.add('hidden');
+        }
+    }
+        }
+    
 
         function switchTab(tabId) {
             // 1. OCULTAR TODAS LAS SECCIONES HTML
