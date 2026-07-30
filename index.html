@@ -1741,12 +1741,10 @@ let detalleJerarquico = "";
         detalleJerarquico = `Rol: ${rolActual}\nCobertura: Nacional`;
     }
 
-    // Mostramos la alerta de forma limpia
-    showCustomAlert(tituloAcceso, `Bienvenido, ${currentUserName || 'Usuario'}.\n\n${detalleJerarquico}`);
-                }, 300);
-            }
-        }
-
+// Mostramos la alerta de forma limpia
+showCustomAlert(tituloAcceso, `Bienvenido, ${currentUserName || 'Usuario'}.\n\n${detalleJerarquico}`);
+  }, 300);
+}
         // ==========================================
         // HERRAMIENTA DE MIGRACIÓN MASIVA (USO ÚNICO)
         // ==========================================
