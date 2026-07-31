@@ -6192,84 +6192,45 @@ db.collection("configuracion_global").doc("parametros_stock").get().then((docSna
 });
         }
 
-        // Asesor: Guarda el inventario en Firebase
         function guardarInventario() {
-            const selectCadena = document.getElementById('inv-cadena');
-            const cadenaInput = selectCadena ? selectCadena.value : "";
-            
-            if (!cadenaInput || cadenaInput.includes("Cargando")) {
-                showCustomAlert("Faltan Datos", "Espere a que cargue su tienda asignada o seleccione una válida.");
-                return;
-            }
+    // 1. Limpiamos el nombre de la cadena/tienda para usarlo como ID único en Firestore
+    const idTiendaUnico = (cadenaInput || 'tienda_general')
+        .trim()
+        .toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, '_');
 
-            let totalUnits = 0;
-            let desglose = {};
+    db.collection("usuarios_auth").doc(asesorCode).get().then((docUser) => {
+        const payload = {
+            asesorCode: asesorCode,
+            nombre: currentUserName,
+            zona: currentUserZone,
+            cadena: cadenaInput,
+            totalUnits: totalUnits,
+            desglose: desgloseModelos,
+            fechaStr: new Date().toLocaleString(),
+            timestampRaw: Date.now()
+        };
 
+        // 2. Guardamos usando el ID único de la tienda para que se sobrescriba y no se duplique
+        db.collection("inventario_nacional").doc(idTiendaUnico).set(payload)
+        .then(() => {
+            // Alerta visual obligatoria para que sepas que SÍ se subió con éxito
+            showCustomAlert("¡Reporte Exitoso!", `Se han subido ${totalUnits} unidades de inventario para la tienda: ${cadenaInput}.`);
+
+            // Limpiar campos del formulario de stock
             Object.keys(infinixDatabase).forEach(key => {
                 const input = document.getElementById(`inv-unit-${key}`);
-                if (input && parseInt(input.value) > 0) {
-                    const units = parseInt(input.value);
-                    totalUnits += units;
-                    desglose[infinixDatabase[key].name] = units;
-                }
+                if(input) input.value = '';
             });
-
-            if (totalUnits === 0) {
-                showCustomAlert("Inventario Vacío", "Debe ingresar al menos una unidad para subir el reporte.");
-                return;
-            }
-
-            const asesorCode = document.getElementById('login-code') ? document.getElementById('login-code').value.trim().toUpperCase() : 'INVITADO';
-            
-            // Consultamos los datos del usuario autenticado actual para asegurar trazabilidad perfecta
-            db.collection("usuarios_auth").doc(asesorCode).get().then((docUser) => {
-                const dataUser = docUser.exists ? docUser.data() : {};
-                
-                const payload = {
-                    asesorCode: asesorCode,
-                    nombre: dataUser.nombre || currentUserName,
-                    cadena: cadenaInput, // Tienda exacta vinculada
-                    zona: dataUser.zona || "Zona Nacional",
-                    totalUnits: totalUnits,
-                    desglose: desglose,
-                    timestampRaw: Date.now(),
-                    fechaStr: new Date().toLocaleString()
-                };
-
-                // Enviamos directamente a Firestore
-                db.collection("inventario_nacional").doc(asesorCode).set(payload)
-                    .then(() => {
-                        // Alerta visual obligatoria para que sepas que SÍ se subió con éxito
-                        showCustomAlert("¡Reporte Exitoso!", `Se han subido ${totalUnits} unidades de inventario para la tienda: ${cadenaInput}.`);
-                        
-                        // Limpiar campos del formulario de stock
-                        Object.keys(infinixDatabase).forEach(key => {
-                            const input = document.getElementById(`inv-unit-${key}`);
-                            if(input) input.value = '';
-                        });
-                    })
-                    .catch((error) => {
-                        showCustomAlert("Error de Red", "No se pudo sincronizar el inventario con Firebase: " + error.message);
-                    });
-            }).catch((error) => {
-                showCustomAlert("Error de Sesión", "No se pudo verificar el perfil del usuario.");
-            });
-        }
-
-        // Sincronización en Tiempo Real de Inventario para Líderes
-        const hookInventarioSync = () => {
-            db.collection("inventario_nacional").orderBy("timestampRaw", "desc").onSnapshot((snap) => {
-                inventarioNacionalLog = [];
-                if (snap) {
-                    snap.forEach(doc => { inventarioNacionalLog.push(doc.data()); });
-                }
-                if(!document.getElementById('tab-inventario').classList.contains('hidden') && currentUserRole !== 'ASESOR') {
-                    renderInventarioAdminTable();
-                }
-            });
-        };
-        setTimeout(hookInventarioSync, 2500); // Enganchar después de carga inicial
-
+        })
+        .catch((error) => {
+            showCustomAlert("Error de Red", "No se pudo sincronizar el inventario con Firebase: " + error.message);
+        });
+    }).catch((error) => {
+        showCustomAlert("Error de Sesión", "No se pudo verificar el perfil del usuario.");
+    });
+}
         // Líderes: Renderiza la tabla con los reportes
         function renderInventarioAdminTable() {
     const controlesLideres = document.getElementById('inv-controles-lideres');
