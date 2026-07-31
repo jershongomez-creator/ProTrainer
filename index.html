@@ -5845,74 +5845,115 @@ const cardHtml = `
         // Lo disparamos después de que cargue la página
         setTimeout(startRankingSync, 2000); 
 
-        // Guardar las ventas desde la calculadora
-        function guardarVentasCalculadora() {
-            const cadena = document.getElementById('calc-cadena').value;
-            const target = parseInt(document.getElementById('calc-target').value) || 0;
-            
-            if (!cadena) {
-                showCustomAlert("Faltan Datos", "Selecciona una cadena retail antes de guardar tus ventas.");
-                return;
-            }
+       // Guardar Las ventas desde la calculadora
+   // Guardar Las ventas desde la calculadora
+   function guardarVentasCalculadora() {
+        const cadena = document.getElementById('calc-cadena').value;
+        const target = parseInt(document.getElementById('calc-target').value) || 0;
 
-            let totalUnits = 0;
-            let desglose = {};
+        if (!cadena) {
+            showCustomAlert("Faltan Datos", "Selecciona una cadena retail antes de guardar tus ventas.");
+            return;
+        }
 
-            Object.keys(infinixDatabase).forEach(key => {
-                const input = document.getElementById(`calc-unit-${key}`);
-                if (input && parseInt(input.value) > 0) {
-                    const units = parseInt(input.value);
+        let totalUnits = 0;
+        let desglose = {};
+        const valoresInputsCalc = {};
+
+        Object.keys(infinixDatabase).forEach(key => {
+            const input = document.getElementById(`calc-unit-${key}`);
+            if (input) {
+                const units = parseInt(input.value) || 0;
+                if (units > 0) {
                     totalUnits += units;
                     desglose[key] = units;
                 }
-            });
-
-            if (totalUnits === 0) {
-                showCustomAlert("Sin Ventas", "Debes ingresar al menos una unidad vendida para registrar en el ranking.");
-                return;
+                valoresInputsCalc[key] = input.value; // Guardamos todos (incluso en 0) para restaurar exacto
             }
+        });
 
-            const asesorCode = currentUserCode;
-            const payload = {
-                asesorCode: asesorCode,
-                nombre: currentUserName,
-                cadena: document.getElementById('calc-cadena').options[document.getElementById('calc-cadena').selectedIndex].text,
-                zona: currentUserZone,
-                target: target,
-                totalUnits: totalUnits,
-                desglose: desglose,
-                timestamp: Date.now(),
-                fechaFormato: new Date().toLocaleDateString()
-            };
-// Sincronizar automáticamente con el Salón de la Fama / Ranking Nacional
-db.collection("ranking_ventas").doc(asesorCode).set({
-                asesorCode: asesorCode,
-                nombre: payload.nombre || "Asesor Infinix",
-                cadena: payload.cadena || "PDV General",
-                zona: payload.zona || "Zona Nacional",
-                totalUnidades: totalUnits,
-                cumplimiento: target > 0 ? Math.round((totalUnits / target) * 100) : 0,
-                timestampRaw: Date.now()
-            }).then(() => {
-                console.log("Ranking actualizado con éxito.");
-            }).catch((error) => {
-                console.error("Error al actualizar el ranking:", error);
-            });
-            const btn = event.currentTarget;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = `⏱️ Guardando...`;
+        // Guardar en localStorage usando el código del asesor
+        const asesorCode = currentUserCode || document.getElementById('login-code')?.value.trim().toUpperCase() || 'INVITADO';
+        localStorage.setItem(`calc_previas_${asesorCode}`, JSON.stringify(valoresInputsCalc));
+        localStorage.setItem(`calc_target_${asesorCode}`, target);
+        localStorage.setItem(`calc_cadena_${asesorCode}`, cadena);
 
-            db.collection("ventas_calculadora").doc(asesorCode).set(payload)
-                .then(() => {
-                    triggerCyberToast("VENTAS GUARDADAS", "Tus números se han actualizado en el Ranking Nacional.", true);
-                    btn.innerHTML = originalText;
-                })
-                .catch((error) => {
-                    showCustomAlert("Error de Red", "No se pudo sincronizar el ranking.");
-                    btn.innerHTML = originalText;
-                });
+        if (totalUnits === 0) {
+            showCustomAlert("Sin Ventas", "Debes ingresar al menos una unidad vendida para registrar en el ranking.");
+            return;
         }
 
+        const payload = {
+            asesorCode: asesorCode,
+            nombre: currentUserName,
+            cadena: document.getElementById('calc-cadena').options[document.getElementById('calc-cadena').selectedIndex].text,
+            zona: currentUserZone,
+            target: target,
+            totalUnits: totalUnits,
+            desglose: desglose,
+            timestamp: Date.now(),
+            fechaFormato: new Date().toLocaleDateString()
+        };
+
+        db.collection("ranking_ventas").doc(asesorCode).set({
+            asesorCode: asesorCode,
+            nombre: payload.nombre || "Asesor Infinix",
+            cadena: payload.cadena || "PDV General",
+            zona: payload.zona || "Zona Nacional",
+            totalUnidades: totalUnits,
+            cumplimiento: target > 0 ? Math.round((totalUnits / target) * 100) : 0,
+            timestampRaw: Date.now()
+        }).catch((error) => console.error("Error al actualizar el ranking:", error));
+
+        const btn = event.currentTarget;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `🛡️ Guardando...`;
+
+        db.collection("ventas_calculadora").doc(asesorCode).set(payload)
+            .then(() => {
+                triggerCyberToast("VENTAS GUARDADAS", "Tus números se han actualizado en el Ranking Nacional.", true);
+                btn.innerHTML = originalText;
+            })
+            .catch((error) => {
+                showCustomAlert("Error de Red", "No se pudo sincronizar el ranking.");
+                btn.innerHTML = originalText;
+            });
+    }
+
+    // Cargar la memoria local de la calculadora del asesor
+    function cargarVentasCalculadoraLocal() {
+        const asesorCode = currentUserCode || document.getElementById('login-code')?.value.trim().toUpperCase() || 'INVITADO';
+        const datosGuardados = localStorage.getItem(`calc_previas_${asesorCode}`);
+        const targetGuardado = localStorage.getItem(`calc_target_${asesorCode}`);
+        const cadenaGuardada = localStorage.getItem(`calc_cadena_${asesorCode}`);
+        
+        // Restaurar target si existe el input
+        if (targetGuardado) {
+            const inputTarget = document.getElementById('calc-target');
+            if (inputTarget) inputTarget.value = targetGuardado;
+        }
+
+        // Restaurar cadena si existe el select
+        if (cadenaGuardada) {
+            const selectCadena = document.getElementById('calc-cadena');
+            if (selectCadena) selectCadena.value = cadenaGuardada;
+        }
+
+        // Restaurar unidades de los inputs
+        if (datosGuardados) {
+            try {
+                const valoresInputs = JSON.parse(datosGuardados);
+                Object.keys(valoresInputs).forEach(key => {
+                    const input = document.getElementById(`calc-unit-${key}`);
+                    if (input) {
+                        input.value = valoresInputs[key];
+                    }
+                });
+            } catch(e) {
+                console.error("Error al restaurar memoria de calculadora", e);
+            }
+        }
+    }
         // Dibuja el Podio y la Lista del Ranking
         function renderSalonFama() {
     const podioContainer = document.getElementById('podio-container');
@@ -6102,6 +6143,7 @@ db.collection("ranking_ventas").doc(asesorCode).set({
         if (asesorView) asesorView.classList.remove('hidden');
         if (adminView) adminView.classList.add('hidden');
         renderInventarioAsesorForm();
+        cargarVentasCalculadoraLocal();
     } else {
         // Líderes (Trainer, Supervisor, Gerente, Admin)
         if (asesorView) asesorView.classList.add('hidden');
@@ -6883,6 +6925,51 @@ async function verReportePantalla(cadena) {
         contenidoVisor.innerHTML = `<p class="text-red-500 col-span-full text-center py-8">Hubo un error al traer las fotos. Revisa la consola (F12).</p>`;
     }
 }
+// 1. Función para cargar la memoria local de la calculadora
+function cargarVentasCalculadoraLocal() {
+        const asesorCode = currentUserCode || document.getElementById('login-code')?.value.trim().toUpperCase() || 'INVITADO';
+        const datosGuardados = localStorage.getItem(`calc_previas_${asesorCode}`);
+        const targetGuardado = localStorage.getItem(`calc_target_${asesorCode}`);
+        const cadenaGuardada = localStorage.getItem(`calc_cadena_${asesorCode}`);
+        
+        if (targetGuardado) {
+            const inputTarget = document.getElementById('calc-target');
+            if (inputTarget) inputTarget.value = targetGuardado;
+        }
+
+        if (cadenaGuardada) {
+            const selectCadena = document.getElementById('calc-cadena');
+            if (selectCadena) selectCadena.value = cadenaGuardada;
+        }
+
+        if (datosGuardados) {
+            try {
+                const valoresInputs = JSON.parse(datosGuardados);
+                Object.keys(valoresInputs).forEach(key => {
+                    const input = document.getElementById(`calc-unit-${key}`);
+                    if (input) {
+                        input.value = valoresInputs[key];
+                    }
+                });
+            } catch(e) {
+                console.error("Error al restaurar memoria de calculadora", e);
+            }
+        }
+    }
+
+    // 2. AUTO-DETECTOR: Hace que la calculadora cargue sola cuando hagas clic en su pestaña
+    document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(cargarVentasCalculadoraLocal, 1500);
+
+        // Detecta automáticamente cualquier botón del menú que tenga la palabra "Calculadora"
+        document.querySelectorAll('button, a, div, span').forEach(el => {
+            if (el.textContent && el.textContent.includes('Calculadora')) {
+                el.addEventListener('click', () => {
+                    setTimeout(cargarVentasCalculadoraLocal, 300);
+                });
+            }
+        });
+    });
     </script>
 </body>
 </html>
