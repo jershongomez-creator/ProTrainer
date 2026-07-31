@@ -1861,143 +1861,129 @@ const tLocal = typeof tienda !== 'undefined' ? tienda : '';
             });
         }  
 // ==========================================
-        // FUNCIONES MAESTRAS DE NAVEGACIÓN Y ROLES
-        // ==========================================
+// FUNCIONES MAESTRAS DE NAVEGACIÓN Y ROLES
+// ==========================================
 
-        function applyRolePermissions(role) {
-            currentUserRole = role;
-            
-            const btnArena = document.getElementById('btn-tab-comparativa');
-            const btnRadar = document.getElementById('btn-tab-radar-caracteristicas');
-            const btnQuiz = document.getElementById('btn-tab-quiz');
-            const btnShopping = document.getElementById('btn-tab-shopping');
-            const btnCortex = document.getElementById('btn-tab-cortex');
-            const btnAlertasMaster = document.getElementById('btn-tab-alertas-master');
-            const btnTendenciasNacionales = document.getElementById('btn-tab-tendencias-nacionales');
-            const btnCalculadora = document.getElementById('btn-tab-calculadora');
-            const btnAdminCalculadora = document.getElementById('btn-tab-admin-calculadora');
-            const btnSalonFama = document.getElementById('btn-tab-salon-fama');
-            const btnInventario = document.getElementById('btn-tab-inventario');
-            
-            const btnShoppingTrainer = document.getElementById('btn-tab-shopping-trainer');
-            const btnShoppingAdmin = document.getElementById('btn-tab-shopping-admin');
-            
-            const tabsContainer = document.getElementById('main-tabs-container');
-            const btnAlertRiv = document.getElementById('btn-alert-rival');
-            const btnVentaRiv = document.getElementById('btn-venta-rival');
-            const adminBell = document.getElementById('admin-notification-bell');
-            const adminVentaBell = document.getElementById('admin-ventas-bell');
-            const btnObjEditor = document.getElementById('admin-add-objection-btn');
-            const btnQuizEditor = document.getElementById('admin-quiz-editor-btn');
+function applyRolePermissions(role) {
+    currentUserRole = role;
+    
+    const btnArena = document.getElementById('btn-tab-comparativa');
+    const btnRadar = document.getElementById('btn-tab-radar-caracteristicas');
+    const btnQuiz = document.getElementById('btn-tab-quiz');
+    const btnShopping = document.getElementById('btn-tab-shopping');
+    const btnCortex = document.getElementById('btn-tab-cortex');
+    const btnAlertasMaster = document.getElementById('btn-tab-alertas-master');
+    const btnTendenciasNacionales = document.getElementById('btn-tab-tendencias-nacionales');
+    const btnCalculadora = document.getElementById('btn-tab-calculadora');
+    const btnAdminCalculadora = document.getElementById('btn-tab-admin-calculadora');
+    const btnSalonFama = document.getElementById('btn-tab-salon-fama');
+    const btnInventario = document.getElementById('btn-tab-inventario');
+    
+    const btnShoppingTrainer = document.getElementById('btn-tab-shopping-trainer');
+    const btnShoppingAdmin = document.getElementById('btn-tab-shopping-admin');
+    
+    const tabsContainer = document.getElementById('main-tabs-container');
+    const btnAlertRiv = document.getElementById('btn-alert-rival');
+    const btnVentaRiv = document.getElementById('btn-venta-rival');
+    const adminBell = document.getElementById('admin-notification-bell');
+    const adminVentaBell = document.getElementById('admin-ventas-bell');
+    const btnObjEditor = document.getElementById('admin-add-objection-btn');
+    const btnQuizEditor = document.getElementById('admin-quiz-editor-btn');
 
-            let visibleTabs = 0;
+    let visibleTabs = 0;
 
-            // 1. OCULTAMOS TODOS LOS BOTONES POR DEFECTO
-            const allButtons = [btnArena, btnRadar, btnQuiz, btnShopping, btnCortex, btnAlertasMaster, btnTendenciasNacionales, btnCalculadora, btnAdminCalculadora, btnSalonFama, btnInventario, btnShoppingTrainer, btnShoppingAdmin];
-            allButtons.forEach(b => { if(b) b.classList.add('hidden'); });
-            
-            if (btnAlertRiv) btnAlertRiv.classList.add('hidden');
-            if (btnVentaRiv) btnVentaRiv.classList.add('hidden');
-            if (adminBell) adminBell.classList.add('hidden');
-            if (adminVentaBell) adminVentaBell.classList.add('hidden');
-            if (btnObjEditor) btnObjEditor.classList.add('hidden');
-            if (btnQuizEditor) btnQuizEditor.classList.add('hidden');
+    // 1. OCULTAMOS TODOS LOS BOTONES POR DEFECTO
+    const allButtons = [btnArena, btnRadar, btnQuiz, btnShopping, btnCortex, btnAlertasMaster, btnTendenciasNacionales, btnCalculadora, btnAdminCalculadora, btnSalonFama, btnInventario, btnShoppingTrainer, btnShoppingAdmin];
+    allButtons.forEach(b => { if(b) b.classList.add('hidden'); });
+    
+    if (btnAlertRiv) btnAlertRiv.classList.add('hidden');
+    if (btnVentaRiv) btnVentaRiv.classList.add('hidden');
+    if (adminBell) adminBell.classList.add('hidden');
+    if (adminVentaBell) adminVentaBell.classList.add('hidden');
+    if (btnObjEditor) btnObjEditor.classList.add('hidden');
+    if (btnQuizEditor) btnQuizEditor.classList.add('hidden');
 
-            // 2. PESTAÑAS VISIBLES PARA TODOS (SIN EXCEPCIÓN)
-            if (btnArena) { btnArena.classList.remove('hidden'); visibleTabs++; }
-            if (btnRadar) { btnRadar.classList.remove('hidden'); visibleTabs++; } 
-            if (btnSalonFama) { btnSalonFama.classList.remove('hidden'); visibleTabs++; }
-            if (btnInventario) { btnInventario.classList.remove('hidden'); visibleTabs++; }
+    // 2. PESTAÑAS VISIBLES PARA TODOS (SIN EXCEPCIÓN)
+    if (btnArena) { btnArena.classList.remove('hidden'); visibleTabs++; }
+    if (btnRadar) { btnRadar.classList.remove('hidden'); visibleTabs++; } 
+    if (btnSalonFama) { btnSalonFama.classList.remove('hidden'); visibleTabs++; }
+    if (btnInventario) { btnInventario.classList.remove('hidden'); visibleTabs++; }
 
-            // 3. LÓGICA ESTRICTA POR ROLES
-            if (['ASESOR', 'TRAINER', 'SUPERVISOR', 'COORDINADOR', 'ADMIN'].includes(role)) {
-                if (btnAlertRiv) btnAlertRiv.classList.remove('hidden');
-                if (btnVentaRiv) btnVentaRiv.classList.remove('hidden');
-            }
+    // 3. LÓGICA ESTRICTA POR ROLES
+    if (['ASESOR', 'TRAINER', 'SUPERVISOR', 'COORDINADOR', 'ADMIN'].includes(role)) {
+        if (btnAlertRiv) btnAlertRiv.classList.remove('hidden');
+        if (btnVentaRiv) btnVentaRiv.classList.remove('hidden');
+    }
 
-            if (role === 'ADMIN') {
-                if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
-                if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
-                if (btnCortex) { btnCortex.classList.remove('hidden'); visibleTabs++; }
-                if (btnAlertasMaster) { btnAlertasMaster.classList.remove('hidden'); visibleTabs++; }
-                if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
-                if (btnAdminCalculadora) { btnAdminCalculadora.classList.remove('hidden'); visibleTabs++; }
-                if (btnShoppingAdmin) { btnShoppingAdmin.classList.remove('hidden'); visibleTabs++; }
-                
-                if (btnObjEditor) btnObjEditor.classList.remove('hidden');
-                if (btnQuizEditor) btnQuizEditor.classList.remove('hidden');
-                if (adminBell) { adminBell.classList.remove('hidden'); updateAdminBellCounter(); }
-                if (adminVentaBell) { adminVentaBell.classList.remove('hidden'); updateAdminVentasCounter(); }
-            }
-            else if (role === 'GERENTE') {
-                if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
-                if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
-                if (btnRadar) { btnRadar.classList.add('hidden'); visibleTabs--; } 
-                if (btnShoppingAdmin) { btnShoppingAdmin.classList.remove('hidden'); visibleTabs++; }
-            }
-            else if (role === 'SUPERVISOR' || role === 'COORDINADOR' || role === 'TRAINER') {
+    if (role === 'ADMIN') {
+        if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
+        if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
+        if (btnCortex) { btnCortex.classList.remove('hidden'); visibleTabs++; }
+        if (btnAlertasMaster) { btnAlertasMaster.classList.remove('hidden'); visibleTabs++; }
+        if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
+        if (btnAdminCalculadora) { btnAdminCalculadora.classList.remove('hidden'); visibleTabs++; }
         
-        // Pestañas generales para los 3 roles
+        if (btnObjEditor) btnObjEditor.classList.remove('hidden');
+        if (btnQuizEditor) btnQuizEditor.classList.remove('hidden');
+        if (adminBell) { adminBell.classList.remove('hidden'); updateAdminBellCounter(); }
+        if (adminVentaBell) { adminVentaBell.classList.remove('hidden'); updateAdminVentasCounter(); }
+    }
+    else if (role === 'GERENTE') {
+        if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
+        if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
+        if (btnRadar) { btnRadar.classList.add('hidden'); visibleTabs--; } 
+    }
+    else if (role === 'SUPERVISOR' || role === 'COORDINADOR' || role === 'TRAINER') {
         if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
         if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
         if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
 
-        // Ocultamos el Radar para Supervisor y Coordinador
         if ((role === 'SUPERVISOR' || role === 'COORDINADOR') && btnRadar) { 
             btnRadar.classList.add('hidden'); 
             visibleTabs--; 
         }
-
-        // 📥 PANEL DE CARGA (Exclusivo y únicamente para TRAINER) 👇
-        if (role === 'TRAINER' && btnShoppingTrainer) {
-            btnShoppingTrainer.classList.remove('hidden');
-            visibleTabs++;
-        } else if (btnShoppingTrainer) {
-            btnShoppingTrainer.classList.add('hidden'); // Seguro extra: Candado para los demás
-        }
-
-        // 📤 PANEL DE DESCARGA EXCEL (Exclusivo y únicamente para COORDINADOR) 👇
-        if (role === 'COORDINADOR' && btnShoppingAdmin) {
-            btnShoppingAdmin.classList.remove('hidden');
-            visibleTabs++;
-        } else if (btnShoppingAdmin) {
-            btnShoppingAdmin.classList.add('hidden'); // Seguro extra: Candado para los demás
-        }
     }
-            else if (role === 'ASESOR') {
-                if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
-                if (btnCalculadora) { btnCalculadora.classList.remove('hidden'); visibleTabs++; }
-            }
+    else if (role === 'ASESOR') {
+        if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
+        if (btnCalculadora) { btnCalculadora.classList.remove('hidden'); visibleTabs++; }
+    }
 
-            if (tabsContainer) {
-                let maxCols = Math.min(visibleTabs, 6);
-                let gridClass = `grid-cols-${maxCols}`;
-                if(visibleTabs > 4) gridClass = `grid-cols-3 md:grid-cols-${maxCols}`;
-                tabsContainer.className = `grid ${gridClass} gap-2 p-1.5 bg-darkCard rounded-2xl border border-darkBorder shadow-2xl transition-all duration-500 overflow-x-auto`;
-            }
-            switchTab('tab-comparativa');
-            // CANDADO ABSOLUTO DE BOTONES DE SHOPPING
-    // Cargar Shopping: Exclusivo para TRAINER y ADMIN
+    if (tabsContainer) {
+        let maxCols = Math.min(visibleTabs, 6);
+        let gridClass = `grid-cols-${maxCols}`;
+        if(visibleTabs > 4) gridClass = `grid-cols-3 md:grid-cols-${maxCols}`;
+        tabsContainer.className = `grid ${gridClass} gap-2 p-1.5 bg-darkCard rounded-2xl border border-darkBorder shadow-2xl transition-all duration-500 overflow-x-auto`;
+    }
+
+    // ==========================================
+    // 🔒 CANDADO ABSOLUTO FINAL (IMPOSIBLE DE SALTAR)
+    // ==========================================
+    const esAdmin = (role === 'ADMIN');
+    const esTrainer = (role === 'TRAINER');
+    const esJonathanFerro = (currentUserCode === 'CO1000429' || (currentUserName && currentUserName.toUpperCase().includes('FERRO')));
+
+    // Cargar Shopping: ÚNICAMENTE Trainers y Admins
     if (btnShoppingTrainer) {
-        if (role === 'TRAINER' || role === 'ADMIN') {
+        if (esAdmin || esTrainer) {
             btnShoppingTrainer.classList.remove('hidden');
         } else {
             btnShoppingTrainer.classList.add('hidden');
         }
     }
 
-    // Descargar Excel: Exclusivo para COORDINADOR, GERENTE y ADMIN
+    // Descargar Excel: ÚNICAMENTE Jonathan Ferro y Admins
     if (btnShoppingAdmin) {
-        if (role === 'COORDINADOR' || role === 'GERENTE' || role === 'ADMIN') {
+        if (esAdmin || esJonathanFerro) {
             btnShoppingAdmin.classList.remove('hidden');
         } else {
             btnShoppingAdmin.classList.add('hidden');
         }
     }
-        }
-    
 
-        function switchTab(tabId) {
+    switchTab('tab-comparativa');
+}
+
+function switchTab(tabId) {
             // 1. OCULTAR TODAS LAS SECCIONES HTML
             const tabs = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping', 'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-calculadora', 'tab-admin-calculadora', 'tab-salon-fama', 'tab-inventario', 'tab-simulador', 'tab-shopping-trainer', 'tab-shopping-admin'];
             
@@ -2051,6 +2037,11 @@ const tLocal = typeof tienda !== 'undefined' ? tienda : '';
                 }
             }
 
+            // Identidades maestras para validación en tiempo de navegación
+            const esAdmin = (currentUserRole === 'ADMIN');
+            const esTrainer = (currentUserRole === 'TRAINER');
+            const esJonathanFerro = (currentUserCode === 'CO1000429' || (currentUserName && currentUserName.toUpperCase().includes('FERRO')));
+
             // 2. APAGAR ESTILOS DE TODOS LOS BOTONES Y APLICAR RESTRICCIONES DE ROL
             const buttons = ['btn-tab-comparativa', 'btn-tab-radar-caracteristicas', 'btn-tab-quiz', 'btn-tab-shopping', 'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales', 'btn-tab-calculadora', 'btn-tab-admin-calculadora', 'btn-tab-salon-fama', 'btn-tab-inventario', 'btn-tab-simulador', 'btn-tab-shopping-trainer', 'btn-tab-shopping-admin'];
             
@@ -2070,10 +2061,16 @@ const tLocal = typeof tienda !== 'undefined' ? tienda : '';
                     if (btnId === 'btn-tab-simulador' && currentUserRole !== 'ASESOR') element.classList.add('hidden');
                     if (btnId === 'btn-tab-admin-calculadora' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
 
-                    // 👇 RESTRICCIÓN ESTRICTA: El botón de carga solo lo ven Supervisor y Trainer 👇
-                    if (btnId === 'btn-tab-shopping-trainer' && !['SUPERVISOR', 'TRAINER'].includes(currentUserRole)) element.classList.add('hidden');
+                    // 👇 RESTRICCIONES CORREGIDAS Y BLINDADAS 👇
+                    // Cargar Shopping: SOLO TRAINER y ADMIN
+                    if (btnId === 'btn-tab-shopping-trainer' && !esAdmin && !esTrainer) {
+                        element.classList.add('hidden');
+                    }
                     
-                    if (btnId === 'btn-tab-shopping-admin' && !['ADMIN', 'GERENTE', 'SUPERVISOR', 'COORDINADOR'].includes(currentUserRole)) element.classList.add('hidden');
+                    // Descargar Excel: SOLO ADMIN y JONATHAN FERRO
+                    if (btnId === 'btn-tab-shopping-admin' && !esAdmin && !esJonathanFerro) {
+                        element.classList.add('hidden');
+                    }
                 }
             });
 
@@ -5918,85 +5915,46 @@ db.collection("ranking_ventas").doc(asesorCode).set({
 
         // Dibuja el Podio y la Lista del Ranking
         function renderSalonFama() {
-            const podioContainer = document.getElementById('podio-container');
-            const listContainer = document.getElementById('ranking-list-container');
-            if (!podioContainer || !listContainer) return;
+    const podioContainer = document.getElementById('podio-container');
+    const listContainer = document.getElementById('ranking-list-container');
+    if (!podioContainer || !listContainer) return;
 
-            podioContainer.innerHTML = '';
-            listContainer.innerHTML = '';
+    podioContainer.innerHTML = '';
+    listContainer.innerHTML = '';
 
-/// === LÓGICA DE FILTRO Y RESTRICCIÓN DE OPCIONES POR ROL Y REGIONAL OFICIAL ===
-let zonaFiltro = "TODAS";
+    /// === LÓGICA DE FILTRO Y RESTRICCIÓN DE OPCIONES PARA RANKING ===
+    let zonaFiltro = "TODAS";
     const selectRanking = document.getElementById('filtro-zona-ranking');
 
-    const rolUpper = (typeof currentUserRole !== 'undefined' ? currentUserRole : '').toUpperCase();
-    const codigoActual = typeof currentUserCode !== 'undefined' ? currentUserCode : '';
-    const nombreActual = typeof currentUserName !== 'undefined' ? currentUserName : '';
-    
-    const miZona = (typeof currentuserZone !== 'undefined' && currentuserZone) ? currentuserZone : 
-                   (typeof zona !== 'undefined' && zona) ? zona : '';
-                   
-    // Leemos la regional directo de la variable global de sesión sin valores forzados erróneos
-    let miRegional = (typeof regional !== 'undefined' && regional) ? regional : 
-                     (typeof window.regional !== 'undefined' && window.regional) ? window.regional : '';
-    miRegional = miRegional.toUpperCase().trim();
+    const rolUpper = (currentUserRole || '').toUpperCase();
+    const miZona = currentUserZone || '';
+    const miRegional = window.regional ? window.regional.toUpperCase().trim() : '';
 
-    // Mapeo oficial y exacto de las zonas por cada Regional según tu estructura
     const regionalesMap = {
-        "SUROCCIDENTE": [
-            "Valle", 
-            "Nariño & Santander", 
-            "Nariño & Santander Trainer", 
-            "Valle Trainer"
-        ],
-        "ZONA CENTRO": [
-            "Exito Centro Sur", 
-            "Exito Centro Norte", 
-            "Falabella / Cencosud & Olimpica Centro", 
-            "Alkosto Centro Sur", 
-            "Alkosto Centro Norte", 
-            "ALKOSTO CENTRO TRAINER", 
-            "EXITO CENTRO NORTE TRAINER", 
-            "EXITO CENTRO SUR TRAINER", 
-
-        ],
-        "COSTA": [
-            "Costa Sur", 
-            "Costa Norte", 
-            "Costa Sur Trainer", 
-            "Costa Norte Trainer"
-        ],
-        "ANTIOQUIA": [
-            "Antioquia Norte", 
-            "Antioquia Sur", 
-            "Eje Cafetero", 
-            "Antioquia Norte Trainer", 
-            "Antioquia Sur Trainer"
-        ]
+        "SUROCCIDENTE": ["Valle", "Nariño & Santander", "Nariño & Santander Trainer", "Valle Trainer"],
+        "ZONA CENTRO": ["Exito Centro Sur", "Exito Centro Norte", "Falabella / Cencosud & Olimpica Centro", "Alkosto Centro Sur", "Alkosto Centro Norte", "Alcosto Centro Trainer", "Exito Centro Sur Trainer", "FALABELLA & CENCOSUD CENTRO TRAINER"],
+        "COSTA": ["Costa Sur", "Costa Norte", "Costa Sur Trainer", "Costa Norte Trainer"],
+        "ANTIOQUIA": ["Antioquia Norte", "Antioquia Sur", "Eje Cafetero", "Antioquia Norte Trainer", "Antioquia Sur Trainer"]
     };
 
-    const esGerenteOAdmin = (rolUpper === 'ADMIN' || rolUpper === 'GERENTE' || codigoActual === 'CO1000429' || nombreActual.includes('FERRO'));
+    const esGerenteOAdmin = (rolUpper === 'ADMIN' || rolUpper === 'GERENTE' || currentUserCode === 'CO1000429' || currentUserName.includes('FERRO'));
+
+    let zonasPermitidas = [];
+    if (rolUpper === 'COORDINADOR') {
+        zonasPermitidas = regionalesMap[miRegional] || [];
+    } else if (!esGerenteOAdmin) {
+        zonasPermitidas = [miZona];
+    }
 
     if (selectRanking) {
         if (!esGerenteOAdmin) {
             const options = selectRanking.options;
-            
-            let zonasPermitidas = [];
-            if (rolUpper === 'COORDINADOR') {
-                zonasPermitidas = regionalesMap[miRegional] || [];
-            } else {
-                zonasPermitidas = [miZona];
-            }
-
             for (let i = 0; i < options.length; i++) {
                 const optVal = options[i].value;
-                
                 if (optVal === "TODAS") {
-                    options[i].style.display = "block"; // El Ranking Nacional siempre visible para todos
+                    options[i].style.display = "block"; // Ranking Nacional siempre visible
                     continue;
                 }
-
-                // Verificamos si la zona del select pertenece a las permitidas de su regional/zona
                 const coincide = zonasPermitidas.some(z => z.trim().toLowerCase() === optVal.trim().toLowerCase());
                 options[i].style.display = coincide ? "block" : "none";
             }
@@ -6006,16 +5964,13 @@ let zonaFiltro = "TODAS";
 
     let rankingFiltrado = rankingNacional;
 
+    // Si seleccionaron una zona específica, filtramos por esa
     if (zonaFiltro !== "TODAS") {
-        let zonasFiltroActivas = rolUpper === 'COORDINADOR' ? (regionalesMap[miRegional] || [miZona]) : [miZona];
-        
         rankingFiltrado = rankingNacional.filter(asesor => {
             const zonaAsesor = (asesor.zona || '').trim().toLowerCase();
-            return zonasFiltroActivas.some(z => z.trim().toLowerCase() === zonaAsesor) ||
-                   zonaAsesor === zonaFiltro.trim().toLowerCase();
+            return zonaAsesor === zonaFiltro.trim().toLowerCase();
         });
     }
-    // ================================
 
     if (rankingFiltrado.length === 0) {
         listContainer.innerHTML = '<div class="text-center text-gray-500 font-mono py-8">Aún no hay ventas registradas en esta zona.</div>';
@@ -6024,51 +5979,51 @@ let zonaFiltro = "TODAS";
 
     // Generar Podio (Top 3) - Orden: 2, 1, 3 para diseño visual
     const top3 = [rankingFiltrado[1], rankingFiltrado[0], rankingFiltrado[2]];
-            const alturas = ['h-[160px]', 'h-[220px]', 'h-[130px]'];
-            const medallas = ['🥈', '🥇', '🥉'];
+    const alturas = ['h-[160px]', 'h-[220px]', 'h-[130px]'];
+    const medallas = ['🥈', '🥇', '🥉'];
 
-            top3.forEach((asesor, index) => {
-                if (!asesor) return;
-                podioContainer.innerHTML += `
-                    <div class="flex flex-col items-center justify-end w-28 sm:w-36 transition-all transform hover:scale-105">
-                        <div class="text-center mb-3">
-                            <div class="text-3xl drop-shadow-lg mb-1">${medallas[index]}</div>
-                            <div class="font-black text-white text-xs sm:text-sm truncate w-full px-1">${asesor.nombre}</div>
-                            <div class="text-[9px] text-gray-400 uppercase tracking-widest">${asesor.cadena}</div>
-                            <div class="font-mono text-infinix font-black text-lg mt-1">${asesor.totalUnits} <span class="text-[10px] text-white">UD</span></div>
-                        </div>
-                        <div class="w-full ${alturas[index]} rounded-t-xl bg-gradient-to-t from-darkCard to-[#131b2f] border-t-4 border-l border-r border-darkBorder relative flex items-center justify-center overflow-hidden shadow-2xl" style="border-top-color: ${index === 1 ? '#eab308' : (index === 0 ? '#9ca3af' : '#c2410c')}">
-                            <span class="text-6xl font-black opacity-10 absolute bottom-4">${index === 1 ? '1' : (index === 0 ? '2' : '3')}</span>
+    top3.forEach((asesor, index) => {
+        if (!asesor) return;
+        podioContainer.innerHTML += `
+            <div class="flex flex-col items-center justify-end w-28 sm:w-36 transition-all transform hover:scale-105">
+                <div class="text-center mb-3">
+                    <div class="text-3xl drop-shadow-lg mb-1">${medallas[index]}</div>
+                    <div class="font-black text-white text-xs sm:text-sm truncate w-full px-1">${asesor.nombre}</div>
+                    <div class="text-[9px] text-gray-400 uppercase tracking-widest">${asesor.cadena}</div>
+                    <div class="font-mono text-infinix font-black text-lg mt-1">${asesor.totalUnits} <span class="text-[10px] text-white">UD</span></div>
+                </div>
+                <div class="w-full ${alturas[index]} rounded-t-xl bg-gradient-to-t from-darkCard to-[#131b2f] border-t-4 border-l border-r border-darkBorder relative flex items-center justify-center overflow-hidden shadow-2xl" style="border-top-color: ${index === 1 ? '#eab308' : (index === 0 ? '#9ca3af' : '#c2410c')}">
+                    <span class="text-6xl font-black opacity-10 absolute bottom-4">${index === 1 ? '1' : (index === 0 ? '2' : '3')}</span>
+                </div>
+            </div>
+        `;
+    });
+
+    // Generar Lista (Top 4 al 10)
+    const restos = rankingFiltrado.slice(3);
+    if(restos.length === 0) {
+        listContainer.innerHTML = '<div class="text-center text-gray-600 font-mono text-[10px]">Esperando más guerreros...</div>';
+    } else {
+        restos.forEach((asesor, index) => {
+            const pos = index + 4;
+            listContainer.innerHTML += `
+                <div class="flex items-center justify-between bg-black/40 p-3 rounded-xl border border-darkBorder hover:border-infinix/40 transition-colors">
+                    <div class="flex items-center gap-4">
+                        <div class="w-8 h-8 rounded-full bg-darkBg border border-darkBorder flex items-center justify-center font-black text-gray-400 font-mono">${pos}</div>
+                        <div>
+                            <div class="font-bold text-white text-xs sm:text-sm">${asesor.nombre}</div>
+                            <div class="text-[9px] text-gray-500 uppercase tracking-widest">${asesor.cadena} • Zona: ${asesor.zona}</div>
                         </div>
                     </div>
-                `;
-            });
-
-            // Generar Lista (Top 4 al 10)
-            const restos = rankingFiltrado.slice(3);
-            if(restos.length === 0) {
-                listContainer.innerHTML = '<div class="text-center text-gray-600 font-mono text-[10px]">Esperando más guerreros...</div>';
-            } else {
-                restos.forEach((asesor, index) => {
-                    const pos = index + 4;
-                    listContainer.innerHTML += `
-                        <div class="flex items-center justify-between bg-black/40 p-3 rounded-xl border border-darkBorder hover:border-infinix/40 transition-colors">
-                            <div class="flex items-center gap-4">
-                                <div class="w-8 h-8 rounded-full bg-darkBg border border-darkBorder flex items-center justify-center font-black text-gray-400 font-mono">${pos}</div>
-                                <div>
-                                    <div class="font-bold text-white text-xs sm:text-sm">${asesor.nombre}</div>
-                                    <div class="text-[9px] text-gray-500 uppercase tracking-widest">${asesor.cadena} • Zona: ${asesor.zona}</div>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <div class="text-sm font-black text-infinix font-mono">${asesor.totalUnits} UD</div>
-                                <div class="text-[9px] text-gray-400">Meta: ${asesor.target}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-        }
+                    <div class="text-right">
+                        <div class="text-sm font-black text-infinix font-mono">${asesor.totalUnits} UD</div>
+                        <div class="text-[9px] text-gray-400">Meta: ${asesor.target}</div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+}
         // ==========================================
         // 2. SINCRONIZACIÓN Y RENDERIZADO DEL SALÓN DE LA FAMA (RANKING)
         // ==========================================
@@ -6138,27 +6093,38 @@ let zonaFiltro = "TODAS";
 
         // Inicialización y ruteo visual dependiendo del rol
         function initInventarioView() {
-            const asesorView = document.getElementById('inventario-asesor-view');
-            const adminView = document.getElementById('inventario-admin-view');
-            const btnWipe = document.getElementById('btn-wipe-inv');
+    const asesorView = document.getElementById('inventario-asesor-view');
+    const adminView = document.getElementById('inventario-admin-view');
+    const btnWipe = document.getElementById('btn-wipe-inv');
+    const panelAdminInyector = document.getElementById('panel-inyector-admin');
 
-            if (currentUserRole === 'ASESOR') {
-                if (asesorView) asesorView.classList.remove('hidden');
-                if (adminView) adminView.classList.add('hidden');
-                renderInventarioAsesorForm();
+    if (currentUserRole === 'ASESOR') {
+        if (asesorView) asesorView.classList.remove('hidden');
+        if (adminView) adminView.classList.add('hidden');
+        renderInventarioAsesorForm();
+    } else {
+        // Líderes (Trainer, Supervisor, Gerente, Admin)
+        if (asesorView) asesorView.classList.add('hidden');
+        if (adminView) adminView.classList.remove('hidden');
+
+        // Wipe de inventario solo para ADMIN
+        if (btnWipe) {
+            if (currentUserRole === 'ADMIN') btnWipe.classList.remove('hidden');
+            else btnWipe.classList.add('hidden');
+        }
+
+        // CANDADO ESTRICTO DEL INYECTOR (AQUÍ ESTÁ LA MAGIA)
+        if (panelAdminInyector) {
+            if (currentUserRole === 'ADMIN') {
+                panelAdminInyector.classList.remove('hidden');
             } else {
-                // Líderes (Trainer, Supervisor, Gerente, Admin)
-                if (asesorView) asesorView.classList.add('hidden');
-                if (adminView) adminView.classList.remove('hidden');
-                
-                // Solo el ADMIN puede purgar el inventario nacional
-                if (btnWipe) {
-                    if (currentUserRole === 'ADMIN') btnWipe.classList.remove('hidden');
-                    else btnWipe.classList.add('hidden');
-                }
-                renderInventarioAdminTable();
+                panelAdminInyector.classList.add('hidden');
             }
         }
+
+        renderInventarioAdminTable();
+    }
+}
 
         function renderInventarioAsesorForm() {
             const container = document.getElementById('inv-models-container');
@@ -6306,35 +6272,21 @@ db.collection("configuracion_global").doc("parametros_stock").get().then((docSna
 
         // Líderes: Renderiza la tabla con los reportes
         function renderInventarioAdminTable() {
-            document.getElementById('inv-controles-lideres').classList.remove('hidden');
-            const tbody = document.getElementById('inv-admin-tbody');
-            const totalText = document.getElementById('inv-total-nacional');
-            if (!tbody || !totalText) return;
-
-            tbody.innerHTML = '';
-            let granTotal = 0;
-
-            if (inventarioNacionalLog.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-500 font-mono text-xs">No hay reportes de inventario en el sistema.</td></tr>`;
-                totalText.textContent = "0";
-                return;
-            }
-              // === 1. LÓGICA DE FILTRO Y RESTRICCIÓN DE OPCIONES PARA STOCK ===
-    let zonaFiltro = "TODAS";
-    const selectStock = document.getElementById('filtro-zona-stock'); // <--- EL ESLABÓN PERDIDO ESTÁ AQUÍ
+    const controlesLideres = document.getElementById('inv-controles-lideres');
+    if (controlesLideres) controlesLideres.classList.remove('hidden');
     
-    const rolUpper = (typeof currentUserRole !== 'undefined' ? currentUserRole : '').toUpperCase();
-    const codigoActual = typeof currentUserCode !== 'undefined' ? currentUserCode : '';
-    const nombreActual = typeof currentUserName !== 'undefined' ? currentUserName : '';
-    
-    const miZona = (typeof currentuserZone !== 'undefined' && currentuserZone) ? currentuserZone : 
-                   (typeof zona !== 'undefined' && zona) ? zona : '';
-                   
-    let miRegional = (typeof window.regional !== 'undefined' && window.regional) ? window.regional : 
-                     (typeof regional !== 'undefined' && regional) ? regional : '';
-    miRegional = miRegional.toUpperCase().trim();
+    const tbody = document.getElementById('inv-admin-tbody');
+    const totalText = document.getElementById('inv-total-nacional');
+    const selectStock = document.getElementById('filtro-zona-stock');
+    if (!tbody || !totalText) return;
 
-    // Mapeo oficial unificado (Idéntico al del Ranking)
+    tbody.innerHTML = '';
+    let granTotal = 0;
+
+    const rolUpper = (currentUserRole || '').toUpperCase();
+    const miZona = currentUserZone || '';
+    let miRegional = window.regional ? window.regional.toUpperCase().trim() : '';
+
     const regionalesMap = {
         "SUROCCIDENTE": ["Valle", "Nariño & Santander", "Nariño & Santander Trainer", "Valle Trainer"],
         "ZONA CENTRO": ["Exito Centro Sur", "Exito Centro Norte", "Falabella / Cencosud & Olimpica Centro", "Alkosto Centro Sur", "Alkosto Centro Norte", "Alcosto Centro Trainer", "Exito Centro Sur Trainer", "FALABELLA & CENCOSUD CENTRO TRAINER"],
@@ -6342,68 +6294,117 @@ db.collection("configuracion_global").doc("parametros_stock").get().then((docSna
         "ANTIOQUIA": ["Antioquia Norte", "Antioquia Sur", "Eje Cafetero", "Antioquia Norte Trainer", "Antioquia Sur Trainer"]
     };
 
-    const esGerenteOAdmin = (rolUpper === 'ADMIN' || rolUpper === 'GERENTE' || codigoActual === 'CO1000429' || nombreActual.includes('FERRO'));
+    const esGerenteOAdmin = (rolUpper === 'ADMIN' || rolUpper === 'GERENTE' || currentUserCode === 'CO1000429' || currentUserName.includes('FERRO'));
 
-    // Filtramos las opciones del <select> del Stock
+    // === 1. DEDUPLICACIÓN POR TIENDA (CADENA) ===
+    // Si varios asesores suben inventario de la misma tienda, nos quedamos solo con el más reciente
+    const mapaTiendasUnicas = {};
+    inventarioNacionalLog.forEach(inv => {
+        const claveTienda = (inv.cadena || '').trim().toLowerCase();
+        if (!claveTienda) return;
+        
+        if (!mapaTiendasUnicas[claveTienda]) {
+            mapaTiendasUnicas[claveTienda] = inv;
+        } else {
+            const tiempoNuevo = inv.timestamp || new Date(inv.fechaStr || 0).getTime() || 0;
+            const tiempoGuardado = mapaTiendasUnicas[claveTienda].timestamp || new Date(mapaTiendasUnicas[claveTienda].fechaStr || 0).getTime() || 0;
+            
+            if (tiempoNuevo >= tiempoGuardado) {
+                mapaTiendasUnicas[claveTienda] = inv;
+            }
+        }
+    });
+    const inventarioUnicoPorTienda = Object.values(mapaTiendasUnicas);
+
+    // Definir zonas permitidas según el rol
+    let zonasPermitidas = [];
+    if (rolUpper === 'COORDINADOR') {
+        zonasPermitidas = regionalesMap[miRegional] || [];
+    } else if (!esGerenteOAdmin) {
+        zonasPermitidas = [miZona];
+    }
+
+    // === 2. FILTRADO ESTRICTO DE LAS OPCIONES DEL SELECTOR DE STOCK ===
     if (selectStock) {
-        if (!esGerenteOAdmin) {
-            const options = selectStock.options;
-            let zonasPermitidas = rolUpper === 'COORDINADOR' ? (regionalesMap[miRegional] || []) : [miZona];
-
-            for (let i = 0; i < options.length; i++) {
-                const optVal = options[i].value;
-                if (optVal === "TODAS" || optVal === "") {
-                    options[i].style.display = "block"; // "Todas" o "Nacional" siempre visible
-                    continue;
-                }
+        const options = selectStock.options;
+        
+        for (let i = 0; i < options.length; i++) {
+            const optVal = options[i].value;
+            
+            if (optVal === "TODAS" || optVal === "") {
+                options[i].style.display = (esGerenteOAdmin || rolUpper === 'COORDINADOR') ? "block" : "none";
+                continue;
+            }
+            
+            if (esGerenteOAdmin) {
+                options[i].style.display = "block";
+            } else if (rolUpper === 'COORDINADOR') {
                 const coincide = zonasPermitidas.some(z => z.trim().toLowerCase() === optVal.trim().toLowerCase());
+                options[i].style.display = coincide ? "block" : "none";
+            } else {
+                const coincide = (optVal.trim().toLowerCase() === miZona.trim().toLowerCase());
                 options[i].style.display = coincide ? "block" : "none";
             }
         }
-        zonaFiltro = selectStock.value;
+
+        if (!esGerenteOAdmin && (selectStock.value === "TODAS" || selectStock.value === "")) {
+            if (rolUpper === 'COORDINADOR') {
+                selectStock.value = "TODAS"; 
+            } else if (zonasPermitidas.length > 0) {
+                selectStock.value = zonasPermitidas[0];
+            }
+        }
     }
 
-    // Definimos qué zonas puede ver realmente el usuario en la tabla
-    let zonasFiltroActivas = esGerenteOAdmin ? [] : (rolUpper === 'COORDINADOR' ? (regionalesMap[miRegional] || [miZona]) : [miZona]);
+    let zonaFiltro = selectStock ? selectStock.value : "TODAS";
 
-    inventarioNacionalLog.forEach(inv => {
+    if (inventarioUnicoPorTienda.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-500 font-mono text-xs">No hay reportes de inventario en el sistema.</td></tr>`;
+        totalText.textContent = "0";
+        return;
+    }
+
+    inventarioUnicoPorTienda.forEach(inv => {
         const zonaInv = (inv.zona || '').trim().toLowerCase();
         
-        // === 2. EL CANDADO DE SEGURIDAD DE LA TABLA ===
+        // === 3. CANDADO DE SEGURIDAD DE LA TABLA ===
         if (!esGerenteOAdmin) {
-            // Si no es admin, la zona del reporte DEBE pertenecer a sus zonas asignadas
-            const perteneceAZonasPermitidas = zonasFiltroActivas.some(z => z.trim().toLowerCase() === zonaInv);
-            if (!perteneceAZonasPermitidas) return; 
+            if (rolUpper === 'COORDINADOR') {
+                const pertenece = zonasPermitidas.some(z => z.trim().toLowerCase() === zonaInv);
+                if (!pertenece) return;
+            } else {
+                if (zonaInv !== miZona.trim().toLowerCase()) return;
+            }
         }
 
-        // Filtro del selector (si eligió una zona específica en el menú)
-        if (zonaFiltro && zonaFiltro !== "TODAS" && zonaInv !== zonaFiltro.trim().toLowerCase()) return;
+        // Filtro del dropdown de zonas
+        if (zonaFiltro !== "TODAS" && zonaInv !== zonaFiltro.trim().toLowerCase()) return;
+        
         granTotal += (inv.totalUnits || 0);
-                // Formatear el desglose para que se vea bien en la tabla
-                let detalleHtml = '';
-                if(inv.desglose) {
-                    Object.keys(inv.desglose).forEach(modelo => {
-                        detalleHtml += `<span class="inline-block bg-black/50 border border-darkBorder px-2 py-1 rounded mr-1 mb-1 text-[9px]"><span class="text-white">${modelo}:</span> <span class="text-blue-400 font-bold">${inv.desglose[modelo]}</span></span>`;
-                    });
-                }
-
-                tbody.innerHTML += `
-                    <tr class="hover:bg-darkBorder/20 transition-all border-b border-darkBorder/50">
-                        <td class="p-3 pl-4">
-                            <div class="font-bold text-white text-[10px] sm:text-xs truncate w-32 sm:w-auto">${inv.nombre}</div>
-                            <div class="text-[8px] text-gray-500 uppercase">ZONA: ${inv.zona}</div>
-                        </td>
-                        <td class="p-3 text-gray-300 uppercase tracking-widest text-[9px] font-bold">${inv.cadena}</td>
-                        <td class="p-3 text-center font-black text-blue-500 text-sm bg-blue-500/5">${inv.totalUnits}</td>
-                        <td class="p-3 text-center text-gray-400 text-[9px]">${inv.fechaStr}</td>
-                        <td class="p-3 max-w-[200px] whitespace-normal leading-tight">${detalleHtml}</td>
-                    </tr>
-                `;
+        
+        let detalleHtml = '';
+        if(inv.desglose) {
+            Object.keys(inv.desglose).forEach(modelo => {
+                detalleHtml += `<span class="inline-block bg-black/50 border border-darkBorder px-2 py-1 rounded mr-1 mb-1 text-[9px]"><span class="text-white">${modelo}:</span> <span class="text-blue-400 font-bold">${inv.desglose[modelo]}</span></span>`;
             });
-
-            totalText.textContent = granTotal.toLocaleString();
         }
 
+        tbody.innerHTML += `
+            <tr class="hover:bg-darkBorder/20 transition-all border-b border-darkBorder/50">
+                <td class="p-3 pl-4">
+                    <div class="font-bold text-white text-[10px] sm:text-xs truncate w-32 sm:w-auto">${inv.nombre}</div>
+                    <div class="text-[8px] text-gray-500 uppercase">ZONA: ${inv.zona}</div>
+                </td>
+                <td class="p-3 text-gray-300 uppercase tracking-widest text-[9px] font-bold">${inv.cadena}</td>
+                <td class="p-3 text-center font-black text-blue-500 text-sm bg-blue-500/5">${inv.totalUnits}</td>
+                <td class="p-3 text-center text-gray-400 text-[9px]">${inv.fechaStr}</td>
+                <td class="p-3 max-w-[200px] whitespace-normal leading-tight">${detalleHtml}</td>
+            </tr>
+        `;
+    });
+
+    totalText.textContent = granTotal.toLocaleString();
+}
 // === INYECTOR GLOBAL DE REFERENCIAS DE STOCK ===
 function inyectarNuevaReferencia() {
     const inputElement = document.getElementById('input-nueva-referencia');
