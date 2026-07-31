@@ -6296,26 +6296,27 @@ db.collection("configuracion_global").doc("parametros_stock").get().then((docSna
 
     const esGerenteOAdmin = (rolUpper === 'ADMIN' || rolUpper === 'GERENTE' || currentUserCode === 'CO1000429' || currentUserName.includes('FERRO'));
 
-    // === 1. DEDUPLICACIÓN POR TIENDA (CADENA) ===
-    // Si varios asesores suben inventario de la misma tienda, nos quedamos solo con el más reciente
-    const mapaTiendasUnicas = {};
+   // === 1. DEDUPLICACIÓN POR TIENDA (CADENA) ROBUSTA ===
+   const mapaTiendasUnicas = {};
     inventarioNacionalLog.forEach(inv => {
         const claveTienda = (inv.cadena || '').trim().toLowerCase();
         if (!claveTienda) return;
         
+        // Usamos un timestamp numérico seguro (si no existe, usamos 0)
+        const tiempoNuevo = Number(inv.timestamp) || 0;
+        
         if (!mapaTiendasUnicas[claveTienda]) {
             mapaTiendasUnicas[claveTienda] = inv;
         } else {
-            const tiempoNuevo = inv.timestamp || new Date(inv.fechaStr || 0).getTime() || 0;
-            const tiempoGuardado = mapaTiendasUnicas[claveTienda].timestamp || new Date(mapaTiendasUnicas[claveTienda].fechaStr || 0).getTime() || 0;
+            const tiempoGuardado = Number(mapaTiendasUnicas[claveTienda].timestamp) || 0;
             
+            // Si el nuevo reporte tiene un timestamp mayor (o igual), sobrescribe al anterior
             if (tiempoNuevo >= tiempoGuardado) {
                 mapaTiendasUnicas[claveTienda] = inv;
             }
         }
     });
     const inventarioUnicoPorTienda = Object.values(mapaTiendasUnicas);
-
     // Definir zonas permitidas según el rol
     let zonasPermitidas = [];
     if (rolUpper === 'COORDINADOR') {
