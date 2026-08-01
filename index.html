@@ -7685,12 +7685,29 @@ function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = 
     setTimeout(() => {
         html2canvas(tarjetaVisual, { backgroundColor: '#0d1117', scale: 2 }).then(canvas => {
             tarjetaVisual.style.display = 'none';
-            const link = document.createElement('a');
-            link.download = `Cierre_${nombreTienda.replace(/\s+/g, '_')}_W${numSemanaActual}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
+            const nombreArchivo = `Cierre_${nombreTienda.replace(/\s+/g, '_')}_W${numSemanaActual}.png`;
+
+            canvas.toBlob(blob => {
+                const archivo = new File([blob], nombreArchivo, { type: 'image/png' });
+
+                if (navigator.canShare && navigator.canShare({ files: [archivo] })) {
+                    navigator.share({
+                        title: 'Cierre de Ventas Infinix',
+                        text: `Reporte de cierre - ${nombreTienda} (Semana ${numSemanaActual})`,
+                        files: [archivo]
+                    }).catch(error => {
+                        console.log("Usuario canceló o error al compartir:", error);
+                    });
+                } else {
+                    const link = document.createElement('a');
+                    link.download = nombreArchivo;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                }
+            }, 'image/png');
+
         }).catch(err => {
-            console.error(err);
+            console.error("Error generando imagen:", err);
             tarjetaVisual.style.display = 'none';
         });
     }, 400);
