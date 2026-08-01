@@ -7684,7 +7684,7 @@ function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = 
     
     setTimeout(() => {
         html2canvas(tarjetaVisual, { backgroundColor: '#0d1117', scale: 2 }).then(canvas => {
-            tarjetaVisual.style.display = 'none'; 
+            tarjetaVisual.style.display = 'none';
             const link = document.createElement('a');
             link.download = `Cierre_${nombreTienda.replace(/\s+/g, '_')}_W${numSemanaActual}.png`;
             link.href = canvas.toDataURL();
