@@ -7274,13 +7274,12 @@ async function generarYGuardarCierreVentas() {
         if (inputVenta) {
             const units = parseInt(inputVenta.value) || 0;
             const targetInf = inputTarget ? (parseInt(inputTarget.value) || 0) : 0;
-            
-            if (units > 0 || targetInf > 0) { // Guarda si hay venta o si tiene un target asignado
+            if (units > 0) {
                 totalUnidadesDia += units;
-                desgloseInfinixDia[key] = { venta: units, target: targetInf };
                 const precioUnitario = infinixDatabase[key].price || infinixDatabase[key].valor || 500000;
                 totalDineroDia += (units * precioUnitario);
             }
+            desgloseInfinixDia[key] = { venta: units, target: targetInf };
         }
     });
 
