@@ -1194,24 +1194,24 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#21262d] p-5 rounded-lg border border-[#30363d]">
         <div>
             <label class="block text-xs font-bold text-gray-400 mb-2">1. FILTRAR POR ZONA</label>
-            <select id="filtro-zona-admin" class="w-full bg-[#0d1117] text-white p-3 rounded border border-[#30363d] focus:border-green-400 focus:outline-none cursor-pointer">
-                <option value="ALL">Nacional (Todas las Zonas)</option>
-                <option value="SANTANDER">Santander & Nariño (Marco)</option>
-                <option value="CENTRO">Centro (Wilson)</option>
-                <option value="COSTA">Costa (Paola)</option>
-                <option value="ANTIOQUIA">Antioquia & Eje (Zapata)</option>
-            </select>
-        </div>
-        <div>
-            <label class="block text-xs font-bold text-gray-400 mb-2">2. FILTRAR POR CADENA</label>
-            <select id="filtro-cadena-admin" class="w-full bg-[#0d1117] text-white p-3 rounded border border-[#30363d] focus:border-green-400 focus:outline-none cursor-pointer">
-                <option value="ALL">Todas las Cadenas</option>
-                <option value="EXITO">Grupo Éxito</option>
-                <option value="FALABELLA">Falabella</option>
-                <option value="WOM">WOM</option>
-                <option value="OLIMPICA">Olímpica</option>
-                <option value="ALKOSTO">Alkosto / Ktronix</option>
-            </select>
+<!-- 1. FILTRAR POR ZONA (REGIONAL) -->
+<select id="filtro-zona-admin" class="w-full bg-[#0d1117] text-white p-3 rounded-lg border border-[#30363d] focus:border-green-400 focus:outline-none cursor-pointer">
+    <option value="ALL">Nacional (Todas las Regionales)</option>
+    <option value="SUROCCIDENTE">Suroccidente (Marco) - Valle, Santander, Nariño</option>
+    <option value="COSTA">Costa (Paola) - Norte y Sur</option>
+    <option value="ANTIOQUIA">Antioquia (Zapata) - Eje, Norte, Sur</option>
+    <option value="ZONA CENTRO">Zona Centro (Wilson) - Éxito, Falabella, Olímpica</option>
+</select>
+
+<!-- 2. FILTRAR POR CADENA -->
+<select id="filtro-cadena-admin" class="w-full bg-[#0d1117] text-white p-3 rounded-lg border border-[#30363d] focus:border-green-400 focus:outline-none cursor-pointer">
+    <option value="ALL">Todas las Cadenas</option>
+    <option value="EXITO">Grupo Éxito</option>
+    <option value="falabella">Falabella</option>
+    <option value="WOM">WOM</option>
+    <option value="OLIMPICA">Olímpica</option>
+    <option value="ALKOSTO">Alkosto / Ktronix</option>
+</select>
         </div>
         <div>
             <label class="block text-xs font-bold text-gray-400 mb-2">3. FILTRAR POR TIENDA (Opcional)</label>
@@ -2142,6 +2142,7 @@ const btnCierre = document.getElementById('btn-tab-cierre-ventas');
 
             if (tabId === 'tab-tendencias-nacionales') renderTendenciasNacionalesTab();
             if (tabId === 'tab-inventario') initInventarioView();
+            if (tabId === 'panel-admin-gerencia') cargarDatosCentralReportes();
 
             const calcBanner = document.getElementById('calc-fixed-banner');
             if (calcBanner) {
@@ -7314,14 +7315,35 @@ const marcasCompetencia = ["INFINIX", "XIAOMI", "HONOR", "TECNO", "OPPO", "REALM
     try {
         // Datos de la tienda y la semana
         const nombreTienda = typeof window.currentUserStore !== 'undefined' ? window.currentUserStore : "Éxito Bucaramanga"; 
-        const idDocumentoSemana = `${nombreTienda}_${typeof semanaKey !== 'undefined' ? semanaKey : 'W31'}`.replace(/\s+/g, '_'); 
 
-        await db.collection("cierre_ventas_nacional").doc(idDocumentoSemana).set({
-    tienda: nombreTienda,
-    semana: typeof semanaKey !== 'undefined' ? semanaKey : 'W31',
-    [diaHoy]: payloadHoy // Reemplaza por completo el cajón del día con los datos frescos de pantalla
-}, { merge: true }); 
+        
+        // 1. Capturamos los datos reales, únicos y dinámicos de este asesor en sesión
+        const nombreTiendaReal = typeof nombreTienda !== 'undefined' ? nombreTienda : (window.miTienda || 'Tienda_General');
+        const nombreCadenaReal = typeof nombreCadena !== 'undefined' ? nombreCadena : (window.miCadena || 'Cadena_General');
+        const zonaReal = typeof zonaTienda !== 'undefined' ? zonaTienda : (window.miZona || 'Nariño & Santander');
+        const nombreAsesorReal = window.nombreAsesorLogueado || document.getElementById('admin-user-name')?.textContent || 'Asesor_Desconocido';
+        const semanaActualKey = typeof semanaKey !== 'undefined' ? semanaKey : 'W31';
 
+        // 2. CREAMOS EL ID ÚNICO (Semana + Cadena + Tienda) para que NO se sobrescriban los datos
+        // Ej: "W31_WOM_TIENDA_WOM_POBLADO_GIRON" o "W31_EXITO_EXITO_BUCARAMANGA"
+        const idDocumentoUnico = `${semanaActualKey}_${nombreCadenaReal}_${nombreTiendaReal}`
+            .toUpperCase()
+            .replace(/\s+/g, '_')
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+        console.log("🚀 Guardando reporte en Firebase con ID Único:", idDocumentoUnico);
+
+        // 3. Guardamos en Firebase apuntando a ese ID blindado
+        await db.collection("cierre_ventas_nacional").doc(idDocumentoUnico).set({
+    tienda: nombreTiendaReal,
+    cadena: nombreCadenaReal,
+    zona: window.miZona || document.getElementById('zona-tienda')?.value || 'Nariño & Santander',
+    asesorResponsable: window.nombreAsesorLogueado || document.getElementById('nombre-asesor')?.textContent || 'Desconocido',
+    semana: semanaActualKey,
+    [diaHoy]: payloadHoy 
+}, { merge: true });
+        
+        // ----------------------------------
         console.log("✅ Datos de HOY guardados con éxito en Firebase.");
 
        // 5. DESCARGAR TODA LA SEMANA DE FIREBASE PARA ARMAR EL EXCEL
@@ -7371,6 +7393,167 @@ function obtenerSemanaActualKey() {
     const semanaNum = Math.ceil((days + start.getDay() + 1) / 7);
     return `W${semanaNum}`;
 }
+// ==========================================
+// CENTRAL DE REPORTES: CONSULTA MASIVA Y KPIs
+// ==========================================
+async function cargarDatosCentralReportes() {
+    try {
+        console.log("📥 Consultando jerarquía estricta según base de datos Firebase...");
+        
+        // EL MAPA EXACTO EXTRAÍDO DE TU FIREBASE (image_a396c3.png)
+        const mapaOperativo = {
+            "SUROCCIDENTE": ["Valle", "Nariño & Santander", "Nariño & Santander Trainer", "Valle Trainer"],
+            "ZONA CENTRO": ["Exito Centro Sur", "Exito Centro Norte", "Falabella / Cencosud & Olimpica Centro", "Alkosto Centro Sur", "Alkosto Centro Norte", "Alcosto Centro Trainer", "Exito Centro Sur Trainer", "FALABELLA & CENCOSUD CENTRO TRAINER"],
+            "COSTA": ["Costa Sur", "Costa Norte", "Costa Sur Trainer", "Costa Norte Trainer"],
+            "ANTIOQUIA": ["Antioquia Norte", "Antioquia Sur", "Eje Cafetero", "Antioquia Norte Trainer", "Antioquia Sur Trainer"]
+        };
+
+        const zonaSelect = document.getElementById('filtro-zona-admin');
+        const cadenaSelect = document.getElementById('filtro-cadena-admin');
+        const tiendaSelect = document.getElementById('filtro-tienda-admin');
+
+        const regionalSeleccionada = zonaSelect?.value || 'ALL'; 
+        const cadenaSeleccionada = cadenaSelect?.value || 'ALL'; 
+
+        const snapshot = await db.collection("cierre_ventas_nacional").get();
+        
+        const tiendasDisponibles = new Set();
+        
+        let acumuladoInfinixUnidades = 0;
+        let acumuladoInfinixTarget = 0;
+        let acumuladoMercadoTotal = 0;
+
+        // --- FASE 1: FILTRO EN CASCADA PARA ARMAR EL SELECTOR DE TIENDAS ---
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const zonaDoc = (data.zona || '').trim(); // Dejamos minúsculas/mayúsculas originales para validar
+            const cadenaDoc = (data.cadena || '').trim().toUpperCase();
+            const tiendaDoc = (data.tienda || '').trim().toUpperCase();
+
+            // 1. Candado de Regional (Basado estrictamente en tu mapa)
+            let pasaRegional = true;
+            if (regionalSeleccionada !== 'ALL') {
+                const zonasDeEstaRegional = mapaOperativo[regionalSeleccionada] || [];
+                // Verificamos coincidencia exacta contra el array de Firebase
+                pasaRegional = zonasDeEstaRegional.some(z => z.toUpperCase() === zonaDoc.toUpperCase());
+            }
+
+            // 2. Candado de Cadena
+            let pasaCadena = true;
+            if (cadenaSeleccionada !== 'ALL') {
+                const fCadena = cadenaSeleccionada.toUpperCase();
+                pasaCadena = cadenaDoc.includes(fCadena) || tiendaDoc.includes(fCadena);
+            }
+
+            // Si pasa ambos filtros, se aprueba la tienda para la cascada
+            if (pasaRegional && pasaCadena && data.tienda) {
+                tiendasDisponibles.add(data.tienda);
+            }
+        });
+
+        // REFRESCAMOS EL SELECTOR DE TIENDAS EN HTML
+        if (tiendaSelect) {
+            const tiendaActual = tiendaSelect.value;
+            tiendaSelect.innerHTML = '<option value="ALL">Consolidado General</option>';
+            
+            Array.from(tiendasDisponibles).sort().forEach(tienda => {
+                const opt = document.createElement('option');
+                opt.value = tienda;
+                opt.textContent = tienda;
+                tiendaSelect.appendChild(opt);
+            });
+
+            if (Array.from(tiendaSelect.options).some(o => o.value === tiendaActual)) {
+                tiendaSelect.value = tiendaActual;
+            } else {
+                tiendaSelect.value = 'ALL';
+            }
+        }
+
+        const tiendaFinal = tiendaSelect?.value || 'ALL';
+
+        // --- FASE 2: CÁLCULO DE KPIs CON LOS FILTROS BLINDADOS ---
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const zonaDoc = (data.zona || '').trim();
+            const cadenaDoc = (data.cadena || '').trim().toUpperCase();
+            const tiendaDoc = (data.tienda || '').trim().toUpperCase();
+
+            // Candados estrictos de exclusión
+            if (regionalSeleccionada !== 'ALL') {
+                const zonasDeEstaRegional = mapaOperativo[regionalSeleccionada] || [];
+                if (!zonasDeEstaRegional.some(z => z.toUpperCase() === zonaDoc.toUpperCase())) return;
+            }
+
+            if (cadenaSeleccionada !== 'ALL') {
+                const fCadena = cadenaSeleccionada.toUpperCase();
+                if (!cadenaDoc.includes(fCadena) && !tiendaDoc.includes(fCadena)) return;
+            }
+
+            if (tiendaFinal !== 'ALL' && tiendaDoc !== tiendaFinal.toUpperCase()) return;
+
+            // Recorrido de los días para sumar KPIs
+            const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+            diasSemana.forEach(dia => {
+                if (data[dia]) {
+                    const infoDia = data[dia];
+                    
+                    // CORRECCIÓN MAGISTRAL: Priorizamos el total del día guardado. Si no existe (documento viejo), sumamos el desglose
+                    let sumaUnidadesDia = Number(infoDia.totalUnidadesDia);
+                    if (isNaN(sumaUnidadesDia) || sumaUnidadesDia === 0) {
+                        sumaUnidadesDia = 0;
+                        if (infoDia.infinix) {
+                            Object.values(infoDia.infinix).forEach(item => sumaUnidadesDia += Number(item.venta || 0));
+                        }
+                    }
+                    acumuladoInfinixUnidades += sumaUnidadesDia;
+                    
+                    if (infoDia.infinix) {
+                        Object.values(infoDia.infinix).forEach(item => {
+                            acumuladoInfinixTarget += Number(item.target || 0);
+                        });
+                    }
+                    
+                    if (infoDia.competencia) {
+                        const compData = infoDia.competencia.modelos || infoDia.competencia;
+                        Object.values(compData).forEach(compItem => {
+                            acumuladoMercadoTotal += Number(compItem.venta || compItem.hc || 0);
+                        });
+                    }
+                }
+            });
+        });
+
+        // --- FASE 3: INYECCIÓN DE DATOS EN PANTALLA ---
+        const mercadoGlobal = acumuladoInfinixUnidades + acumuladoMercadoTotal;
+        const marketSharePorcentaje = mercadoGlobal > 0 ? ((acumuladoInfinixUnidades / mercadoGlobal) * 100).toFixed(1) : 0;
+        const cumplimientoPorcentaje = acumuladoInfinixTarget > 0 ? Math.round((acumuladoInfinixUnidades / acumuladoInfinixTarget) * 100) : 0;
+
+        const tarjetaVentas = document.getElementById('kpi-ventas-global');
+        const tarjetaShare = document.getElementById('kpi-share-global');
+        const tarjetaCumplimiento = document.getElementById('kpi-target-global');
+
+        if (tarjetaVentas) tarjetaVentas.textContent = acumuladoInfinixUnidades;
+        if (tarjetaShare) tarjetaShare.textContent = `${marketSharePorcentaje}%`;
+        if (tarjetaCumplimiento) tarjetaCumplimiento.textContent = `${cumplimientoPorcentaje}%`;
+
+        console.log(`✅ Cascadas ajustadas. Total unidades sumadas: ${acumuladoInfinixUnidades}`);
+
+    } catch (error) {
+        console.error("❌ Error crítico en la central de reportes:", error);
+    }
+}
+
+// Disparadores Automáticos (Listeners)
+['filtro-zona-admin', 'filtro-cadena-admin', 'filtro-tienda-admin'].forEach(idFiltro => {
+    const el = document.getElementById(idFiltro);
+    if (el && !el.dataset.listenerCascada) {
+        el.dataset.listenerCascada = "true";
+        el.addEventListener('change', () => {
+            cargarDatosCentralReportes();
+        });
+    }
+});
 
 // Función para pintar las tablas de Cierre de Ventas dentro de la pestaña
 function renderizarFormularioCierre() {
