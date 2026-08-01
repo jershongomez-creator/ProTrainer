@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Script de captura local si lo necesitas offline, o mantienes el CDN externo -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pro Trainer - Terminal de Entrenamiento Elite</title>
-    
+
     <!-- CONEXIÓN PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#050811">
     <link rel="apple-touch-icon" href="Logo_ProTrainer.png">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<!-- Tailwind CSS -->
+<script src="tailwind.js"></script>
 
-    <!-- SDK de Firebase (¡Cargando primero y fuera de las etiquetas de estilo!) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
+<!-- SDK de Firebase (¡Cargando primero y fuera de las etiquetas de estilo!) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
     <script>
         const firebaseConfig = {
@@ -256,7 +258,7 @@
     </header>
 
     <div class="max-w-6xl mx-auto w-full px-4 mt-6">
-        <div id="main-tabs-container" class="grid grid-cols-6 gap-2 p-1.5 bg-darkCard rounded-2xl border border-darkBorder shadow-2xl transition-all duration-500 overflow-x-auto">
+        <div id="main-tabs-container" class="grid grid-cols-7 gap-1.5 p-1.5 bg-darkCard rounded-2xl border border-darkBorder shadow-2xl transition-all duration-500 overflow-x-auto">
             <button onclick="switchTab('tab-comparativa')" id="btn-tab-comparativa" class="py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-infinix text-black shadow-lg shadow-infinix/20 whitespace-nowrap">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                 <span>Arena Cara a Cara</span>
@@ -310,11 +312,20 @@
             <span>📸</span>
             <span>Cargar Shopping</span>
         </button>
-
+    <!-- Botón Cierre de Ventas alineado arriba -->
+<button onclick="switchTab('tab-cierre-ventas'); renderizarFormularioCierre();" id="btn-tab-cierre-ventas" class="py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-1.5 text-gray-400 hover:text-white">
+    <span class="text-green-500 text-lg drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]">📊</span>
+    <span>Cierre de Ventas</span>
+</button>
 <!-- Botón para el Admin/Coordinador (Descargar Excel) -->
 <button onclick="switchTab('tab-shopping-admin')" id="btn-tab-shopping-admin" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
     <span>📥</span>
     <span>Descargar Excel</span>
+</button>
+<!-- Botón de Acceso a Central de Reportes (Solo visible para Jefes/Admin) -->
+<button onclick="switchTab('panel-admin-gerencia')" id="btn-tab-reportes-admin" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-1.5 text-gray-400 hover:text-white">
+    <span class="text-green-500 text-lg drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]">📊</span>
+    <span>Central de Reportes</span>
 </button>
     </div>
 
@@ -1035,6 +1046,34 @@
             <button onclick="migrarUsuariosAFirebase()" class="px-4 py-2 bg-red-600 text-white font-bold rounded">INYECCIÓN MASIVA A FIREBASE</button>
         </div>
     </div>
+        <!-- ========================================== -->
+<!-- PESTAÑA NUEVA: CIERRE DE VENTAS DIARIO     -->
+<!-- ========================================== -->
+<div id="tab-cierre-ventas" class="hidden max-w-6xl mx-auto w-full px-4 mt-6">
+    <div class="bg-darkCard border-2 border-infinit/40 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+        
+        <!-- Encabezado de la sección -->
+        <div class="flex items-center justify-between border-b border-darkBorder pb-4 mb-6">
+            <div>
+                <h2 class="text-xl font-black text-green-400 uppercase tracking-wider">⚡ Cierre de Ventas y Formato Diario</h2>
+                <p class="text-xs text-gray-400 mt-1">Registra tus unidades diarias, competencia y genera tu reporte oficial para WhatsApp.</p>
+            </div>
+            <span class="bg-green-500/10 text-green-400 border border-green-500/30 text-xs font-bold px-3 py-1.5 rounded-xl">
+                Semana Actual Automática
+            </span>
+        </div>
+
+        <!-- Área donde el asesor llenará los datos -->
+        <div id="formulario-cierre-container" class="space-y-6 text-white">
+            <p class="text-sm text-gray-300">Aquí construpiremos el cuadro interactivo de referencias de Infinix y Competencia.</p>
+        </div>
+
+        <!-- El Botón para generar y descargar la imagen -->
+        <button onclick="generarYGuardarCierreVentas()" class="mt-6 w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-black font-black py-3 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 uppercase tracking-wider text-xs cursor-pointer">
+            📸 Generar Cierre y Descargar Imagen
+        </button>
+    </div>
+</div>
    <!-- ========================================== -->
 <!-- PANEL: SHOPPING DIARIO (TRAINER/SUPERVISOR)-->
 <!-- ========================================== -->
@@ -1131,6 +1170,92 @@
         </div>
 
     </div>
+</div>
+  <!-- ========================================== -->
+<!-- PANEL GERENCIAL / MODO DIOS (Fase 2)       -->
+<!-- ========================================== -->
+<div id="panel-admin-gerencia" class="hidden w-full max-w-7xl mx-auto p-4 space-y-6 mt-8">
+    
+    <!-- Encabezado Directivo -->
+    <div class="flex justify-between items-center bg-[#0d1117] border border-green-500/50 p-6 rounded-lg shadow-lg shadow-green-900/20">
+        <div>
+            <h2 class="text-2xl font-bold text-green-400 tracking-wider uppercase flex items-center gap-2">
+                📊 Central de Reportes y Operaciones
+            </h2>
+            <p class="text-sm text-gray-400 mt-1">Visión Global, Market Share y Control Nacional Infinix</p>
+        </div>
+        <div class="text-right">
+            <p class="text-sm text-blue-400 font-bold uppercase">USUARIO: <span id="admin-user-name" class="text-white">CARGANDO...</span></p>
+            <p class="text-xs text-gray-500 uppercase mt-1">PERFIL: <span id="admin-user-role" class="text-yellow-400 font-bold">GERENCIA / ADMIN</span></p>
+        </div>
+    </div>
+
+    <!-- Filtros en Cascada (El Agrupador) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#21262d] p-5 rounded-lg border border-[#30363d]">
+        <div>
+            <label class="block text-xs font-bold text-gray-400 mb-2">1. FILTRAR POR ZONA</label>
+            <select id="filtro-zona-admin" class="w-full bg-[#0d1117] text-white p-3 rounded border border-[#30363d] focus:border-green-400 focus:outline-none cursor-pointer">
+                <option value="ALL">Nacional (Todas las Zonas)</option>
+                <option value="SANTANDER">Santander & Nariño (Marco)</option>
+                <option value="CENTRO">Centro (Wilson)</option>
+                <option value="COSTA">Costa (Paola)</option>
+                <option value="ANTIOQUIA">Antioquia & Eje (Zapata)</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-xs font-bold text-gray-400 mb-2">2. FILTRAR POR CADENA</label>
+            <select id="filtro-cadena-admin" class="w-full bg-[#0d1117] text-white p-3 rounded border border-[#30363d] focus:border-green-400 focus:outline-none cursor-pointer">
+                <option value="ALL">Todas las Cadenas</option>
+                <option value="EXITO">Grupo Éxito</option>
+                <option value="FALABELLA">Falabella</option>
+                <option value="WOM">WOM</option>
+                <option value="OLIMPICA">Olímpica</option>
+                <option value="ALKOSTO">Alkosto / Ktronix</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-xs font-bold text-gray-400 mb-2">3. FILTRAR POR TIENDA (Opcional)</label>
+            <select id="filtro-tienda-admin" class="w-full bg-[#0d1117] text-gray-400 p-3 rounded border border-[#30363d] focus:border-green-400 focus:outline-none cursor-pointer">
+                <option value="ALL">Consolidado General</option>
+                <!-- JS inyectará las tiendas aquí según la cadena/zona -->
+            </select>
+        </div>
+    </div>
+
+    <!-- KPIs Globales (El Mapa de Calor) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- KPI 1: Ventas -->
+        <div class="bg-gradient-to-br from-[#0d1117] to-[#161b22] p-6 rounded-lg border border-[#30363d] shadow-md text-center hover:border-green-500/50 transition-colors">
+            <h3 class="text-gray-400 text-xs font-bold mb-2 uppercase tracking-widest">Ventas Infinix (Acumulado)</h3>
+            <p class="text-5xl font-black text-green-400" id="kpi-ventas-global">0</p>
+            <p class="text-xs text-gray-500 mt-2">Unidades Totales en la selección</p>
+        </div>
+        <!-- KPI 2: Share -->
+        <div class="bg-gradient-to-br from-[#0d1117] to-[#161b22] p-6 rounded-lg border border-[#30363d] shadow-md text-center hover:border-blue-500/50 transition-colors">
+            <h3 class="text-gray-400 text-xs font-bold mb-2 uppercase tracking-widest">Market Share (Participación)</h3>
+            <p class="text-5xl font-black text-blue-400" id="kpi-share-global">0%</p>
+            <p class="text-xs text-gray-500 mt-2">Frente a la competencia total</p>
+        </div>
+        <!-- KPI 3: ROI / Target -->
+        <div class="bg-gradient-to-br from-[#0d1117] to-[#161b22] p-6 rounded-lg border border-[#30363d] shadow-md text-center hover:border-yellow-500/50 transition-colors">
+            <h3 class="text-gray-400 text-xs font-bold mb-2 uppercase tracking-widest">Cumplimiento Target</h3>
+            <p class="text-5xl font-black text-yellow-400" id="kpi-target-global">0%</p>
+            <p class="text-xs text-gray-500 mt-2">Avance de meta mensual</p>
+        </div>
+    </div>
+
+    <!-- Botones de Acción -->
+    <div class="flex flex-wrap gap-4 justify-center mt-8 p-6 bg-[#161b22] rounded-lg border border-[#30363d]">
+        <button id="btn-descargar-consolidado" class="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded shadow-lg shadow-blue-500/30 transition-all flex items-center gap-2">
+            📥 Descargar Consolidado (Imagen/Excel)
+        </button>
+        
+        <!-- MODO DIOS: Solo visible para Jerson -->
+        <button id="btn-wipe-reset" class="hidden px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded shadow-lg shadow-red-500/30 transition-all items-center gap-2">
+            ⚠️ WIPE & RESET (Cierre de Mes Oficial)
+        </button>
+    </div>
+
 </div>
     </main>
 
@@ -1511,6 +1636,7 @@
         </div>
     </div>
 
+
     <!-- SCRIPT DE INTERACCIÓN Y BASE DE DATOS COMPLETA -->
     <script>
         let appState = JSON.parse(localStorage.getItem('infinix_cortex_state')) || {
@@ -1620,6 +1746,7 @@ let currentUserZone = 'TODAS';
                 if (doc.exists) {
                     const userData = doc.data();
                     
+                    
                     if (userData.password === passInput) {
                         if(errorMsg) errorMsg.classList.add('hidden');
 
@@ -1689,6 +1816,7 @@ let currentUserZone = 'TODAS';
                 btn.disabled = false;
             });
         }
+        
         function ejecutarAcceso(rol, nombre, codigo, tienda, zona, regional, remember, pass) {
         currentUserRole = rol;
         currentUserName = nombre;
@@ -1701,7 +1829,14 @@ let currentUserZone = 'TODAS';
             if (typeof initCloudSincronizacion === 'function') {
                 try { initCloudSincronizacion(); } catch(err) {}
             }
-
+// INYECTAR EL CEREBRO DE PERMISOS (Fase 2 - Centralizado)
+if (typeof configurarPanelPorRol === 'function') {
+        configurarPanelPorRol({ 
+            rol: currentUserRole, 
+            nombre: currentUserName, 
+            zona: currentUserZone 
+        });
+    }
             // Mostrar el botón de migración si es el admin maestro
             if (codigo === 'ADMIN') {
                 const migBtn = document.getElementById('admin-migrator-btn');
@@ -1984,8 +2119,21 @@ function applyRolePermissions(role) {
 }
 
 function switchTab(tabId) {
+// --- NUEVO AJUSTE: Control de encendido/apagado del botón Cierre de Ventas ---
+const btnCierre = document.getElementById('btn-tab-cierre-ventas');
+    if (btnCierre) {
+        if (tabId === 'tab-cierre-ventas') {
+            // Encender el botón (Ponerlo Verde)
+            btnCierre.classList.add('bg-green-500', 'text-black');
+            btnCierre.classList.remove('text-gray-300', 'hover:bg-white/5');
+        } else {
+            // Apagar el botón (Volverlo oscuro/normal)
+            btnCierre.classList.remove('bg-green-500', 'text-black');
+            btnCierre.classList.add('text-gray-300', 'hover:bg-white/5');
+        }
+    }
             // 1. OCULTAR TODAS LAS SECCIONES HTML
-            const tabs = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping', 'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-calculadora', 'tab-admin-calculadora', 'tab-salon-fama', 'tab-inventario', 'tab-simulador', 'tab-shopping-trainer', 'tab-shopping-admin'];
+            const tabs = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping', 'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-calculadora', 'tab-admin-calculadora', 'tab-salon-fama', 'tab-inventario', 'tab-shopping-trainer', 'tab-shopping-admin', 'tab-cierre-ventas'];
             
             tabs.forEach(t => {
                 const el = document.getElementById(t);
@@ -5347,8 +5495,133 @@ const cardHtml = `
             <button onclick="processHardwareData()" class="w-full mt-4 py-4 bg-cyberMagenta text-white font-black rounded-xl uppercase tracking-widest orbitron shadow-md">🎯 EXPANDIR CATÁLOGO A NIVEL NACIONAL</button>
         </div>
     </div>
+  
+<!-- ========================================== -->
 
-    <script>
+<!-- MEGA TARJETA ESTILO EXCEL (Actualizada con Mes y Espejos W) -->
+<div id="card-cierre-exportable" style="display: none; width: 1400px; background: #0d1117; color: #ffffff; padding: 20px; border: 2px solid #00ff66; font-family: monospace, sans-serif; box-sizing: border-box;">
+    
+    <div style="text-align: center; border-bottom: 2px solid #00ff66; padding-bottom: 10px; margin-bottom: 15px;">
+        <h2 style="margin: 0; color: #00ff66; font-size: 22px; text-transform: uppercase; letter-spacing: 2px;">FORMATO DE VENTAS DIARIO INFINIX</h2>
+        <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 14px; font-weight: bold; color: #38bdf8;">
+            <span>ASESOR: <span id="excel-asesor" style="color: white;">CARGANDO...</span></span>
+            <span>CADENA: <span id="excel-cadena" style="color: white;">CARGANDO...</span></span>
+            <span>TIENDA: <span id="excel-tienda" style="color: white;">CARGANDO...</span></span>
+            <span>ZONA: <span id="excel-zona" style="color: white;">CARGANDO...</span></span>
+        </div>
+    </div>
+
+    <!-- TABLA 1: INFINIX -->
+    <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 11px; margin-bottom: 20px;">
+        <thead>
+            <tr style="background: rgba(0,255,102,0.1); color: #00ff66;">
+                <th colspan="3" id="excel-mes-actual" style="border: 1px solid #30363d; padding: 5px;">MES ACTUAL</th>
+                <th colspan="5" style="border: 1px solid #30363d; padding: 5px; background: rgba(255,153,0,0.1); color: #ff9900;">SEMANAS DEL MES</th>
+                <th colspan="7" style="border: 1px solid #30363d; padding: 5px;">SEMANA ACTUAL (<span id="excel-w-actual">W31</span>)</th>
+                <th colspan="5" style="border: 1px solid #30363d; padding: 5px; background: rgba(56,189,248,0.1); color: #38bdf8;">RESULTADO GENERAL</th>
+            </tr>
+            <tr style="background: #21262d; color: #8b949e;">
+                <th style="border: 1px solid #30363d; padding: 4px; text-align: left; width: 14%;">MODELO</th>
+                <th style="border: 1px solid #30363d; padding: 4px; width: 4%;">TARGET</th>
+                <th style="border: 1px solid #30363d; padding: 4px; width: 4%;">INV</th>
+                <th id="th-w1-inf" style="border: 1px solid #30363d; padding: 4px; width: 4%;">W31</th>
+                <th id="th-w2-inf" style="border: 1px solid #30363d; padding: 4px; width: 4%;">W32</th>
+                <th id="th-w3-inf" style="border: 1px solid #30363d; padding: 4px; width: 4%;">W33</th>
+                <th id="th-w4-inf" style="border: 1px solid #30363d; padding: 4px; width: 4%;">W34</th>
+                <th id="th-w5-inf" style="border: 1px solid #30363d; padding: 4px; width: 4%;">W35</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: white; width: 4%;">L</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: white; width: 4%;">M</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: white; width: 4%;">M</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: white; width: 4%;">J</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: white; width: 4%;">V</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: white; width: 4%;">S</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: white; width: 4%;">D</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: #00ff66; width: 5%;">T. WEEK</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: #00ff66; width: 5%;">SH. WEEK</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: #38bdf8; width: 5%;">MONTH</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: #38bdf8; width: 5%;">CUMP.</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: #38bdf8; width: 5%;">SH. MONTH</th>
+            </tr>
+        </thead>
+        <tbody id="excel-tabla-infinix-body"></tbody>
+        <tfoot>
+            <tr style="background: rgba(0,255,102,0.2); color: #00ff66; font-weight: bold;">
+                <td style="border: 1px solid #30363d; padding: 6px; text-align: left;">TOTAL INFINIX</td>
+                <td id="excel-inf-tot-target" style="border: 1px solid #30363d;">0</td>
+                <td id="excel-inf-tot-inv" style="border: 1px solid #30363d;">0</td>
+                <td id="excel-inf-tot-w1" style="border: 1px solid #30363d;">-</td>
+                <td style="border: 1px solid #30363d;">-</td><td style="border: 1px solid #30363d;">-</td><td style="border: 1px solid #30363d;">-</td><td style="border: 1px solid #30363d;">-</td>
+                <td id="excel-inf-tot-l" style="border: 1px solid #30363d; color: white;">0</td>
+                <td id="excel-inf-tot-m1" style="border: 1px solid #30363d; color: white;">0</td>
+                <td id="excel-inf-tot-m2" style="border: 1px solid #30363d; color: white;">0</td>
+                <td id="excel-inf-tot-j" style="border: 1px solid #30363d; color: white;">0</td>
+                <td id="excel-inf-tot-v" style="border: 1px solid #30363d; color: white;">0</td>
+                <td id="excel-inf-tot-s" style="border: 1px solid #30363d; color: white;">0</td>
+                <td id="excel-inf-tot-d" style="border: 1px solid #30363d; color: white;">0</td>
+                <td id="excel-inf-tot-week" style="border: 1px solid #30363d; font-size: 13px;">0</td>
+                <td style="border: 1px solid #30363d;">100%</td>
+                <td id="excel-inf-tot-month" style="border: 1px solid #30363d;">0</td>
+                <td id="excel-inf-tot-cump" style="border: 1px solid #30363d;">0%</td>
+                <td style="border: 1px solid #30363d;">100%</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- TABLA 2: COMPETENCIA -->
+    <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 11px;">
+        <thead>
+            <tr style="background: #21262d; color: #8b949e;">
+                <th style="border: 1px solid #30363d; padding: 4px; text-align: left; width: 14%;">MARCA</th>
+                <th style="border: 1px solid #30363d; padding: 4px; width: 4%;">TARGET</th>
+                <th style="border: 1px solid #30363d; padding: 4px; width: 4%;">HC</th>
+                <th id="th-w1-mar" style="border: 1px solid #30363d; padding: 4px; width: 4%;">W31</th>
+                <th id="th-w2-mar" style="border: 1px solid #30363d; padding: 4px; width: 4%;">W32</th>
+                <th id="th-w3-mar" style="border: 1px solid #30363d; padding: 4px; width: 4%;">W33</th>
+                <th id="th-w4-mar" style="border: 1px solid #30363d; padding: 4px; width: 4%;">W34</th>
+                <th id="th-w5-mar" style="border: 1px solid #30363d; padding: 4px; width: 4%;">W35</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: white; width: 4%;">L</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: white; width: 4%;">M</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: white; width: 4%;">M</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: white; width: 4%;">J</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: white; width: 4%;">V</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: white; width: 4%;">S</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: white; width: 4%;">D</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: #00ff66; width: 5%;">WEEK</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: #00ff66; width: 5%;">SHARE</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: #38bdf8; width: 5%;">TTL MES</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: #38bdf8; width: 5%;">ROI</th>
+                <th style="border: 1px solid #30363d; padding: 4px; color: #38bdf8; width: 5%;">SHARE</th>
+            </tr>
+        </thead>
+        <tbody id="excel-tabla-marcas-body"></tbody>
+        <tfoot>
+            <tr style="background: rgba(0,255,102,0.2); color: #00ff66; font-weight: bold;">
+                <td style="border: 1px solid #30363d; padding: 6px; text-align: left;">TOTAL MERCADO</td>
+                <td id="excel-mercado-tot-target" style="border: 1px solid #30363d;">0</td>
+                <td id="excel-mercado-tot-hc" style="border: 1px solid #30363d;">0</td>
+                <td id="excel-mercado-tot-w1" style="border: 1px solid #30363d;">-</td>
+                <td style="border: 1px solid #30363d;">-</td><td style="border: 1px solid #30363d;">-</td><td style="border: 1px solid #30363d;">-</td><td style="border: 1px solid #30363d;">-</td>
+                <td id="excel-mercado-tot-l" style="border: 1px solid #30363d; color: white;">0</td>
+                <td id="excel-mercado-tot-m1" style="border: 1px solid #30363d; color: white;">0</td>
+                <td id="excel-mercado-tot-m2" style="border: 1px solid #30363d; color: white;">0</td>
+                <td id="excel-mercado-tot-j" style="border: 1px solid #30363d; color: white;">0</td>
+                <td id="excel-mercado-tot-v" style="border: 1px solid #30363d; color: white;">0</td>
+                <td id="excel-mercado-tot-s" style="border: 1px solid #30363d; color: white;">0</td>
+                <td id="excel-mercado-tot-d" style="border: 1px solid #30363d; color: white;">0</td>
+                <td id="excel-mercado-tot-week" style="border: 1px solid #30363d; font-size: 13px;">0</td>
+                <td style="border: 1px solid #30363d;">100%</td>
+                <td id="excel-mercado-tot-month" style="border: 1px solid #30363d;">0</td>
+                <td id="excel-mercado-tot-roi" style="border: 1px solid #30363d;">0</td>
+                <td style="border: 1px solid #30363d;">100%</td>
+            </tr>
+        </tfoot>
+    </table>
+    <div style="text-align: right; font-size: 10px; color: #8b949e; margin-top: 15px;">
+        🚀 Generado desde ProTrainer Infinix | Central de Operaciones
+    </div>
+</div>
+      <script> 
+
         function openHardwareModal() { document.getElementById('admin-hardware-modal').classList.remove('hidden'); }
         function closeHardwareModal() { document.getElementById('admin-hardware-modal').classList.add('hidden'); }
 
@@ -6612,6 +6885,7 @@ function inyectarNuevaReferencia() {
                 alert("Error al generar el reporte: " + error.message);
             });
         }  
+   
 // ==========================================
 // MÓDULO: MOTOR DE SHOPPING DIARIO (CON BOTONES)
 // ==========================================
@@ -6970,6 +7244,511 @@ function cargarVentasCalculadoraLocal() {
             }
         });
     });
+    // Función para calcular semana actual (Ej: W31)
+function obtenerSemanaActualKey() {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 1);
+    const days = Math.floor((now - start) / (24 * 60 * 60 * 1000));
+    const semanaNum = Math.ceil((days + start.getDay() + 1) / 7);
+    return `W${semanaNum}`;
+}
+
+// Motor maestro Asíncrono para guardar en Firebase (Solo 1 vez en todo tu archivo)
+async function generarYGuardarCierreVentas() {
+    
+    const fecha = new Date();
+    const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    const diaHoy = diasSemana[fecha.getDay()]; // Ej: "Viernes"
+    
+    // Variables para capturar lo de HOY
+    let totalUnidadesDia = 0;
+    let totalDineroDia = 0;
+    let desgloseInfinixDia = {};
+    let desgloseCompetenciaDia = {};
+
+  // 1. Recolectar lo de INFINIX de la pantalla (Ahora con Target)
+  Object.keys(infinixDatabase).forEach(key => {
+        const inputVenta = document.getElementById(`cierre-${key}-hoy`);
+        const inputTarget = document.getElementById(`cierre-target-inf-${key}`);
+        
+        if (inputVenta) {
+            const units = parseInt(inputVenta.value) || 0;
+            const targetInf = inputTarget ? (parseInt(inputTarget.value) || 0) : 0;
+            
+            if (units > 0 || targetInf > 0) { // Guarda si hay venta o si tiene un target asignado
+                totalUnidadesDia += units;
+                desgloseInfinixDia[key] = { venta: units, target: targetInf };
+                const precioUnitario = infinixDatabase[key].price || infinixDatabase[key].valor || 500000;
+                totalDineroDia += (units * precioUnitario);
+            }
+        }
+    });
+
+    const ticketPromedio = totalUnidadesDia > 0 ? Math.round(totalDineroDia / totalUnidadesDia) : 0;
+
+// 2. Recolectar lo de la COMPETENCIA de la pantalla
+const marcasCompetencia = ["INFINIX", "XIAOMI", "HONOR", "TECNO", "OPPO", "REALME", "VIVO", "MOTOROLA", "SAMSUNG"];
+    marcasCompetencia.forEach(marca => {
+        const inputHc = document.getElementById(`cierre-hc-${marca}`);
+        const inputTarget = document.getElementById(`cierre-target-${marca}`); // <-- ATRAPAMOS EL TARGET AQUÍ
+        const inputVenta = document.getElementById(`cierre-venta-${marca}`);
+        
+        desgloseCompetenciaDia[marca] = {
+            hc: inputHc ? (inputHc.value || '-') : '-',
+            target: inputTarget ? (parseInt(inputTarget.value) || 0) : 0, // <-- Y LO GUARDAMOS AQUÍ
+            venta: inputVenta ? (parseInt(inputVenta.value) || 0) : 0
+        };
+    });
+
+    // 3. Empaquetar SOLO LO DE HOY
+    const payloadHoy = {
+        asesor: typeof currentUserName !== 'undefined' ? currentUserName : "Asesor Infinix",
+        fechaStr: new Date().toLocaleDateString(),
+        timestamp: Date.now(),
+        totalUnidadesDia,
+        totalDineroDia,
+        ticketPromedio,
+        infinix: desgloseInfinixDia,
+        competencia: desgloseCompetenciaDia
+    };
+
+    try {
+        // Datos de la tienda y la semana
+        const nombreTienda = typeof window.currentUserStore !== 'undefined' ? window.currentUserStore : "Éxito Bucaramanga"; 
+        const idDocumentoSemana = `${nombreTienda}_${typeof semanaKey !== 'undefined' ? semanaKey : 'W31'}`.replace(/\s+/g, '_'); 
+
+        // 4. GUARDAR EN FIREBASE (Merge: true protege los días anteriores)
+        await db.collection("cierre_ventas_nacional").doc(idDocumentoSemana).set({
+            tienda: nombreTienda,
+            semana: typeof semanaKey !== 'undefined' ? semanaKey : 'W31',
+            [diaHoy]: payloadHoy // Guarda en el cajón del día (Ej: "Viernes")
+        }, { merge: true });
+
+        console.log("✅ Datos de HOY guardados con éxito en Firebase.");
+
+       // 5. DESCARGAR TODA LA SEMANA DE FIREBASE PARA ARMAR EL EXCEL
+       const docSemana = await db.collection("cierre_ventas_nacional").doc(idDocumentoSemana).get();
+        const dataSemana = docSemana.data() || {};
+// 5.5 DESCARGAR INVENTARIO (STOCK) DE LA TIENDA
+let dataInventario = {};
+        try {
+            const invSnapshot = await db.collection("inventario_nacional").get();
+            // Limpieza extrema: Quita tildes, espacios y pasa a mayúsculas
+            const tiendaLimpia = nombreTienda.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+            invSnapshot.forEach(doc => {
+                const data = doc.data();
+                const cadenaDoc = (data.cadena || data.tienda || doc.id || "").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+                if (cadenaDoc === tiendaLimpia || cadenaDoc.includes(tiendaLimpia) || tiendaLimpia.includes(cadenaDoc)) {
+                    if (data.desglose) {
+                        dataInventario = data.desglose; // Atrapamos el paquete exacto de Firebase
+                    }
+                }
+            });
+            console.log("🔥 STOCK ENCONTRADO:", dataInventario); // Para que lo veas en F12 si quieres revisar
+        } catch (error) {
+            console.error("Aviso: Error cruzando inventario.", error);
+        }
+
+        // 6. DIBUJAR LA MEGA TARJETA ESTILO EXCEL
+        // (Esta función la crearemos en el próximo paso una vez confirmes que este guardado funciona)
+        if (typeof dibujarMegaExcel === 'function') {
+            dibujarMegaExcel(dataSemana, nombreTienda, typeof semanaKey !== 'undefined' ? semanaKey : 'W31', dataInventario);
+        } else {
+            console.warn("La función dibujarMegaExcel aún no está programada, pero los datos se guardaron.");
+            alert("Ventas de hoy guardadas en la nube. Preparando motor de Excel...");
+        }
+
+    } catch (error) {
+        console.error("Error crítico con Firebase:", error);
+        alert("Hubo un error al sincronizar con la base de datos.");
+    }
+}
+// Función para calcular semana actual (Ej: W31)
+function obtenerSemanaActualKey() {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 1);
+    const days = Math.floor((now - start) / (24 * 60 * 60 * 1000));
+    const semanaNum = Math.ceil((days + start.getDay() + 1) / 7);
+    return `W${semanaNum}`;
+}
+
+// Función para pintar las tablas de Cierre de Ventas dentro de la pestaña
+function renderizarFormularioCierre() {
+    const container = document.getElementById('formulario-cierre-container');
+    if (!container) return;
+
+    const fecha = new Date();
+    const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    const diaHoy = diasSemana[fecha.getDay()]; 
+
+    const marcasCompetencia = ["INFINIX", "XIAOMI", "HONOR", "TECNO", "OPPO", "REALME", "VIVO", "MOTOROLA", "SAMSUNG"];
+
+    // 1. DIBUJAR TABLA INFINIX (Ahora con Target)
+    let html = `
+    <div class="overflow-x-auto">
+        <h3 class="text-sm font-bold text-green-400 mb-2 uppercase">1. Reporte de Modelos Infinix (Venta de ${diaHoy})</h3>
+        <table class="w-full text-xs text-left text-gray-300 border border-darkBorder mb-6">
+            <thead class="bg-darkBg text-green-400 border-b border-darkBorder">
+                <tr>
+                    <th class="p-2 border-r border-darkBorder">MODELO INFINIX</th>
+                    <th class="p-2 text-center w-20 border-r border-darkBorder">TARGET</th>
+                    <th class="p-2 text-center w-28 bg-green-500/10 uppercase">VENTA ${diaHoy}</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    Object.keys(infinixDatabase).forEach((key) => {
+        const item = infinixDatabase[key];
+        html += `
+            <tr class="border-b border-darkBorder hover:bg-white/5 transition-all">
+                <td class="p-2 font-bold text-white border-r border-darkBorder">${item.name || key}</td>
+                <td class="p-1 border-r border-darkBorder"><input type="number" id="cierre-target-inf-${key}" min="0" class="w-full bg-darkBg text-center text-gray-300 p-2 rounded border border-darkBorder focus:border-green-400 guardar-local" placeholder="0"></td>
+                <td class="p-1 bg-green-500/5"><input type="number" id="cierre-${key}-hoy" min="0" class="w-full bg-darkBg text-center text-white p-2 rounded border border-darkBorder focus:border-green-400 focus:ring-1 focus:ring-green-400 font-bold calc-inf-hoy" placeholder="0"></td>
+            </tr>
+        `;
+    });
+
+    html += `
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 2. DIBUJAR TABLA COMPETENCIA -->
+    <div class="overflow-x-auto">
+        <h3 class="text-sm font-bold text-blue-400 mb-2 uppercase">2. Venta General Tienda y Competencia (Venta de ${diaHoy})</h3>
+        <table class="w-full text-xs text-left text-gray-300 border border-darkBorder mb-4">
+            <thead class="bg-darkBg text-blue-400 border-b border-darkBorder">
+                <tr>
+                    <th class="p-2 border-r border-darkBorder">MARCA</th>
+                    <th class="p-2 text-center w-20 border-r border-darkBorder">HC</th>
+                    <th class="p-2 text-center w-20 border-r border-darkBorder">TARGET</th>
+                    <th class="p-2 text-center w-28 text-green-400 bg-green-500/10 uppercase">VENTA ${diaHoy}</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    marcasCompetencia.forEach(marca => {
+        const bgRow = marca === "INFINIX" ? "bg-green-900/20" : "";
+        const textColor = marca === "INFINIX" ? "text-green-400 font-bold" : "text-white";
+        const readOnlyAttr = marca === "INFINIX" ? "readonly" : ""; // Bloqueamos la venta de Infinix aquí porque se autosuma
+
+        html += `
+            <tr class="border-b border-darkBorder hover:bg-white/5 transition-all ${bgRow}">
+                <td class="p-2 font-bold ${textColor} border-r border-darkBorder">${marca}</td>
+                <td class="p-1 border-r border-darkBorder"><input type="number" id="cierre-hc-${marca}" min="0" class="w-full bg-darkBg text-center text-gray-300 p-2 rounded border border-darkBorder focus:border-blue-400 guardar-local" placeholder="0"></td>
+                <td class="p-1 border-r border-darkBorder"><input type="number" id="cierre-target-${marca}" min="0" class="w-full bg-darkBg text-center text-gray-300 p-2 rounded border border-darkBorder focus:border-blue-400 guardar-local" placeholder="0"></td>
+                <td class="p-1 bg-green-500/5"><input type="number" id="cierre-venta-${marca}" min="0" class="w-full bg-darkBg text-center text-white p-2 rounded border border-darkBorder focus:border-green-400 font-bold" placeholder="0" ${readOnlyAttr}></td>
+            </tr>
+        `;
+    });
+
+    html += `
+            </tbody>
+        </table>
+    </div>
+    `;
+
+    container.innerHTML = html;
+
+    // MAGIA 1: Auto-Suma de Infinix
+    const inputsModelos = document.querySelectorAll('.calc-inf-hoy');
+    const inputTotalInfinix = document.getElementById('cierre-venta-INFINIX');
+    if (inputTotalInfinix) {
+        inputTotalInfinix.classList.add('cursor-not-allowed', 'opacity-80');
+        inputsModelos.forEach(input => {
+            input.addEventListener('input', () => {
+                let suma = 0;
+                inputsModelos.forEach(inp => suma += parseInt(inp.value) || 0);
+                inputTotalInfinix.value = suma;
+            });
+        });
+    }
+
+    // MAGIA 2: Guardar HC y Targets en memoria local automáticamente
+    const inputsPersistentes = document.querySelectorAll('.guardar-local');
+    inputsPersistentes.forEach(input => {
+        const valorGuardado = localStorage.getItem(input.id);
+        if (valorGuardado) input.value = valorGuardado; // Carga lo que había ayer
+        
+        input.addEventListener('input', () => {
+            localStorage.setItem(input.id, input.value); // Guarda cada vez que teclean
+        });
+    });
+}
+function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = {}) {
+    const numSemanaActual = parseInt(semanaStr.replace(/\D/g, '')) || 31;
+    
+    // 1. MES DINÁMICO Y ENCABEZADOS
+    const meses = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
+    const mesActual = meses[new Date().getMonth()];
+    const elMes = document.getElementById('excel-mes-actual');
+    if(elMes) elMes.textContent = mesActual;
+
+    document.getElementById('excel-tienda').textContent = nombreTienda;
+    document.getElementById('excel-cadena').textContent = nombreTienda.split(" ")[0].toUpperCase();
+    document.getElementById('excel-w-actual').textContent = numSemanaActual;
+    document.getElementById('excel-zona').textContent = typeof currentUserZone !== 'undefined' ? currentUserZone.toUpperCase() : 'SANTANDER';
+    
+    for(let i=1; i<=5; i++) {
+        let textSem = `W${numSemanaActual + i - 1}`;
+        if(document.getElementById(`th-w${i}-inf`)) document.getElementById(`th-w${i}-inf`).textContent = textSem;
+        if(document.getElementById(`th-w${i}-mar`)) document.getElementById(`th-w${i}-mar`).textContent = textSem;
+    }
+
+    let ultimoAsesor = "ASESOR";
+    const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    diasSemana.forEach(dia => {
+        if (dataSemana[dia] && dataSemana[dia].asesor) ultimoAsesor = dataSemana[dia].asesor;
+    });
+    document.getElementById('excel-asesor').textContent = ultimoAsesor.toUpperCase();
+
+    // ---- PRE-CÁLCULOS INFINIX ----
+    let totInfDia = { 'Lunes':0, 'Martes':0, 'Miércoles':0, 'Jueves':0, 'Viernes':0, 'Sábado':0, 'Domingo':0 };
+    let totInfWeek = 0; let totInfTarget = 0; let totInfInv = 0;
+    let datosInfinixArray = [];
+
+    Object.keys(infinixDatabase).forEach(key => {
+        const nombre = infinixDatabase[key].name || key;
+        let sumaSemanaModelo = 0; let targetModelo = 0; let invModelo = 0;
+        let ventasPorDia = {};
+        
+// Coincidencia Exacta de Stock (Anti-duplicados)
+        // Quitamos la palabra "INFINIX" y caracteres especiales para comparar manzanas con manzanas
+        const nomLimpio = nombre.toUpperCase().replace(/INFINIX/g, '').replace(/[^A-Z0-9]/g, '');
+        
+        Object.keys(dataInventario).forEach(k => {
+            const kLimpio = k.toUpperCase().replace(/INFINIX/g, '').replace(/[^A-Z0-9]/g, '');
+            
+            // EL SECRETO: Usamos === (igualdad estricta) para que Note 60 no se robe lo de Note 60 PRO
+            if (kLimpio !== "" && nomLimpio === kLimpio) {
+                invModelo = parseInt(dataInventario[k]) || 0;
+            }
+        });
+        // ---------------------------------------------------------
+        // MAGIA ANTI-OBJECT (AQUÍ ESTÁ LA CORRECCIÓN)
+        diasSemana.forEach(dia => {
+            let ventaDia = 0;
+            if (dataSemana[dia] && dataSemana[dia].infinix && dataSemana[dia].infinix[key] !== undefined) {
+                let val = dataSemana[dia].infinix[key];
+                
+                // Detecta si es el formato nuevo {venta, target} o el viejo (solo número)
+                if (typeof val === 'object' && val !== null) {
+                    ventaDia = parseInt(val.venta) || 0;
+                    if (val.target) targetModelo = parseInt(val.target) || 0;
+                } else {
+                    ventaDia = parseInt(val) || 0;
+                }
+            }
+            ventasPorDia[dia] = ventaDia;
+            sumaSemanaModelo += ventaDia;
+            totInfDia[dia] += ventaDia;
+        });
+        // ---------------------------------------------------------
+
+        totInfWeek += sumaSemanaModelo; 
+        totInfTarget += targetModelo; 
+        totInfInv += invModelo;
+        
+        datosInfinixArray.push({ nombre, targetModelo, invModelo, ventasPorDia, sumaSemanaModelo });
+    });
+
+    const tbodyInfinix = document.getElementById('excel-tabla-infinix-body');
+    let htmlInfinix = '';
+    
+    datosInfinixArray.forEach(dato => {
+        let filaDiasHtml = '';
+        diasSemana.forEach(dia => {
+            let v = dato.ventasPorDia[dia];
+            filaDiasHtml += `<td style="border: 1px solid #30363d; padding: 4px; color: ${v > 0 ? '#00ff66' : 'white'};">${v}</td>`;
+        });
+
+        let cumpModelo = dato.targetModelo > 0 ? Math.round((dato.sumaSemanaModelo / dato.targetModelo) * 100) : 0;
+        let shareInf = totInfWeek > 0 ? Math.round((dato.sumaSemanaModelo / totInfWeek) * 100) : 0;
+
+        htmlInfinix += `
+            <tr style="background: transparent; color: #8b949e; border-bottom: 1px solid #30363d;">
+                <td style="border: 1px solid #30363d; padding: 4px; text-align: left; color: white;">${dato.nombre}</td>
+                <td style="border: 1px solid #30363d; padding: 4px;">${dato.targetModelo}</td>
+                <td style="border: 1px solid #30363d; padding: 4px;">${dato.invModelo}</td>
+                <td style="border: 1px solid #30363d; padding: 4px; color: #00ff66; font-weight: bold;">${dato.sumaSemanaModelo}</td>
+                <td style="border: 1px solid #30363d; padding: 4px;">-</td><td style="border: 1px solid #30363d;">-</td><td style="border: 1px solid #30363d;">-</td><td style="border: 1px solid #30363d;">-</td>
+                ${filaDiasHtml}
+                <td style="border: 1px solid #30363d; padding: 4px; color: #00ff66; font-weight: bold;">${dato.sumaSemanaModelo}</td>
+                <td style="border: 1px solid #30363d; padding: 4px;">${shareInf}%</td>
+                <td style="border: 1px solid #30363d; padding: 4px; color: #38bdf8;">${dato.sumaSemanaModelo}</td>
+                <td style="border: 1px solid #30363d; padding: 4px; color: #38bdf8;">${cumpModelo}%</td>
+                <td style="border: 1px solid #30363d; padding: 4px;">${shareInf}%</td>
+            </tr>
+        `;
+    });
+    tbodyInfinix.innerHTML = htmlInfinix;
+
+    // Totales Infinix
+    document.getElementById('excel-inf-tot-target').textContent = totInfTarget;
+    document.getElementById('excel-inf-tot-inv').textContent = totInfInv;
+    if(document.getElementById('excel-inf-tot-w1')) document.getElementById('excel-inf-tot-w1').textContent = totInfWeek;
+    document.getElementById('excel-inf-tot-l').textContent = totInfDia['Lunes'];
+    document.getElementById('excel-inf-tot-m1').textContent = totInfDia['Martes'];
+    document.getElementById('excel-inf-tot-m2').textContent = totInfDia['Miércoles'];
+    document.getElementById('excel-inf-tot-j').textContent = totInfDia['Jueves'];
+    document.getElementById('excel-inf-tot-v').textContent = totInfDia['Viernes'];
+    document.getElementById('excel-inf-tot-s').textContent = totInfDia['Sábado'];
+    document.getElementById('excel-inf-tot-d').textContent = totInfDia['Domingo'];
+    document.getElementById('excel-inf-tot-week').textContent = totInfWeek;
+    document.getElementById('excel-inf-tot-month').textContent = totInfWeek;
+    document.getElementById('excel-inf-tot-cump').textContent = totInfTarget > 0 ? Math.round((totInfWeek / totInfTarget) * 100) + '%' : '0%';
+
+
+    // ---- PRE-CÁLCULOS COMPETENCIA ----
+    let totMercadoDia = { 'Lunes':0, 'Martes':0, 'Miércoles':0, 'Jueves':0, 'Viernes':0, 'Sábado':0, 'Domingo':0 };
+    let totMercadoWeek = 0; let totMercadoTarget = 0; let totMercadoHC = 0;
+    let datosMarcasArray = [];
+    const marcasCompetencia = ["INFINIX", "XIAOMI", "HONOR", "TECNO", "OPPO", "REALME", "VIVO", "MOTOROLA", "SAMSUNG"];
+
+    marcasCompetencia.forEach(marca => {
+        let sumaSemanaMarca = 0; let hcUltimo = 0; let targetUltimo = 0; let ventasPorDia = {};
+
+        diasSemana.forEach(dia => {
+            let ventaDia = 0;
+            if (dataSemana[dia] && dataSemana[dia].competencia && dataSemana[dia].competencia[marca]) {
+                ventaDia = dataSemana[dia].competencia[marca].venta || 0;
+                if (dataSemana[dia].competencia[marca].hc) hcUltimo = parseInt(dataSemana[dia].competencia[marca].hc) || 0;
+                if (dataSemana[dia].competencia[marca].target) targetUltimo = parseInt(dataSemana[dia].competencia[marca].target) || 0;
+            }
+            ventasPorDia[dia] = ventaDia;
+            sumaSemanaMarca += ventaDia;
+            totMercadoDia[dia] += ventaDia;
+        });
+        
+        totMercadoWeek += sumaSemanaMarca; totMercadoTarget += targetUltimo; totMercadoHC += hcUltimo;
+        datosMarcasArray.push({ marca, hc: hcUltimo, target: targetUltimo, ventasPorDia, sumaSemanaMarca });
+    });
+
+    const tbodyMarcas = document.getElementById('excel-tabla-marcas-body');
+    let htmlMarcas = '';
+
+    datosMarcasArray.forEach(dato => {
+        let filaDiasHtml = '';
+        const isInf = dato.marca === 'INFINIX';
+
+        diasSemana.forEach(dia => {
+            let v = dato.ventasPorDia[dia];
+            // Aquí está la magia: Si es Infinix, la letra del día siempre es verde. Si no, blanca o gris.
+            let colorTexto = isInf ? '#00ff66' : (v > 0 ? 'white' : '#8b949e');
+            filaDiasHtml += `<td style="border: 1px solid #30363d; padding: 4px; color: ${colorTexto};">${v}</td>`;
+        });
+
+        const share = totMercadoWeek > 0 ? Math.round((dato.sumaSemanaMarca / totMercadoWeek) * 100) : 0;
+        const roi = dato.hc > 0 ? (dato.sumaSemanaMarca / dato.hc).toFixed(1) : 0;
+
+        htmlMarcas += `
+            <tr style="background: ${isInf ? 'rgba(0,255,102,0.1)' : 'transparent'}; color: ${isInf ? '#00ff66' : '#8b949e'}; font-weight: ${isInf ? 'bold' : 'normal'}; border-bottom: 1px solid #30363d;">
+                <td style="border: 1px solid #30363d; padding: 4px; text-align: left;">${dato.marca}</td>
+                <td style="border: 1px solid #30363d; padding: 4px;">${dato.target}</td>
+                <td style="border: 1px solid #30363d; padding: 4px;">${dato.hc}</td>
+                <td style="border: 1px solid #30363d; padding: 4px; color: ${isInf ? '#00ff66' : 'white'}; font-weight: ${isInf ? 'bold' : 'normal'};">${dato.sumaSemanaMarca}</td>
+                <td style="border: 1px solid #30363d; padding: 4px;">-</td><td style="border: 1px solid #30363d;">-</td><td style="border: 1px solid #30363d;">-</td><td style="border: 1px solid #30363d;">-</td>
+                ${filaDiasHtml}
+                <td style="border: 1px solid #30363d; padding: 4px; color: #00ff66;">${dato.sumaSemanaMarca}</td>
+                <td style="border: 1px solid #30363d; padding: 4px; color: #00ff66;">${share}%</td>
+                <td style="border: 1px solid #30363d; padding: 4px; color: #38bdf8;">${dato.sumaSemanaMarca}</td>
+                <td style="border: 1px solid #30363d; padding: 4px; color: #38bdf8;">${roi}</td>
+                <td style="border: 1px solid #30363d; padding: 4px; color: #38bdf8;">${share}%</td>
+            </tr>
+        `;
+    });
+    tbodyMarcas.innerHTML = htmlMarcas;
+
+    // Totales Mercado
+    document.getElementById('excel-mercado-tot-target').textContent = totMercadoTarget;
+    document.getElementById('excel-mercado-tot-hc').textContent = totMercadoHC;
+    if(document.getElementById('excel-mercado-tot-w1')) document.getElementById('excel-mercado-tot-w1').textContent = totMercadoWeek;
+    document.getElementById('excel-mercado-tot-l').textContent = totMercadoDia['Lunes'];
+    document.getElementById('excel-mercado-tot-m1').textContent = totMercadoDia['Martes'];
+    document.getElementById('excel-mercado-tot-m2').textContent = totMercadoDia['Miércoles'];
+    document.getElementById('excel-mercado-tot-j').textContent = totMercadoDia['Jueves'];
+    document.getElementById('excel-mercado-tot-v').textContent = totMercadoDia['Viernes'];
+    document.getElementById('excel-mercado-tot-s').textContent = totMercadoDia['Sábado'];
+    document.getElementById('excel-mercado-tot-d').textContent = totMercadoDia['Domingo'];
+    document.getElementById('excel-mercado-tot-week').textContent = totMercadoWeek;
+    document.getElementById('excel-mercado-tot-month').textContent = totMercadoWeek;
+    document.getElementById('excel-mercado-tot-roi').textContent = totMercadoHC > 0 ? (totMercadoWeek / totMercadoHC).toFixed(1) : 0;
+
+    // 4. CAPTURAR Y DESCARGAR
+    const tarjetaVisual = document.getElementById('card-cierre-exportable');
+    tarjetaVisual.style.display = 'block'; 
+    
+    setTimeout(() => {
+        html2canvas(tarjetaVisual, { backgroundColor: '#0d1117', scale: 2 }).then(canvas => {
+            tarjetaVisual.style.display = 'none'; 
+            const link = document.createElement('a');
+            link.download = `Cierre_${nombreTienda.replace(/\s+/g, '_')}_W${numSemanaActual}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }).catch(err => {
+            console.error(err);
+            tarjetaVisual.style.display = 'none';
+        });
+    }, 400);
+}
+// ==========================================
+// MOTOR DE ROLES Y PERMISOS (Actualizado)
+// ==========================================
+function configurarPanelPorRol(datosUsuario) {
+    const panelAdmin = document.getElementById('panel-admin-gerencia');
+    const btnWipeReset = document.getElementById('btn-wipe-reset');
+    const filtroZona = document.getElementById('filtro-zona-admin');
+    const navCierreBtn = document.getElementById('btn-tab-cierre-ventas');
+    const btnTabReportes = document.getElementById('btn-tab-reportes-admin'); // <--- NUEVO BOTÓN
+    
+    if (!panelAdmin) return;
+
+    const rol = datosUsuario && datosUsuario.rol ? datosUsuario.rol.toUpperCase() : 'ASESOR';
+    const zonaUser = datosUsuario && datosUsuario.zona ? datosUsuario.zona.toUpperCase() : 'ALL';
+
+    if (rol === 'ASESOR') {
+        panelAdmin.classList.add('hidden');
+        if (navCierreBtn) navCierreBtn.classList.remove('hidden');
+        if (btnTabReportes) btnTabReportes.classList.add('hidden'); // Oculto para asesores
+        return; 
+    }
+
+    // SI ES ADMIN, GERENCIA O COORDINADOR:
+    // Ocultamos el cierre de ventas y MOSTRAMOS el botón de Central de Reportes en el menú
+    if (navCierreBtn) navCierreBtn.classList.add('hidden'); 
+    if (btnTabReportes) btnTabReportes.classList.remove('hidden'); // <--- ¡AQUÍ SE ENCIENDE!
+    
+    document.getElementById('admin-user-name').textContent = datosUsuario.nombre || "USUARIO";
+    document.getElementById('admin-user-role').textContent = rol;
+
+    // ... (el resto de tu lógica de filtros y permisos se queda igual)
+    // LÓGICA DE CANDADOS Y PERMISOS
+    if (rol === 'ADMIN') {
+        btnWipeReset.classList.remove('hidden'); // Botón rojo exclusivo para ti
+        filtroZona.disabled = false;
+        filtroZona.value = 'ALL';
+    } else if (rol === 'GERENCIA') {
+        btnWipeReset.classList.add('hidden'); 
+        filtroZona.disabled = false;
+        filtroZona.value = 'ALL';
+    } else if (rol === 'COORDINADOR' || rol === 'SUPERVISOR' || rol === 'TRAINER') {
+        btnWipeReset.classList.add('hidden'); 
+        
+        let opcionExiste = Array.from(filtroZona.options).some(opt => opt.value === zonaUser);
+        if (opcionExiste) {
+            filtroZona.value = zonaUser;
+        } else {
+            filtroZona.innerHTML = `<option value="${zonaUser}">${zonaUser}</option>`;
+        }
+        
+        filtroZona.disabled = true; 
+        filtroZona.classList.add('opacity-70', 'cursor-not-allowed'); 
+    }
+}
     </script>
 </body>
 </html>
