@@ -7317,12 +7317,11 @@ const marcasCompetencia = ["INFINIX", "XIAOMI", "HONOR", "TECNO", "OPPO", "REALM
         const nombreTienda = typeof window.currentUserStore !== 'undefined' ? window.currentUserStore : "Éxito Bucaramanga"; 
         const idDocumentoSemana = `${nombreTienda}_${typeof semanaKey !== 'undefined' ? semanaKey : 'W31'}`.replace(/\s+/g, '_'); 
 
-        // 4. GUARDAR EN FIREBASE (Merge: true protege los días anteriores)
         await db.collection("cierre_ventas_nacional").doc(idDocumentoSemana).set({
-            tienda: nombreTienda,
-            semana: typeof semanaKey !== 'undefined' ? semanaKey : 'W31',
-            [diaHoy]: payloadHoy // Guarda en el cajón del día (Ej: "Viernes")
-        }, { merge: true });
+    tienda: nombreTienda,
+    semana: typeof semanaKey !== 'undefined' ? semanaKey : 'W31',
+    [diaHoy]: payloadHoy // Reemplaza por completo el cajón del día con los datos frescos de pantalla
+}, { merge: true }); 
 
         console.log("✅ Datos de HOY guardados con éxito en Firebase.");
 
