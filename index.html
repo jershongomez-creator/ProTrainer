@@ -2102,10 +2102,13 @@ function applyRolePermissions(role) {
     const btnAdminCalculadora = document.getElementById('btn-tab-admin-calculadora');
     const btnSalonFama = document.getElementById('btn-tab-salon-fama');
     const btnInventario = document.getElementById('btn-tab-inventario');
-    const btnAdminListas = document.getElementById('btn-tab-admin-listas');
-    
     const btnShoppingTrainer = document.getElementById('btn-tab-shopping-trainer');
     const btnShoppingAdmin = document.getElementById('btn-tab-shopping-admin');
+    
+    // 👇 ESTOS ERAN LOS PRÓFUGOS 👇
+    const btnCierreVentas = document.getElementById('btn-tab-cierre-ventas');
+    const btnCentralReportes = document.getElementById('btn-tab-reportes-admin');
+    const btnAdminListas = document.getElementById('btn-tab-admin-listas');
     
     const tabsContainer = document.getElementById('main-tabs-container');
     const btnAlertRiv = document.getElementById('btn-alert-rival');
@@ -2117,8 +2120,8 @@ function applyRolePermissions(role) {
 
     let visibleTabs = 0;
 
-    // 1. OCULTAMOS TODOS LOS BOTONES POR DEFECTO
-    const allButtons = [btnArena, btnRadar, btnQuiz, btnShopping, btnCortex, btnAlertasMaster, btnTendenciasNacionales, btnCalculadora, btnAdminCalculadora, btnSalonFama, btnInventario, btnShoppingTrainer, btnShoppingAdmin, btnAdminListas];
+    // 1. OCULTAMOS TODOS LOS BOTONES POR DEFECTO (Incluyendo los nuevos)
+    const allButtons = [btnArena, btnRadar, btnQuiz, btnShopping, btnCortex, btnAlertasMaster, btnTendenciasNacionales, btnCalculadora, btnAdminCalculadora, btnSalonFama, btnInventario, btnShoppingTrainer, btnShoppingAdmin, btnCierreVentas, btnCentralReportes, btnAdminListas];
     allButtons.forEach(b => { if(b) b.classList.add('hidden'); });
     
     if (btnAlertRiv) btnAlertRiv.classList.add('hidden');
@@ -2147,8 +2150,11 @@ function applyRolePermissions(role) {
         if (btnAlertasMaster) { btnAlertasMaster.classList.remove('hidden'); visibleTabs++; }
         if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
         if (btnAdminCalculadora) { btnAdminCalculadora.classList.remove('hidden'); visibleTabs++; }
-        if (btnAdminListas) { btnAdminListas.classList.remove('hidden'); visibleTabs++; }
         
+        // BOTONES EXCLUSIVOS DE ADMIN:
+        if (btnCentralReportes) { btnCentralReportes.classList.remove('hidden'); visibleTabs++; }
+        if (btnAdminListas) { btnAdminListas.classList.remove('hidden'); visibleTabs++; }
+
         if (btnObjEditor) btnObjEditor.classList.remove('hidden');
         if (btnQuizEditor) btnQuizEditor.classList.remove('hidden');
         if (adminBell) { adminBell.classList.remove('hidden'); updateAdminBellCounter(); }
@@ -2158,11 +2164,13 @@ function applyRolePermissions(role) {
         if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
         if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
         if (btnRadar) { btnRadar.classList.add('hidden'); visibleTabs--; } 
+        if (btnCentralReportes) { btnCentralReportes.classList.remove('hidden'); visibleTabs++; }
     }
     else if (role === 'SUPERVISOR' || role === 'COORDINADOR' || role === 'TRAINER') {
         if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
         if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
         if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
+        if (btnCentralReportes) { btnCentralReportes.classList.remove('hidden'); visibleTabs++; }
 
         if ((role === 'SUPERVISOR' || role === 'COORDINADOR') && btnRadar) { 
             btnRadar.classList.add('hidden'); 
@@ -2172,6 +2180,9 @@ function applyRolePermissions(role) {
     else if (role === 'ASESOR') {
         if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
         if (btnCalculadora) { btnCalculadora.classList.remove('hidden'); visibleTabs++; }
+        
+        // BOTÓN EXCLUSIVO DE ASESOR:
+        if (btnCierreVentas) { btnCierreVentas.classList.remove('hidden'); visibleTabs++; }
     }
 
     if (tabsContainer) {
@@ -2182,13 +2193,12 @@ function applyRolePermissions(role) {
     }
 
     // ==========================================
-    // 🔒 CANDADO ABSOLUTO FINAL (IMPOSIBLE DE SALTAR)
+    // 🔒 CANDADO ABSOLUTO FINAL
     // ==========================================
     const esAdmin = (role === 'ADMIN');
     const esTrainer = (role === 'TRAINER');
     const esJonathanFerro = (currentUserCode === 'CO1000429' || (currentUserName && currentUserName.toUpperCase().includes('FERRO')));
 
-    // Cargar Shopping: ÚNICAMENTE Trainers y Admins
     if (btnShoppingTrainer) {
         if (esAdmin || esTrainer) {
             btnShoppingTrainer.classList.remove('hidden');
@@ -2197,7 +2207,6 @@ function applyRolePermissions(role) {
         }
     }
 
-    // Descargar Excel: ÚNICAMENTE Jonathan Ferro y Admins
     if (btnShoppingAdmin) {
         if (esAdmin || esJonathanFerro) {
             btnShoppingAdmin.classList.remove('hidden');
@@ -2282,14 +2291,16 @@ const btnCierre = document.getElementById('btn-tab-cierre-ventas');
             const esTrainer = (currentUserRole === 'TRAINER');
             const esJonathanFerro = (currentUserCode === 'CO1000429' || (currentUserName && currentUserName.toUpperCase().includes('FERRO')));
 
-            // 2. APAGAR ESTILOS DE TODOS LOS BOTONES Y APLICAR RESTRICCIONES DE ROL
-            const buttons = ['btn-tab-comparativa', 'btn-tab-radar-caracteristicas', 'btn-tab-quiz', 'btn-tab-shopping', 'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales', 'btn-tab-calculadora', 'btn-tab-admin-calculadora', 'btn-tab-salon-fama', 'btn-tab-inventario', 'btn-tab-simulador', 'btn-tab-shopping-trainer', 'btn-tab-shopping-admin', 'btn-tab-reportes-admin', 'btn-tab-admin-listas'];
+          // 2. APAGAR ESTILOS DE TODOS LOS BOTONES Y APLICAR RESTRICCIONES DE ROL
+          const buttons = ['btn-tab-comparativa', 'btn-tab-radar-caracteristicas', 'btn-tab-quiz', 'btn-tab-shopping', 'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales', 'btn-tab-calculadora', 'btn-tab-admin-calculadora', 'btn-tab-salon-fama', 'btn-tab-inventario', 'btn-tab-simulador', 'btn-tab-shopping-trainer', 'btn-tab-shopping-admin', 'btn-tab-reportes-admin', 'btn-tab-admin-listas'];
             
             buttons.forEach(btnId => {
                 const element = document.getElementById(btnId);
                 if (element) {
+                    // Reseteo visual general
                     element.className = "py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap";
                     
+                    // --- CANDADOS ESTRICTOS DE ROL ---
                     if (btnId === 'btn-tab-shopping' && !['GERENTE', 'SUPERVISOR', 'COORDINADOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
                     if (btnId === 'btn-tab-cortex' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
                     if (btnId === 'btn-tab-alertas-master' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
@@ -2301,14 +2312,23 @@ const btnCierre = document.getElementById('btn-tab-cierre-ventas');
                     if (btnId === 'btn-tab-simulador' && currentUserRole !== 'ASESOR') element.classList.add('hidden');
                     if (btnId === 'btn-tab-admin-calculadora' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
 
-                    // 👇 RESTRICCIONES CORREGIDAS Y BLINDADAS 👇
+                    // Descargar Excel: SOLO ADMIN y JONATHAN FERRO
+                    if (btnId === 'btn-tab-shopping-admin' && !esAdmin && !esJonathanFerro) {
+                        element.classList.add('hidden');
+                    }
+
                     // Cargar Shopping: SOLO TRAINER y ADMIN
                     if (btnId === 'btn-tab-shopping-trainer' && !esAdmin && !esTrainer) {
                         element.classList.add('hidden');
                     }
-                    
-                    // Descargar Excel: SOLO ADMIN y JONATHAN FERRO
-                    if (btnId === 'btn-tab-shopping-admin' && !esAdmin && !esJonathanFerro) {
+
+                    // --- BLINDAJE DE LOS DOS NUEVOS BOTONES ---
+                    // Gestor Listas: Única y exclusivamente ADMIN
+                    if (btnId === 'btn-tab-admin-listas' && currentUserRole !== 'ADMIN') {
+                        element.classList.add('hidden');
+                    }
+                    // Central de Reportes: Bloqueado a muerte para Asesores
+                    if (btnId === 'btn-tab-reportes-admin' && currentUserRole === 'ASESOR') {
                         element.classList.add('hidden');
                     }
                 }
@@ -4832,31 +4852,33 @@ db.collection("catalogos").doc("evaluaciones").onSnapshot((doc) => {
                 renderEvaluations();
             });
         }
-        // 10. Sincronización en tiempo real de Especificaciones Avanzadas (Nivel Ingeniero)
-        db.collection("catalogos").doc("specs_avanzadas").onSnapshot((doc) => {
-            if (doc && doc.exists) {
-                advancedSpecsDatabase = doc.data() || {};
-            }
-        }, (err) => {
-            console.log("Specs avanzadas cargadas localmente/vacías");
+     // 10. Sincronización en tiempo real de Especificaciones Avanzadas (Nivel Ingeniero)
+     db.collection("catalogos").doc("specs_avanzadas").onSnapshot((doc) => {
+                if (doc && doc.exists) {
+                    advancedSpecsDatabase = doc.data() || {};
+                }
+            }, (err) => {
+                console.log("Specs avanzadas cargadas localmente/vacías");
+            });
+
+            // 11. Sincronización en tiempo real de las Listas de Cierre
             db.collection("configuracion_global").doc("form_cierre").onSnapshot((doc) => {
-    if (doc && doc.exists) {
-        const data = doc.data();
-        configCierreModelos = (data.modelos && data.modelos.length > 0) ? data.modelos : null;
-        configCierreMarcas = (data.marcas && data.marcas.length > 0) ? data.marcas : ["INFINIX", "XIAOMI", "HONOR", "TECNO", "OPPO", "REALME", "VIVO", "MOTOROLA", "SAMSUNG"];
-        
-        // Rellenar textareas del Admin
-        const textareaModelos = document.getElementById('admin-cierre-modelos');
-        const textareaMarcas = document.getElementById('admin-cierre-marcas');
-        if(textareaModelos) textareaModelos.value = configCierreModelos ? configCierreModelos.join(", ") : Object.keys(infinixDatabase).map(k => infinixDatabase[k].name || k).join(", ");
-        if(textareaMarcas) textareaMarcas.value = configCierreMarcas.join(", ");
-        
-        // Refrescar la tabla en vivo si un asesor la está viendo
-        if(!document.getElementById('tab-cierre-ventas').classList.contains('hidden')) {
-            renderizarFormularioCierre();
-        }
-    }
-});
+                if (doc && doc.exists) {
+                    const data = doc.data();
+                    configCierreModelos = (data.modelos && data.modelos.length > 0) ? data.modelos : null;
+                    configCierreMarcas = (data.marcas && data.marcas.length > 0) ? data.marcas : ["INFINIX", "XIAOMI", "HONOR", "TECNO", "OPPO", "REALME", "VIVO", "MOTOROLA", "SAMSUNG"];
+                    
+                    // Rellenar textareas del Admin
+                    const textareaModelos = document.getElementById('admin-cierre-modelos');
+                    const textareaMarcas = document.getElementById('admin-cierre-marcas');
+                    if(textareaModelos) textareaModelos.value = configCierreModelos ? configCierreModelos.join(", ") : Object.keys(infinixDatabase).map(k => infinixDatabase[k].name || k).join(", ");
+                    if(textareaMarcas) textareaMarcas.value = configCierreMarcas.join(", ");
+                    
+                    // Refrescar la tabla en vivo si un asesor la está viendo
+                    if(!document.getElementById('tab-cierre-ventas').classList.contains('hidden')) {
+                        renderizarFormularioCierre();
+                    }
+                }
         });
         function migrarObjecionesInicialesAFirebase() {
             const iniciales = [
@@ -6380,7 +6402,7 @@ const cardHtml = `
     }
 }
 
-        function renderInventarioAsesorForm() {
+function renderInventarioAsesorForm() {
             const container = document.getElementById('inv-models-container');
             const selectCadena = document.getElementById('inv-cadena');
             if (!container) return;
@@ -6389,21 +6411,45 @@ const cardHtml = `
             const asesorCode = document.getElementById('login-code') ? document.getElementById('login-code').value.trim().toUpperCase() : '';
 
             if (selectCadena) {
-                selectCadena.innerHTML = '<option value="">Cargando tienda asignada...</option>';
-                selectCadena.disabled = true;
+                selectCadena.innerHTML = '<option value="">Cargando tiendas de su zona...</option>';
+                selectCadena.disabled = false; // Habilitamos el selector para que pueda cambiar de tienda si cubre un turno
 
-                // Consultamos su tienda real directamente desde Firestore
+                // Consultamos su zona y tienda real directamente desde Firestore
                 db.collection("usuarios_auth").doc(asesorCode).get().then((docUser) => {
                     if (docUser.exists) {
                         const userData = docUser.data();
-                        const tiendaAsignada = userData.tienda || "Tienda no especificada";
+                        const zonaDelAsesor = userData.zona || window.miZona;
+                        const tiendaDelAsesor = userData.tienda || window.currentUserStore;
 
-                        selectCadena.innerHTML = '';
-                        const opt = document.createElement('option');
-                        opt.value = tiendaAsignada;
-                        opt.textContent = tiendaAsignada; // Aquí mostrará el nombre exacto de la tienda (ej: EXITO ORIENTAL...)
-                        opt.selected = true;
-                        selectCadena.appendChild(opt);
+                        selectCadena.innerHTML = '<option value="">-- Seleccione la Tienda a reportar --</option>';
+
+                        // Normalizamos y buscamos en el diccionario maestro de zonas
+                        const zonaNormalizada = Object.keys(diccionarioTiendasZonas).find(z => z.trim().toUpperCase() === zonaDelAsesor.trim().toUpperCase());
+
+                        if (zonaNormalizada) {
+                            const tiendasDeMiZona = diccionarioTiendasZonas[zonaNormalizada];
+                            
+                            // Ordenamos e imprimimos todas las tiendas de la regional/zona
+                            tiendasDeMiZona.sort().forEach(tienda => {
+                                const option = document.createElement('option');
+                                option.value = tienda;
+                                option.textContent = tienda;
+                                
+                                // Auto-seleccionamos su tienda oficial por defecto
+                                if (tiendaDelAsesor && tienda.toUpperCase() === tiendaDelAsesor.trim().toUpperCase()) {
+                                    option.selected = true;
+                                }
+                                
+                                selectCadena.appendChild(option);
+                            });
+                        } else {
+                            // Si la zona no está en el diccionario, ponemos su tienda por defecto de emergencia
+                            const opt = document.createElement('option');
+                            opt.value = tiendaDelAsesor;
+                            opt.textContent = tiendaDelAsesor;
+                            opt.selected = true;
+                            selectCadena.appendChild(opt);
+                        }
                     } else {
                         selectCadena.innerHTML = '<option value="General">Tienda General</option>';
                     }
@@ -6412,38 +6458,37 @@ const cardHtml = `
                 });
             }
 
-           // 1. Ponemos un mensaje de carga mientras traemos las inyecciones
-    container.innerHTML = '<div class="text-xs text-center text-gray-500 py-4 orbitron animate-pulse">SINCRONIZANDO REFERENCIAS NUEVAS...</div>';
+            // 1. Ponemos un mensaje de carga mientras traemos las inyecciones
+            container.innerHTML = '<div class="text-xs text-center text-gray-500 py-4 orbitron animate-pulse">SINCRONIZANDO REFERENCIAS NUEVAS...</div>';
 
-// 2. Traemos los modelos inyectados desde el panel admin
-db.collection("configuracion_global").doc("parametros_stock").get().then((docSnapshot) => {
-    if (docSnapshot.exists && docSnapshot.data().modelos_activos) {
-        // Fusionamos los modelos nuevos con tu base de datos original
-        docSnapshot.data().modelos_activos.forEach(modelo => {
-            let safeKey = "inyectado_" + modelo.toLowerCase().replace(/[^a-z0-9]/g, '');
-            if (!infinixDatabase[safeKey]) {
-                infinixDatabase[safeKey] = { name: modelo };
-            }
-        });
-    }
-    
-    // 3. Ahora sí, dibujamos TODOS los inputs (los fijos + los inyectados)
-    container.innerHTML = '';
-    Object.keys(infinixDatabase).forEach(key => {
-        const model = infinixDatabase[key];
-        container.innerHTML += `
-        <div class="flex justify-between items-center py-2.5 px-3 bg-black/40 rounded-xl border border-darkBorder hover:border-blue-500/50 transition-colors">
-            <div class="text-xs font-bold text-white uppercase w-7/12 truncate flex items-center gap-2">
-                <span class="text-blue-500 drop-shadow-[0_0_5px_rgba(59,130,246,0.8)]">></span> ${model.name}
-            </div>
-            <div class="w-4/12 flex items-center gap-2">
-                <input type="number" id="inv-unit-${key}" min="0" class="w-full bg-[#0d0d11] border border-darkBorder rounded-lg text-center text-blue-400 font-mono font-black py-2 focus:border-blue-500 outline-none">
-                <span class="text-[9px] text-gray-500 font-bold">UD</span>
-            </div>
-        </div>
-        `;
-    });
-});
+            // 2. Traemos los modelos inyectados desde el panel admin
+            db.collection("configuracion_global").doc("parametros_stock").get().then((docSnapshot) => {
+                if (docSnapshot.exists && docSnapshot.data().modelos_activos) {
+                    docSnapshot.data().modelos_activos.forEach(modelo => {
+                        let safeKey = "inyectado_" + modelo.toLowerCase().replace(/[^a-z0-9]/g, '');
+                        if (!infinixDatabase[safeKey]) {
+                            infinixDatabase[safeKey] = { name: modelo };
+                        }
+                    });
+                }
+                
+                // 3. Dibujamos TODOS los inputs (los fijos + los inyectados)
+                container.innerHTML = '';
+                Object.keys(infinixDatabase).forEach(key => {
+                    const model = infinixDatabase[key];
+                    container.innerHTML += `
+                    <div class="flex justify-between items-center py-2.5 px-3 bg-black/40 rounded-xl border border-darkBorder hover:border-blue-500/50 transition-colors">
+                        <div class="text-xs font-bold text-white uppercase w-7/12 truncate flex items-center gap-2">
+                            <span class="text-blue-500 drop-shadow-[0_0_5px_rgba(59,130,246,0.8)]">></span> ${model.name}
+                        </div>
+                        <div class="w-4/12 flex items-center gap-2">
+                            <input type="number" id="inv-unit-${key}" min="0" class="w-full bg-[#0d0d11] border border-darkBorder rounded-lg text-center text-blue-400 font-mono font-black py-2 focus:border-blue-500 outline-none" placeholder="0">
+                            <span class="text-[9px] text-gray-500 font-bold">UD</span>
+                        </div>
+                    </div>
+                    `;
+                });
+            });
         }
 
         // Asesor: Guarda el inventario en Firebase
