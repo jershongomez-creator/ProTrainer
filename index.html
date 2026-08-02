@@ -7320,8 +7320,8 @@ const marcasCompetencia = ["INFINIX", "XIAOMI", "HONOR", "TECNO", "OPPO", "REALM
         const cadenaDOM = document.getElementById('cadena-asesor')?.textContent || document.getElementById('cadena-tienda-input')?.value;
         const zonaDOM = document.getElementById('zona-tienda')?.value || document.getElementById('zona-asesor')?.textContent;
 
-        const nombreTiendaReal = window.currentUserStore || window.miTienda || tiendaDOM || 'Tienda_No_Asignada';
-        const nombreCadenaReal = window.miCadena || cadenaDOM || 'Cadena_No_Asignada';
+        const nombreTiendaReal = document.getElementById('tu-id-real-de-tienda')?.textContent || window.miTienda || 'Tienda_Desconocida';
+        const nombreCadenaReal = document.getElementById('tu-id-real-de-cadena')?.textContent || window.miCadena || 'Cadena_Desconocida';
         const zonaReal = window.miZona || zonaDOM || 'Zona_No_Asignada';
         const nombreAsesorReal = typeof currentUserName !== 'undefined' ? currentUserName : (window.nombreAsesorLogueado || document.getElementById('admin-user-name')?.textContent || 'Asesor_Desconocido');
         const semanaActualKey = typeof semanaKey !== 'undefined' ? semanaKey : 'W31';
@@ -7353,7 +7353,7 @@ const marcasCompetencia = ["INFINIX", "XIAOMI", "HONOR", "TECNO", "OPPO", "REALM
         console.log("✅ Datos de HOY guardados con éxito en Firebase.");
 
        // 5. DESCARGAR TODA LA SEMANA DE FIREBASE PARA ARMAR EL EXCEL
-       const docSemana = await db.collection("cierre_ventas_nacional").doc(idDocumentoSemana).get();
+       const docSemana = await db.collection("cierre_ventas_nacional").doc(idDocumentoUnico).get();
         const dataSemana = docSemana.data() || {};
 // 5.5 DESCARGAR INVENTARIO (STOCK) DE LA TIENDA
 let dataInventario = {};
