@@ -7314,34 +7314,40 @@ const marcasCompetencia = ["INFINIX", "XIAOMI", "HONOR", "TECNO", "OPPO", "REALM
 
     try {
         // Datos de la tienda y la semana
-        const nombreTienda = typeof window.currentUserStore !== 'undefined' ? window.currentUserStore : "Éxito Bucaramanga"; 
+      // 1. ELIMINAMOS EL FANTASMA DE "ÉXITO" Y CAPTURAMOS AL ASESOR REAL
+        // Buscamos los datos en las variables globales o leemos directamente lo que dice la pantalla del asesor
+        const tiendaDOM = document.getElementById('tienda-asesor')?.textContent || document.getElementById('nombre-tienda-input')?.value;
+        const cadenaDOM = document.getElementById('cadena-asesor')?.textContent || document.getElementById('cadena-tienda-input')?.value;
+        const zonaDOM = document.getElementById('zona-tienda')?.value || document.getElementById('zona-asesor')?.textContent;
 
-        
-        // 1. Capturamos los datos reales, únicos y dinámicos de este asesor en sesión
-        const nombreTiendaReal = typeof nombreTienda !== 'undefined' ? nombreTienda : (window.miTienda || 'Tienda_General');
-        const nombreCadenaReal = typeof nombreCadena !== 'undefined' ? nombreCadena : (window.miCadena || 'Cadena_General');
-        const zonaReal = typeof zonaTienda !== 'undefined' ? zonaTienda : (window.miZona || 'Nariño & Santander');
-        const nombreAsesorReal = window.nombreAsesorLogueado || document.getElementById('admin-user-name')?.textContent || 'Asesor_Desconocido';
+        const nombreTiendaReal = window.currentUserStore || window.miTienda || tiendaDOM || 'Tienda_No_Asignada';
+        const nombreCadenaReal = window.miCadena || cadenaDOM || 'Cadena_No_Asignada';
+        const zonaReal = window.miZona || zonaDOM || 'Zona_No_Asignada';
+        const nombreAsesorReal = typeof currentUserName !== 'undefined' ? currentUserName : (window.nombreAsesorLogueado || document.getElementById('admin-user-name')?.textContent || 'Asesor_Desconocido');
         const semanaActualKey = typeof semanaKey !== 'undefined' ? semanaKey : 'W31';
 
-        // 2. CREAMOS EL ID ÚNICO (Semana + Cadena + Tienda) para que NO se sobrescriban los datos
-        // Ej: "W31_WOM_TIENDA_WOM_POBLADO_GIRON" o "W31_EXITO_EXITO_BUCARAMANGA"
+        // 2. ASEGURAMOS EL DÍA (Evita que el código se estrelle si 'diaHoy' se borró)
+        const diasSemanaArr = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        const diaHoySeguro = typeof diaHoy !== 'undefined' ? diaHoy : diasSemanaArr[new Date().getDay()];
+
+        // 3. ID ÚNICO BLINDADO (El que evita cruces de datos y elimina el letal Slash '/')
         const idDocumentoUnico = `${semanaActualKey}_${nombreCadenaReal}_${nombreTiendaReal}`
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita tildes
             .toUpperCase()
-            .replace(/\s+/g, '_')
-            .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            .replace(/[^A-Z0-9]/g, '_') // 🚨 MAGIA: Cambia slashes (/) o raros por guiones bajos. Salva a Firebase.
+            .replace(/_+/g, '_');       // Limpia guiones dobles
 
-        console.log("🚀 Guardando reporte en Firebase con ID Único:", idDocumentoUnico);
+        console.log("🚀 Guardando reporte con ID Único Blindado:", idDocumentoUnico);
 
-        // 3. Guardamos en Firebase apuntando a ese ID blindado
+        // 4. GUARDADO LIMPIO EN FIREBASE (Cero cruces)
         await db.collection("cierre_ventas_nacional").doc(idDocumentoUnico).set({
-    tienda: nombreTiendaReal,
-    cadena: nombreCadenaReal,
-    zona: window.miZona || document.getElementById('zona-tienda')?.value || 'Nariño & Santander',
-    asesorResponsable: window.nombreAsesorLogueado || document.getElementById('nombre-asesor')?.textContent || 'Desconocido',
-    semana: semanaActualKey,
-    [diaHoy]: payloadHoy 
-}, { merge: true });
+            tienda: nombreTiendaReal,
+            cadena: nombreCadenaReal,
+            zona: zonaReal,
+            asesorResponsable: nombreAsesorReal,
+            semana: semanaActualKey,
+            [diaHoySeguro]: payloadHoy 
+        }, { merge: true }); 
         
         // ----------------------------------
         console.log("✅ Datos de HOY guardados con éxito en Firebase.");
