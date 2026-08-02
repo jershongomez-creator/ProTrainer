@@ -146,6 +146,7 @@
     </style>
     <!-- Librería para descargar Excel -->
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 <div id="login-overlay" class="fixed inset-0 bg-darkBg z-[99999] flex items-center justify-center p-4 transition-opacity duration-500 overflow-y-auto">
@@ -332,6 +333,10 @@
 <button onclick="switchTab('panel-admin-gerencia')" id="btn-tab-reportes-admin" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-1.5 text-gray-400 hover:text-white">
     <span class="text-green-500 text-lg drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]">📊</span>
     <span>Central de Reportes</span>
+</button>
+<!-- Botón Reporte de Visita -->
+<button onclick="switchTab('tab-reporte-visita')" id="btn-tab-reporte-visita" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all border border-blue-400/50">
+    <span>📸</span> Reporte de Visita
 </button>
 </div> 
 </div>
@@ -1075,6 +1080,70 @@
         </button>
     </div>
 </div>
+<!-- ========================================== -->
+<!-- PESTAÑA NUEVA: REPORTE DE VISITA           -->
+<!-- ========================================== -->
+<div id="tab-reporte-visita" class="hidden max-w-6xl mx-auto w-full px-4 mt-6">
+    
+    <!-- Encabezado -->
+    <div class="flex items-center justify-between border-b border-darkBorder pb-4 mb-6">
+        <div>
+            <h2 class="text-xl font-black text-blue-400 uppercase tracking-wider">📸 Reporte Táctico de Visita</h2>
+            <p class="text-xs text-gray-400 mt-1">Genera y descarga el reporte oficial de supervisión o formación para WhatsApp.</p>
+        </div>
+    </div>
+
+    <!-- Selector de Rol para mostrar el formulario correcto -->
+    <div class="flex gap-4 mb-6">
+        <button onclick="document.getElementById('form-sup').style.display='block'; document.getElementById('form-formador').style.display='none';" class="flex-1 py-3 bg-[#161b22] border border-[#30363d] text-green-400 font-bold rounded-xl hover:border-green-400 transition-all">
+            MODO SUPERVISOR (Infinix)
+        </button>
+        <button onclick="document.getElementById('form-formador').style.display='block'; document.getElementById('form-sup').style.display='none';" class="flex-1 py-3 bg-[#161b22] border border-[#30363d] text-blue-400 font-bold rounded-xl hover:border-blue-400 transition-all">
+            MODO FORMADOR (Infinix)
+        </button>
+    </div>
+
+    <!-- FORMULARIO 1: SUPERVISOR (Oculto por defecto, se muestra al hacer clic arriba) -->
+    <div id="form-sup" class="hidden bg-[#0d1117] p-6 rounded-2xl border border-[#30363d] shadow-xl">
+        <h3 class="text-sm font-black text-green-400 uppercase tracking-widest mb-4">Ingreso de Datos: Supervisión</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="text" id="sup-tienda" placeholder="Tienda / Punto de Venta" class="w-full bg-[#161b22] text-white p-3 rounded-lg border border-[#30363d] focus:border-green-400 outline-none text-xs">
+            <input type="text" id="sup-ciudad" placeholder="Ciudad / Zona" class="w-full bg-[#161b22] text-white p-3 rounded-lg border border-[#30363d] focus:border-green-400 outline-none text-xs">
+            <select id="sup-tipo" class="w-full bg-[#161b22] text-gray-400 p-3 rounded-lg border border-[#30363d] focus:border-green-400 outline-none text-xs">
+                <option value="">Tipo de Supervisión...</option>
+                <option value="Rutinaria">Rutinaria</option>
+                <option value="Programada">Programada</option>
+                <option value="Especial">Especial</option>
+            </select>
+            <input type="file" id="sup-foto" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-green-600 file:text-white hover:file:bg-green-500 cursor-pointer">
+        </div>
+        <textarea id="sup-observaciones" placeholder="Escribe las observaciones y compromisos aquí..." class="w-full mt-4 bg-[#161b22] text-white p-3 rounded-lg border border-[#30363d] focus:border-green-400 outline-none text-xs" rows="3"></textarea>
+        
+        <button onclick="alert('Motor de imagen en construcción 🚀')" class="w-full mt-6 py-4 bg-green-600 hover:bg-green-500 text-black font-black uppercase tracking-widest rounded-xl transition-all">
+            Generar Imagen de Reporte
+        </button>
+    </div>
+
+    <!-- FORMULARIO 2: FORMADOR (Oculto por defecto) -->
+    <div id="form-formador" class="hidden bg-[#0d1117] p-6 rounded-2xl border border-[#30363d] shadow-xl">
+        <h3 class="text-sm font-black text-blue-400 uppercase tracking-widest mb-4">Ingreso de Datos: Formación</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="text" id="form-tienda" placeholder="Tienda Visitada" class="w-full bg-[#161b22] text-white p-3 rounded-lg border border-[#30363d] focus:border-blue-400 outline-none text-xs">
+            <input type="text" id="form-asesor" placeholder="Asesor Capacitado" class="w-full bg-[#161b22] text-white p-3 rounded-lg border border-[#30363d] focus:border-blue-400 outline-none text-xs">
+            <input type="text" id="form-temas" placeholder="Tema(s) Capacitados" class="w-full bg-[#161b22] text-white p-3 rounded-lg border border-[#30363d] focus:border-blue-400 outline-none text-xs">
+            <input type="file" id="form-foto" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
+        </div>
+        <textarea id="form-observaciones" placeholder="Escribe observaciones y recomendaciones aquí..." class="w-full mt-4 bg-[#161b22] text-white p-3 rounded-lg border border-[#30363d] focus:border-blue-400 outline-none text-xs" rows="3"></textarea>
+        
+        <button onclick="alert('Motor de imagen en construcción 🚀')" class="w-full mt-6 py-4 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest rounded-xl transition-all">
+            Generar Imagen de Reporte
+        </button>
+    </div>
+
+</div>
+<!-- ========================================== -->
+<!-- FIN PESTAÑA: REPORTE DE VISITA             -->
+<!-- ========================================== -->
 <!-- ========================================== -->
 <!-- PESTAÑA NUEVA: CIERRE DE VENTAS DIARIO     -->
 <!-- ========================================== -->
@@ -8005,7 +8074,7 @@ const diccionarioTiendasZonas = {
         "ALKOSTO 20 DE JULIO", "ALKOSTO BOLIVAR", "ALKOSTO CENTRO", "ALKOSTO FLORIDA", "ALKOSTO GRAN PLAZA", 
         "ALKOSTO TUQUERRES", "Caracoli", "EXITO BARRANCABERMEJA", "EXITO BUCARAMANGA", "EXITO CANAVERAL FLORIDA B", 
         "EXITO ORIENTAL BUCARAMANGA CV", "EXITO PASTO", "EXITO SAN MATEO CUCUTA (CV)", "JUMBO MEGA MALL", 
-        "KTRONIX BUCARAMANGA", "METRO VENTURA", "TIENDA IBIS CUCUTA", "TIENDA PASEO DEL COMERCIO", "TIENDA POBLADO DE GIRON"
+        "KTRONIX BUCARAMANGA", "METRO VENTURA", "TIENDA IBIS CUCUTA", "TIENDA PASEO DEL COMERCIO", "TIENDA POBLADO DE GIRON","TIENDA PARQUE SANTANDER"
     ],
     "Falabella / Cencosud & Olimpica Centro": [
         "Acqua", "C.mayor", "Colina", "Diver", "Feliz", "Galerias", "Hayuelos", "JUMBO SANTAFE BOG", "JUMBO SUBA", 
