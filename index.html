@@ -1075,22 +1075,30 @@
         </button>
     </div>
 </div>
-        <!-- ========================================== -->
+<!-- ========================================== -->
 <!-- PESTAÑA NUEVA: CIERRE DE VENTAS DIARIO     -->
 <!-- ========================================== -->
 <div id="tab-cierre-ventas" class="hidden max-w-6xl mx-auto w-full px-4 mt-6">
     <div class="bg-darkCard border-2 border-infinix/40 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-        
+    
         <!-- Encabezado de la sección -->
         <div class="flex items-center justify-between border-b border-darkBorder pb-4 mb-6">
             <div>
                 <h2 class="text-xl font-black text-green-400 uppercase tracking-wider">⚡ Cierre de Ventas y Formato Diario</h2>
                 <p class="text-xs text-gray-400 mt-1">Registra tus unidades diarias, competencia y genera tu reporte oficial para WhatsApp.</p>
             </div>
-
             <span class="bg-green-500/10 text-green-400 border border-green-500/30 text-xs font-bold px-3 py-1.5 rounded-xl">
                 Semana Actual Automática
             </span>
+        </div>
+
+        <!-- Selector de Fecha de Reporte -->
+        <div class="mt-4 mb-6 bg-[#0d1117] p-4 rounded-xl border border-green-500/30 shadow-inner">
+            <label class="block text-[10px] font-black text-green-400 uppercase tracking-widest mb-2">
+                📅 FECHA DEL REPORTE A SUBIR
+            </label>
+            <input type="date" id="fecha-cierre-asesor" class="w-full bg-[#161b22] text-white p-3 rounded-lg border border-[#30363d] focus:border-green-400 focus:outline-none cursor-pointer" required>
+            <p class="text-[9px] text-gray-400 mt-2">Cambia la fecha solo si necesitas subir el reporte de un día de descanso o una fecha anterior.</p>
         </div>
             <!-- ========================================== -->
     <!-- FILTROS MANUALES (CADENA Y TIENDA POR ZONA) -->
@@ -1241,60 +1249,84 @@
             <p class="text-xs text-gray-500 uppercase mt-1">PERFIL: <span id="admin-user-role" class="text-yellow-400 font-bold">GERENCIA / ADMIN</span></p>
         </div>
     </div>
-
-    <!-- Filtros en Cascada (El Agrupador) -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#21262d] p-5 rounded-lg border border-[#30363d]">
-        <div>
-            <label class="block text-xs font-bold text-gray-400 mb-2">1. FILTRAR POR ZONA</label>
-<!-- 1. FILTRAR POR ZONA (REGIONAL) -->
-<select id="filtro-zona-admin" class="w-full bg-[#0d1117] text-white p-3 rounded-lg border border-[#30363d] focus:border-green-400 focus:outline-none cursor-pointer">
-    <option value="ALL">Nacional (Todas las Regionales)</option>
-    <option value="SUROCCIDENTE">Suroccidente (Marco) - Valle, Santander, Nariño</option>
-    <option value="COSTA">Costa (Paola) - Norte y Sur</option>
-    <option value="ANTIOQUIA">Antioquia (Zapata) - Eje, Norte, Sur</option>
-    <option value="ZONA CENTRO">Zona Centro (Wilson) - Éxito, Falabella, Olímpica</option>
-</select>
-
-<!-- 2. FILTRAR POR CADENA -->
-<select id="filtro-cadena-admin" class="w-full bg-[#0d1117] text-white p-3 rounded-lg border border-[#30363d] focus:border-green-400 focus:outline-none cursor-pointer">
-    <option value="ALL">Todas las Cadenas</option>
-    <option value="EXITO">Grupo Éxito</option>
-    <option value="falabella">Falabella</option>
-    <option value="WOM">WOM</option>
-    <option value="OLIMPICA">Olímpica</option>
-    <option value="ALKOSTO">Alkosto / Ktronix</option>
-</select>
-        </div>
-        <div>
-            <label class="block text-xs font-bold text-gray-400 mb-2">3. FILTRAR POR TIENDA (Opcional)</label>
-            <select id="filtro-tienda-admin" class="w-full bg-[#0d1117] text-gray-400 p-3 rounded border border-[#30363d] focus:border-green-400 focus:outline-none cursor-pointer">
-                <option value="ALL">Consolidado General</option>
-                <!-- JS inyectará las tiendas aquí según la cadena/zona -->
-            </select>
-        </div>
+<!-- Filtros en Cascada en 3 Niveles -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#21262d] p-5 rounded-lg border border-[#30363d] mb-6">
+    <div>
+        <label class="block text-xs font-bold text-gray-400 mb-2">1. REGIONAL</label>
+        <select id="filtro-regional-admin" class="w-full bg-[#0d1117] text-white p-3 rounded-lg border border-[#30363d] focus:border-green-400 focus:outline-none cursor-pointer">
+            <option value="ALL">Nacional (Todas)</option>
+            <option value="SUROCCIDENTE">Suroccidente</option>
+            <option value="ZONA CENTRO">Zona Centro</option>
+            <option value="COSTA">Costa</option>
+            <option value="ANTIOQUIA">Antioquia</option>
+        </select>
+    </div>
+    <div>
+        <label class="block text-xs font-bold text-gray-400 mb-2">2. ZONA</label>
+        <select id="filtro-zona-admin" class="w-full bg-[#0d1117] text-white p-3 rounded-lg border border-[#30363d] focus:border-green-400 focus:outline-none cursor-pointer">
+            <option value="ALL">Todas las Zonas</option>
+        </select>
+    </div>
+    <div>
+        <label class="block text-xs font-bold text-gray-400 mb-2">3. TIENDA / SEDE</label>
+        <select id="filtro-tienda-admin" class="w-full bg-[#0d1117] text-white p-3 rounded-lg border border-[#30363d] focus:border-green-400 focus:outline-none cursor-pointer">
+            <option value="ALL">Consolidado General</option>
+        </select>
+    </div>
+</div>
+<!-- 4 Tarjetas de KPIs Estratégicos -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <!-- Tarjeta 1: Venta Infinix -->
+    <div class="bg-gradient-to-br from-[#0d1117] to-[#161b22] p-6 rounded-lg border border-[#30363d] shadow-md text-center hover:border-green-500/50 transition-colors">
+        <h3 class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-2">Ventas Infinix</h3>
+        <p class="text-3xl font-black text-green-400" id="kpi-ventas-global">0</p>
+        <p class="text-[10px] text-gray-500 mt-1">Unidades Acumuladas</p>
+    </div>
+    
+    <!-- Tarjeta 2: Market Share -->
+    <div class="bg-gradient-to-br from-[#0d1117] to-[#161b22] p-6 rounded-lg border border-[#30363d] shadow-md text-center hover:border-blue-500/50 transition-colors">
+        <h3 class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-2">Market Share</h3>
+        <p class="text-3xl font-black text-blue-400" id="kpi-share-global">0%</p>
+        <p class="text-[10px] text-gray-500 mt-1">Participación vs Total</p>
     </div>
 
-    <!-- KPIs Globales (El Mapa de Calor) -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- KPI 1: Ventas -->
-        <div class="bg-gradient-to-br from-[#0d1117] to-[#161b22] p-6 rounded-lg border border-[#30363d] shadow-md text-center hover:border-green-500/50 transition-colors">
-            <h3 class="text-gray-400 text-xs font-bold mb-2 uppercase tracking-widest">Ventas Infinix (Acumulado)</h3>
-            <p class="text-5xl font-black text-green-400" id="kpi-ventas-global">0</p>
-            <p class="text-xs text-gray-500 mt-2">Unidades Totales en la selección</p>
-        </div>
-        <!-- KPI 2: Share -->
-        <div class="bg-gradient-to-br from-[#0d1117] to-[#161b22] p-6 rounded-lg border border-[#30363d] shadow-md text-center hover:border-blue-500/50 transition-colors">
-            <h3 class="text-gray-400 text-xs font-bold mb-2 uppercase tracking-widest">Market Share (Participación)</h3>
-            <p class="text-5xl font-black text-blue-400" id="kpi-share-global">0%</p>
-            <p class="text-xs text-gray-500 mt-2">Frente a la competencia total</p>
-        </div>
-        <!-- KPI 3: ROI / Target -->
-        <div class="bg-gradient-to-br from-[#0d1117] to-[#161b22] p-6 rounded-lg border border-[#30363d] shadow-md text-center hover:border-yellow-500/50 transition-colors">
-            <h3 class="text-gray-400 text-xs font-bold mb-2 uppercase tracking-widest">Cumplimiento Target</h3>
-            <p class="text-5xl font-black text-yellow-400" id="kpi-target-global">0%</p>
-            <p class="text-xs text-gray-500 mt-2">Avance de meta mensual</p>
-        </div>
+    <!-- Tarjeta 3: ROI -->
+    <div class="bg-gradient-to-br from-[#0d1117] to-[#161b22] p-6 rounded-lg border border-[#30363d] shadow-md text-center hover:border-purple-500/50 transition-colors">
+        <h3 class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-2">ROI (Retorno)</h3>
+        <p class="text-3xl font-black text-purple-400" id="kpi-roi-global">0</p>
+        <p class="text-[10px] text-gray-500 mt-1">Retorno de Inversión</p>
     </div>
+
+    <!-- Tarjeta 4: Cumplimiento Target -->
+    <div class="bg-gradient-to-br from-[#0d1117] to-[#161b22] p-6 rounded-lg border border-[#30363d] shadow-md text-center hover:border-yellow-500/50 transition-colors">
+        <h3 class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-2">Cumplimiento</h3>
+        <p class="text-3xl font-black text-yellow-400" id="kpi-target-global">0%</p>
+        <p class="text-[10px] text-gray-500 mt-1">Avance de Meta</p>
+    </div>
+</div>
+<!-- Nueva Tabla: Radar Cara a Cara por Marca -->
+<div class="bg-[#161b22] border border-[#30363d] rounded-2xl p-5 mb-6 shadow-xl overflow-x-auto">
+    <h3 class="text-sm font-black text-blue-400 uppercase tracking-widest orbitron mb-4 flex items-center gap-2">
+        <span>🎯</span> Radar de Competencia: Top Marcas vs Infinix
+    </h3>
+    <table class="w-full text-left border-collapse whitespace-nowrap text-xs">
+        <thead>
+            <tr class="bg-black/60 text-[10px] font-bold uppercase tracking-wider text-gray-400 border-b border-darkBorder">
+                <th class="p-3 pl-4">Regional / Zona</th>
+                <th class="p-3">Tienda</th>
+                <th class="p-3 text-center">Marca Rival</th>
+                <th class="p-3 text-center text-gray-300">Ventas Rival</th>
+                <th class="p-3 text-center text-green-400">Ventas Infinix</th>
+                <th class="p-3 text-center text-yellow-400">Brecha (A favor / En contra)</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-darkBorder/50 font-mono" id="tabla-desglose-reportes">
+            <tr>
+                <td colspan="6" class="p-6 text-center text-gray-500 text-xs">Seleccione filtros para ver el radar de competencia.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
     <!-- PANEL ADMIN INDEPENDIENTE: GESTOR DE LISTAS DE CIERRE -->
     <div id="panel-admin-gestor-listas" class="hidden mb-8 bg-darkCard border-2 border-green-500/50 rounded-3xl p-6 shadow-[0_0_40px_rgba(0,255,102,0.15)] relative overflow-hidden">
         <h3 class="text-lg font-black text-white orbitron tracking-wider mb-2 border-b border-darkBorder pb-3 flex items-center gap-2">
@@ -7241,10 +7273,21 @@ function obtenerSemanaActualKey() {
 // Motor maestro Asíncrono para guardar en Firebase (Versión Definitiva)
 async function generarYGuardarCierreVentas() {
     
-    const fecha = new Date();
-    const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-    const diaHoy = diasSemana[fecha.getDay()]; 
-
+// Extraemos la fecha del nuevo calendario visual
+const inputFecha = document.getElementById('fecha-cierre-asesor');
+        let diaHoy = "";
+        
+        if (inputFecha && inputFecha.value) {
+            // Convertimos la fecha seleccionada a día de la semana (con ajuste de zona horaria)
+            const fechaSeleccionada = new Date(inputFecha.value + 'T00:00:00');
+            const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            diaHoy = diasSemana[fechaSeleccionada.getDay()];
+        } else {
+            // Plan B de seguridad: Si no hay calendario, usa el día de hoy (como lo tenías antes)
+            const fecha = new Date();
+            const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            diaHoy = diasSemana[fecha.getDay()];
+        }
     let totalUnidadesDia = 0;
     let totalDineroDia = 0;
     let desgloseInfinixDia = {};
@@ -7382,112 +7425,60 @@ async function generarYGuardarCierreVentas() {
         alert("Hubo un error al sincronizar con la base de datos.");
     }
 }
-// ==========================================
-// CENTRAL DE REPORTES: CONSULTA MASIVA Y KPIs
-// ==========================================
+// =================================================================
+// CÁLCULO DE LA CENTRAL DE REPORTES (CON ROI Y RADAR DE COMPETENCIA)
+// =================================================================
 async function cargarDatosCentralReportes() {
     try {
-        console.log("📥 Consultando jerarquía estricta según base de datos Firebase...");
-        
-        // EL MAPA EXACTO EXTRAÍDO DE TU FIREBASE (image_a396c3.png)
-        const mapaOperativo = {
-            "SUROCCIDENTE": ["Valle", "Nariño & Santander", "Nariño & Santander Trainer", "Valle Trainer"],
-            "ZONA CENTRO": ["Exito Centro Sur", "Exito Centro Norte", "Falabella / Cencosud & Olimpica Centro", "Alkosto Centro Sur", "Alkosto Centro Norte", "Alcosto Centro Trainer", "Exito Centro Sur Trainer", "FALABELLA & CENCOSUD CENTRO TRAINER"],
-            "COSTA": ["Costa Sur", "Costa Norte", "Costa Sur Trainer", "Costa Norte Trainer"],
-            "ANTIOQUIA": ["Antioquia Norte", "Antioquia Sur", "Eje Cafetero", "Antioquia Norte Trainer", "Antioquia Sur Trainer"]
-        };
-
+        const regionalSelect = document.getElementById('filtro-regional-admin');
         const zonaSelect = document.getElementById('filtro-zona-admin');
-        const cadenaSelect = document.getElementById('filtro-cadena-admin');
         const tiendaSelect = document.getElementById('filtro-tienda-admin');
+        const tbodyDesglose = document.getElementById('tabla-desglose-reportes');
 
-        const regionalSeleccionada = zonaSelect?.value || 'ALL'; 
-        const cadenaSeleccionada = cadenaSelect?.value || 'ALL'; 
+        const regFiltro = regionalSelect?.value?.trim() || 'ALL';
+        const zonaFiltro = zonaSelect?.value?.trim() || 'ALL';
+        const tiendaFiltro = tiendaSelect?.value?.trim() || 'ALL';
 
         const snapshot = await db.collection("cierre_ventas_nacional").get();
-        
-        const tiendasDisponibles = new Set();
         
         let acumuladoInfinixUnidades = 0;
         let acumuladoInfinixTarget = 0;
         let acumuladoMercadoTotal = 0;
+        
+        let asesoresSet = new Set(); // Para calcular el ROI
+        let rankingCompetencia = {}; // Para el radar de marcas
 
-        // --- FASE 1: FILTRO EN CASCADA PARA ARMAR EL SELECTOR DE TIENDAS ---
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            const zonaDoc = (data.zona || '').trim(); // Dejamos minúsculas/mayúsculas originales para validar
-            const cadenaDoc = (data.cadena || '').trim().toUpperCase();
-            const tiendaDoc = (data.tienda || '').trim().toUpperCase();
-
-            // 1. Candado de Regional (Basado estrictamente en tu mapa)
-            let pasaRegional = true;
-            if (regionalSeleccionada !== 'ALL') {
-                const zonasDeEstaRegional = mapaOperativo[regionalSeleccionada] || [];
-                // Verificamos coincidencia exacta contra el array de Firebase
-                pasaRegional = zonasDeEstaRegional.some(z => z.toUpperCase() === zonaDoc.toUpperCase());
-            }
-
-            // 2. Candado de Cadena
-            let pasaCadena = true;
-            if (cadenaSeleccionada !== 'ALL') {
-                const fCadena = cadenaSeleccionada.toUpperCase();
-                pasaCadena = cadenaDoc.includes(fCadena) || tiendaDoc.includes(fCadena);
-            }
-
-            // Si pasa ambos filtros, se aprueba la tienda para la cascada
-            if (pasaRegional && pasaCadena && data.tienda) {
-                tiendasDisponibles.add(data.tienda);
-            }
-        });
-
-        // REFRESCAMOS EL SELECTOR DE TIENDAS EN HTML
-        if (tiendaSelect) {
-            const tiendaActual = tiendaSelect.value;
-            tiendaSelect.innerHTML = '<option value="ALL">Consolidado General</option>';
-            
-            Array.from(tiendasDisponibles).sort().forEach(tienda => {
-                const opt = document.createElement('option');
-                opt.value = tienda;
-                opt.textContent = tienda;
-                tiendaSelect.appendChild(opt);
-            });
-
-            if (Array.from(tiendaSelect.options).some(o => o.value === tiendaActual)) {
-                tiendaSelect.value = tiendaActual;
-            } else {
-                tiendaSelect.value = 'ALL';
-            }
-        }
-
-        const tiendaFinal = tiendaSelect?.value || 'ALL';
-
-        // --- FASE 2: CÁLCULO DE KPIs CON LOS FILTROS BLINDADOS ---
         snapshot.forEach(doc => {
             const data = doc.data();
             const zonaDoc = (data.zona || '').trim();
-            const cadenaDoc = (data.cadena || '').trim().toUpperCase();
             const tiendaDoc = (data.tienda || '').trim().toUpperCase();
+            const asesorDoc = data.asesorResponsable || data.asesor || 'Desconocido';
 
-            // Candados estrictos de exclusión
-            if (regionalSeleccionada !== 'ALL') {
-                const zonasDeEstaRegional = mapaOperativo[regionalSeleccionada] || [];
-                if (!zonasDeEstaRegional.some(z => z.toUpperCase() === zonaDoc.toUpperCase())) return;
+            // Filtros en cascada
+            if (regFiltro !== 'ALL') {
+                const regDeEstaZona = obtenerRegionalDeZona(zonaDoc);
+                if (regDeEstaZona.toUpperCase() !== regFiltro.toUpperCase()) return;
             }
 
-            if (cadenaSeleccionada !== 'ALL') {
-                const fCadena = cadenaSeleccionada.toUpperCase();
-                if (!cadenaDoc.includes(fCadena) && !tiendaDoc.includes(fCadena)) return;
+            if (zonaFiltro !== 'ALL') {
+                const zonaDocClean = zonaDoc.replace(/trainer/gi, '').trim().toUpperCase();
+                const zonaFiltroClean = zonaFiltro.replace(/trainer/gi, '').trim().toUpperCase();
+                if (zonaDocClean !== zonaFiltroClean) return;
             }
 
-            if (tiendaFinal !== 'ALL' && tiendaDoc !== tiendaFinal.toUpperCase()) return;
+            if (tiendaFiltro !== 'ALL' && tiendaDoc !== tiendaFiltro.toUpperCase()) return;
 
-            // Recorrido de los días para sumar KPIs
+            // Si pasa los filtros, sumamos el asesor para el cálculo del ROI
+            if (asesorDoc !== 'Desconocido' && asesorDoc !== '') {
+                asesoresSet.add(asesorDoc.toUpperCase());
+            }
+
             const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
             diasSemana.forEach(dia => {
                 if (data[dia]) {
                     const infoDia = data[dia];
                     
-                    // CORRECCIÓN MAGISTRAL: Priorizamos el total del día guardado. Si no existe (documento viejo), sumamos el desglose
+                    // Sumar Infinix
                     let sumaUnidadesDia = Number(infoDia.totalUnidadesDia);
                     if (isNaN(sumaUnidadesDia) || sumaUnidadesDia === 0) {
                         sumaUnidadesDia = 0;
@@ -7503,44 +7494,111 @@ async function cargarDatosCentralReportes() {
                         });
                     }
                     
+                    // Sumar y agrupar Competencia por Marca
                     if (infoDia.competencia) {
                         const compData = infoDia.competencia.modelos || infoDia.competencia;
-                        Object.values(compData).forEach(compItem => {
-                            acumuladoMercadoTotal += Number(compItem.venta || compItem.hc || 0);
+                        Object.entries(compData).forEach(([modeloRival, compItem]) => {
+                            let ventaRival = Number(compItem.venta || compItem.hc || 0);
+                            acumuladoMercadoTotal += ventaRival;
+
+                            if (ventaRival > 0) {
+                                // Extraer la marca (primera palabra del modelo)
+                                let marca = modeloRival.trim().toUpperCase().split(' ')[0];
+                                // Agrupaciones básicas (opcional)
+                                if (marca === 'REDMI' || marca === 'POCO') marca = 'XIAOMI';
+                                
+                                if (!rankingCompetencia[marca]) {
+                                    rankingCompetencia[marca] = 0;
+                                }
+                                rankingCompetencia[marca] += ventaRival;
+                            }
                         });
                     }
                 }
             });
         });
 
-        // --- FASE 3: INYECCIÓN DE DATOS EN PANTALLA ---
+        // 1. ACTUALIZAR LAS 4 TARJETAS (KPIs)
         const mercadoGlobal = acumuladoInfinixUnidades + acumuladoMercadoTotal;
         const marketSharePorcentaje = mercadoGlobal > 0 ? ((acumuladoInfinixUnidades / mercadoGlobal) * 100).toFixed(1) : 0;
         const cumplimientoPorcentaje = acumuladoInfinixTarget > 0 ? Math.round((acumuladoInfinixUnidades / acumuladoInfinixTarget) * 100) : 0;
+        
+        // FÓRMULA ROI: Ventas totales / Cantidad de asesores únicos
+        const roi = asesoresSet.size > 0 ? Math.round(acumuladoInfinixUnidades / asesoresSet.size) : 0;
 
         const tarjetaVentas = document.getElementById('kpi-ventas-global');
         const tarjetaShare = document.getElementById('kpi-share-global');
+        const tarjetaRoi = document.getElementById('kpi-roi-global');
         const tarjetaCumplimiento = document.getElementById('kpi-target-global');
 
-        if (tarjetaVentas) tarjetaVentas.textContent = acumuladoInfinixUnidades;
+        if (tarjetaVentas) tarjetaVentas.textContent = acumuladoInfinixUnidades.toLocaleString();
         if (tarjetaShare) tarjetaShare.textContent = `${marketSharePorcentaje}%`;
+        if (tarjetaRoi) tarjetaRoi.textContent = roi;
         if (tarjetaCumplimiento) tarjetaCumplimiento.textContent = `${cumplimientoPorcentaje}%`;
 
-        console.log(`✅ Cascadas ajustadas. Total unidades sumadas: ${acumuladoInfinixUnidades}`);
+        // 2. CONSTRUIR EL RADAR DE COMPETENCIA (TOP 5)
+        let filasTablaHtml = '';
+        const regAsignada = regFiltro === 'ALL' ? 'Nacional' : regFiltro;
+        const zonaAsignada = zonaFiltro === 'ALL' ? 'Todas las Zonas' : zonaFiltro;
+        const tiendaAsignada = tiendaFiltro === 'ALL' ? 'Consolidado General' : tiendaFiltro;
+
+        // Convertir el objeto a array y ordenar de mayor a menor
+        let marcasTop = Object.entries(rankingCompetencia)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5); // Tomamos solo el Top 5
+
+        if (marcasTop.length > 0) {
+            marcasTop.forEach(([marca, ventasMarca], index) => {
+                let brecha = acumuladoInfinixUnidades - ventasMarca;
+                let colorBrecha = brecha >= 0 ? 'text-green-400' : 'text-red-400';
+                let signo = brecha > 0 ? '+' : '';
+                let medalla = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '▪️';
+
+                filasTablaHtml += `
+                    <tr class="hover:bg-darkBorder/30 transition-all border-b border-darkBorder/50 text-xs">
+                        <td class="p-3 pl-4">
+                            <div class="font-bold text-white">${regAsignada}</div>
+                            <div class="text-[9px] text-gray-400 uppercase">${zonaAsignada}</div>
+                        </td>
+                        <td class="p-3 text-gray-200 font-bold uppercase">${tiendaAsignada}</td>
+                        <td class="p-3 text-center text-gray-300 font-bold tracking-wider">${medalla} ${marca}</td>
+                        <td class="p-3 text-center text-gray-400">${ventasMarca} unds</td>
+                        <td class="p-3 text-center font-black text-green-400 text-sm">${acumuladoInfinixUnidades} unds</td>
+                        <td class="p-3 text-center font-bold ${colorBrecha}">${signo}${brecha} unds</td>
+                    </tr>
+                `;
+            });
+        } else {
+            filasTablaHtml = `<tr><td colspan="6" class="p-6 text-center text-gray-500 text-xs">No hay registros de competencia con los filtros seleccionados.</td></tr>`;
+        }
+
+        if (tbodyDesglose) {
+            tbodyDesglose.innerHTML = filasTablaHtml;
+        }
 
     } catch (error) {
-        console.error("❌ Error crítico en la central de reportes:", error);
+        console.error("Error en Central de Reportes:", error);
     }
 }
-
-// Disparadores Automáticos (Listeners)
-['filtro-zona-admin', 'filtro-cadena-admin', 'filtro-tienda-admin'].forEach(idFiltro => {
-    const el = document.getElementById(idFiltro);
-    if (el && !el.dataset.listenerCascada) {
-        el.dataset.listenerCascada = "true";
-        el.addEventListener('change', () => {
-            cargarDatosCentralReportes();
-        });
+// =================================================================
+// DISPARADOR MAESTRO (DELEGACIÓN DE EVENTOS GLOBAL)
+// =================================================================
+document.addEventListener('change', function(event) {
+    if (!event.target) return;
+    
+    // Si cambias la Regional
+    if (event.target.id === 'filtro-regional-admin') {
+        actualizarZonasCascada();
+        if (typeof cargarDatosCentralReportes === 'function') cargarDatosCentralReportes();
+    } 
+    // Si cambias la Zona
+    else if (event.target.id === 'filtro-zona-admin') {
+        actualizarTiendasCascada(); 
+        if (typeof cargarDatosCentralReportes === 'function') cargarDatosCentralReportes();
+    } 
+    // Si cambias la Tienda
+    else if (event.target.id === 'filtro-tienda-admin') {
+        if (typeof cargarDatosCentralReportes === 'function') cargarDatosCentralReportes();
     }
 });
 
@@ -8059,6 +8117,316 @@ function cargarTiendasDeMiZona() {
         console.warn(`⚠️ La zona del asesor es "${zonaDelAsesor}" pero no existe en el diccionario.`);
     }
 }
+// =================================================================
+// MOTOR DE FILTROS EN CASCADA (SOLUCIÓN DEFINITIVA POR DELEGACIÓN)
+// =================================================================
+
+const mapaOperativo = {
+    "SUROCCIDENTE": ["Valle", "Nariño & Santander"],
+    "ZONA CENTRO": ["Exito Centro Sur", "Exito Centro Norte", "Falabella / Cencosud & Olimpica Centro", "Alkosto Centro Sur", "Alkosto Centro Norte"],
+    "COSTA": ["Costa Sur", "Costa Norte"],
+    "ANTIOQUIA": ["Antioquia Norte", "Antioquia Sur", "Eje Cafetero"]
+};
+
+function obtenerRegionalDeZona(zonaBuscada) {
+    if (!zonaBuscada) return '';
+    const zonaClean = zonaBuscada.replace(/trainer/gi, '').trim().toUpperCase();
+    for (let reg in mapaOperativo) {
+        if (mapaOperativo[reg].some(z => z.toUpperCase().trim() === zonaClean)) {
+            return reg;
+        }
+    }
+    return '';
+}
+
+function actualizarZonasCascada() {
+    const regSelect = document.getElementById('filtro-regional-admin');
+    const zonaSelect = document.getElementById('filtro-zona-admin');
+    if (!regSelect || !zonaSelect) return;
+
+    const regVal = regSelect.value;
+    const zonaActual = zonaSelect.value;
+    zonaSelect.innerHTML = '<option value="ALL">Todas las Zonas</option>';
+
+    let zonasDisponibles = [];
+    if (regVal === 'ALL') {
+        Object.values(mapaOperativo).forEach(arr => zonasDisponibles.push(...arr));
+    } else {
+        zonasDisponibles = mapaOperativo[regVal] || [];
+    }
+
+    const zonasUnicas = [...new Set(zonasDisponibles)]
+        .filter(z => !z.toUpperCase().includes('TRAINER'))
+        .sort();
+
+    zonasUnicas.forEach(zona => {
+        const opt = document.createElement('option');
+        opt.value = zona;
+        opt.textContent = zona;
+        zonaSelect.appendChild(opt);
+    });
+
+    if (Array.from(zonaSelect.options).some(o => o.value === zonaActual)) {
+        zonaSelect.value = zonaActual;
+    } else {
+        zonaSelect.value = 'ALL';
+    }
+    
+    // Inmediatamente después de actualizar las zonas, limpiamos las tiendas
+    actualizarTiendasCascada();
+}
+
+function actualizarTiendasCascada() {
+    const regionalSelect = document.getElementById('filtro-regional-admin');
+    const zonaSelect = document.getElementById('filtro-zona-admin');
+    const tiendaSelect = document.getElementById('filtro-tienda-admin');
+    if (!zonaSelect || !tiendaSelect) return;
+
+    const regVal = regionalSelect ? regionalSelect.value.trim() : 'ALL';
+    const zonaVal = zonaSelect.value ? zonaSelect.value.trim() : 'ALL';
+    const tiendaActual = tiendaSelect.value;
+    
+    tiendaSelect.innerHTML = '<option value="ALL">Consolidado General</option>';
+
+    if (typeof diccionarioTiendasZonas === 'undefined') {
+        console.warn("⚠️ El diccionarioTiendasZonas no se ha cargado.");
+        return;
+    }
+
+    let tiendasPermitidas = new Set();
+
+    // 1. SI SELECCIONAS UNA ZONA ESPECÍFICA (Ej: Nariño & Santander)
+    // Va directo a esa llave en tu diccionario y saca SOLO esas tiendas.
+    if (zonaVal !== 'ALL') {
+        const zonaKey = Object.keys(diccionarioTiendasZonas).find(z => z.trim().toUpperCase() === zonaVal.toUpperCase());
+        if (zonaKey && diccionarioTiendasZonas[zonaKey]) {
+            diccionarioTiendasZonas[zonaKey].forEach(tienda => tiendasPermitidas.add(tienda));
+        }
+    } 
+    // 2. SI SELECCIONAS "Todas las Zonas" PERO HAY UNA REGIONAL
+    else if (regVal !== 'ALL') {
+        const zonasDeRegional = mapaOperativo[regVal] || [];
+        zonasDeRegional.forEach(zName => {
+            const zClean = zName.replace(/trainer/gi, '').trim().toUpperCase();
+            const zonaKey = Object.keys(diccionarioTiendasZonas).find(z => z.trim().toUpperCase() === zClean);
+            if (zonaKey && diccionarioTiendasZonas[zonaKey]) {
+                diccionarioTiendasZonas[zonaKey].forEach(tienda => tiendasPermitidas.add(tienda));
+            }
+        });
+    } 
+    // 3. SI ESTÁ TODO EN NACIONAL (ALL)
+    else {
+        Object.values(diccionarioTiendasZonas).forEach(arr => {
+            arr.forEach(tienda => tiendasPermitidas.add(tienda));
+        });
+    }
+
+    // Pintar las opciones en el tercer filtro
+    Array.from(tiendasPermitidas).sort().forEach(tienda => {
+        const opt = document.createElement('option');
+        opt.value = tienda;
+        opt.textContent = tienda;
+        tiendaSelect.appendChild(opt);
+    });
+
+    if (Array.from(tiendaSelect.options).some(o => o.value === tiendaActual)) {
+        tiendaSelect.value = tiendaActual;
+    } else {
+        tiendaSelect.value = 'ALL';
+    }
+}
+
+// =================================================================
+// DISPARADOR MAESTRO (DELEGACIÓN DE EVENTOS GLOBAL)
+// Este método NUNCA falla, no choca con tus botones superiores, 
+// y siempre detectará cuando cambies Regional o Zona.
+// =================================================================
+document.addEventListener('change', function(event) {
+    if (!event.target) return;
+    
+    // Si cambias la Regional
+    if (event.target.id === 'filtro-regional-admin') {
+        actualizarZonasCascada();
+        if (typeof cargarDatosCentralReportes === 'function') cargarDatosCentralReportes();
+    } 
+    // Si cambias la Zona
+    else if (event.target.id === 'filtro-zona-admin') {
+        actualizarTiendasCascada(); // Forzamos la limpieza de la tercera cascada
+        if (typeof cargarDatosCentralReportes === 'function') cargarDatosCentralReportes();
+    } 
+    // Si cambias la Tienda
+    else if (event.target.id === 'filtro-tienda-admin') {
+        if (typeof cargarDatosCentralReportes === 'function') cargarDatosCentralReportes();
+    }
+});
+// =================================================================
+// BLOQUE FINAL: REPORTE DETALLADO Y CANDADOS DE ROL EN FILTROS
+// =================================================================
+
+// Sobrescribimos o integramos la lógica de permisos en configurarPanelPorRol
+const originalConfigurarPanel = typeof configurarPanelPorRol === 'function' ? configurarPanelPorRol : function(){};
+configurarPanelPorRol = function(datosUsuario) {
+    originalConfigurarPanel(datosUsuario);
+    
+    if (!datosUsuario) return;
+    const rol = (datosUsuario.rol || '').toUpperCase();
+    const zonaUser = (datosUsuario.zona || '').trim();
+
+    const regSelect = document.getElementById('filtro-regional-admin');
+    const zonaSelect = document.getElementById('filtro-zona-admin');
+
+    if (rol === 'ADMIN' || rol === 'GERENCIA' || rol === 'GERENTE') {
+        if (regSelect) { regSelect.disabled = false; regSelect.classList.remove('opacity-70', 'cursor-not-allowed'); }
+        if (zonaSelect) { zonaSelect.disabled = false; zonaSelect.classList.remove('opacity-70', 'cursor-not-allowed'); }
+    } 
+    else if (rol === 'COORDINADOR') {
+        // Coordinador: Regional bloqueada a su regional, zona seleccionable dentro de su área
+        const miReg = obtenerRegionalDeZona(zonaUser) || window.regional || 'SUROCCIDENTE';
+        if (regSelect) {
+            regSelect.value = miReg;
+            regSelect.disabled = true;
+            regSelect.classList.add('opacity-70', 'cursor-not-allowed');
+        }
+        actualizarZonasCascada();
+    } 
+    else if (['SUPERVISOR', 'TRAINER', 'FORMADOR'].includes(rol)) {
+        // Supervisor, Formador y Trainer: Regional y Zona bloqueadas e inamovibles a su zona exacta
+        const miReg = obtenerRegionalDeZona(zonaUser) || window.regional || 'SUROCCIDENTE';
+        if (regSelect) {
+            regSelect.value = miReg;
+            regSelect.disabled = true;
+            regSelect.classList.add('opacity-70', 'cursor-not-allowed');
+        }
+        actualizarZonasCascada();
+        if (zonaSelect) {
+            zonaSelect.value = zonaUser;
+            zonaSelect.disabled = true;
+            zonaSelect.classList.add('opacity-70', 'cursor-not-allowed');
+        }
+    }
+    actualizarTiendasCascada();
+    if (typeof cargarDatosCentralReportes === 'function') cargarDatosCentralReportes();
+};
+
+// Actualizamos cargarDatosCentralReportes para que también pinte la tabla de desglose
+const baseCargarDatosReportes = cargarDatosCentralReportes;
+cargarDatosCentralReportes = async function() {
+    try {
+        const regionalSelect = document.getElementById('filtro-regional-admin');
+        const zonaSelect = document.getElementById('filtro-zona-admin');
+        const cadenaSelect = document.getElementById('filtro-cadena-admin');
+        const tiendaSelect = document.getElementById('filtro-tienda-admin');
+        const tbodyDesglose = document.getElementById('tabla-desglose-reportes');
+
+        const regFiltro = regionalSelect?.value || 'ALL';
+        const zonaFiltro = zonaSelect?.value || 'ALL';
+        const cadenaFiltro = cadenaSelect?.value || 'ALL';
+        const tiendaFiltro = tiendaSelect?.value || 'ALL';
+
+        const snapshot = await db.collection("cierre_ventas_nacional").get();
+        
+        let acumuladoInfinixUnidades = 0;
+        let acumuladoInfinixTarget = 0;
+        let acumuladoMercadoTotal = 0;
+        let filasTablaHtml = '';
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const zonaDoc = (data.zona || '').trim();
+            const cadenaDoc = (data.cadena || '').trim().toUpperCase();
+            const tiendaDoc = (data.tienda || '').trim().toUpperCase();
+            const asesorDoc = data.asesorResponsable || data.asesor || 'Asesor General';
+
+            // 1. Filtro Regional
+            if (regFiltro !== 'ALL') {
+                const regDeEstaZona = obtenerRegionalDeZona(zonaDoc);
+                if (regDeEstaZona.toUpperCase() !== regFiltro.toUpperCase()) return;
+            }
+
+            // 2. Filtro Zona
+            if (zonaFiltro !== 'ALL' && zonaDoc.toUpperCase() !== zonaFiltro.toUpperCase()) return;
+
+            // 3. Filtro Cadena
+            if (cadenaFiltro !== 'ALL') {
+                if (!cadenaDoc.includes(cadenaFiltro) && !tiendaDoc.includes(cadenaFiltro)) return;
+            }
+
+            // 4. Filtro Tienda
+            if (tiendaFiltro !== 'ALL' && tiendaDoc !== tiendaFiltro.toUpperCase()) return;
+
+            let unidadesTienda = 0;
+            let targetTienda = 0;
+
+            const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+            diasSemana.forEach(dia => {
+                if (data[dia]) {
+                    const infoDia = data[dia];
+                    let sumaUnidadesDia = Number(infoDia.totalUnidadesDia);
+                    if (isNaN(sumaUnidadesDia) || sumaUnidadesDia === 0) {
+                        sumaUnidadesDia = 0;
+                        if (infoDia.infinix) {
+                            Object.values(infoDia.infinix).forEach(item => sumaUnidadesDia += Number(item.venta || 0));
+                        }
+                    }
+                    unidadesTienda += sumaUnidadesDia;
+                    acumuladoInfinixUnidades += sumaUnidadesDia;
+                    
+                    if (infoDia.infinix) {
+                        Object.values(infoDia.infinix).forEach(item => {
+                            let tVal = Number(item.target || 0);
+                            targetTienda += tVal;
+                            acumuladoInfinixTarget += tVal;
+                        });
+                    }
+                    
+                    if (infoDia.competencia) {
+                        const compData = infoDia.competencia.modelos || infoDia.competencia;
+                        Object.values(compData).forEach(compItem => {
+                            acumuladoMercadoTotal += Number(compItem.venta || compItem.hc || 0);
+                        });
+                    }
+                }
+            });
+
+            const cumpTienda = targetTienda > 0 ? Math.round((unidadesTienda / targetTienda) * 100) : 0;
+            const regAsignada = obtenerRegionalDeZona(zonaDoc) || 'Nacional';
+
+            filasTablaHtml += `
+                <tr class="hover:bg-darkBorder/30 transition-all border-b border-darkBorder/50 text-xs">
+                    <td class="p-3 pl-4">
+                        <div class="font-bold text-white">${regAsignada}</div>
+                        <div class="text-[9px] text-gray-400 uppercase">${zonaDoc}</div>
+                    </td>
+                    <td class="p-3 text-gray-200 font-bold uppercase">${data.tienda || cadenaDoc || 'Sede General'}</td>
+                    <td class="p-3 text-center text-gray-300">${asesorDoc}</td>
+                    <td class="p-3 text-center font-black text-green-400 text-sm">${unidadesTienda}</td>
+                    <td class="p-3 text-center text-gray-400">${targetTienda}</td>
+                    <td class="p-3 text-center font-bold text-blue-400">${cumpTienda}%</td>
+                </tr>
+            `;
+        });
+
+        if (tbodyDesglose) {
+            tbodyDesglose.innerHTML = filasTablaHtml || `<tr><td colspan="6" class="p-6 text-center text-gray-500 text-xs">No hay registros con los filtros seleccionados.</td></tr>`;
+        }
+
+        // KPIs Globales
+        const mercadoGlobal = acumuladoInfinixUnidades + acumuladoMercadoTotal;
+        const marketSharePorcentaje = mercadoGlobal > 0 ? ((acumuladoInfinixUnidades / mercadoGlobal) * 100).toFixed(1) : 0;
+        const cumplimientoPorcentaje = acumuladoInfinixTarget > 0 ? Math.round((acumuladoInfinixUnidades / acumuladoInfinixTarget) * 100) : 0;
+
+        const tarjetaVentas = document.getElementById('kpi-ventas-global');
+        const tarjetaShare = document.getElementById('kpi-share-global');
+        const tarjetaCumplimiento = document.getElementById('kpi-target-global');
+
+        if (tarjetaVentas) tarjetaVentas.textContent = acumuladoInfinixUnidades.toLocaleString();
+        if (tarjetaShare) tarjetaShare.textContent = `${marketSharePorcentaje}%`;
+        if (tarjetaCumplimiento) tarjetaCumplimiento.textContent = `${cumplimientoPorcentaje}%`;
+
+    } catch (error) {
+        console.error("Error cargando detalle en Central de Reportes:", error);
+    }
+};
     </script>
 </body>
 </html>
