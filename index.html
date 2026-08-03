@@ -15,6 +15,10 @@
 <!-- Tailwind CSS -->
 <script src="tailwind.js"></script>
 
+<!-- Motores para generar Excel con estilos desde el navegador -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
 <!-- SDK de Firebase (¡Cargando primero y fuera de las etiquetas de estilo!) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -146,7 +150,7 @@
     </style>
     <!-- Librería para descargar Excel -->
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 </head>
 <body>
 <div id="login-overlay" class="fixed inset-0 bg-darkBg z-[99999] flex items-center justify-center p-4 transition-opacity duration-500 overflow-y-auto">
@@ -260,7 +264,7 @@
     </header>
 
     <div class="max-w-6xl mx-auto w-full px-4 mt-6">
-        <div id="main-tabs-container" class="grid grid-cols-7 gap-1.5 p-1.5 bg-darkCard rounded-2xl border border-darkBorder shadow-2xl transition-all duration-500 overflow-x-auto">
+        <div id="main-tabs-container" class="flex flex-nowrap overflow-x-auto gap-1.5 p-1.5 bg-darkCard rounded-2xl border border-darkBorder shadow-2xl transition-all duration-500 whitespace-nowrap">
             <button onclick="switchTab('tab-comparativa')" id="btn-tab-comparativa" class="py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-infinix text-black shadow-lg shadow-infinix/20 whitespace-nowrap">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                 <span>Arena Cara a Cara</span>
@@ -334,9 +338,10 @@
     <span class="text-green-500 text-lg drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]">📊</span>
     <span>Central de Reportes</span>
 </button>
-<!-- Botón Reporte de Visita -->
-<button onclick="switchTab('tab-reporte-visita')" id="btn-tab-reporte-visita" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all border border-blue-400/50">
-    <span>📸</span> Reporte de Visita
+<!-- Botón Menú Superior Sincronizado -->
+<button onclick="switchTab('tab-reporte-visita')" id="btn-tab-reporte-visita" class="py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-white bg-[#161b22] hover:bg-[#30363d] border border-[#30363d]">
+    <span class="text-green-400 text-lg">📸</span>
+    <span>Reporte de Visita</span>
 </button>
 </div> 
 </div>
@@ -1095,50 +1100,350 @@
 
     <!-- Selector de Rol para mostrar el formulario correcto -->
     <div class="flex gap-4 mb-6">
-        <button onclick="document.getElementById('form-sup').style.display='block'; document.getElementById('form-formador').style.display='none';" class="flex-1 py-3 bg-[#161b22] border border-[#30363d] text-green-400 font-bold rounded-xl hover:border-green-400 transition-all">
+        HTML
+        <button onclick="document.getElementById('form-sup').classList.remove('hidden'); document.getElementById('form-formador').classList.add('hidden'); cargarTiendasSupervisor();" class="flex-1 py-3 bg-[#161b22] border border-[#30363d] text-green-400 font-bold rounded-xl hover:border-green-400 transition-all cursor-pointer">
             MODO SUPERVISOR (Infinix)
         </button>
-        <button onclick="document.getElementById('form-formador').style.display='block'; document.getElementById('form-sup').style.display='none';" class="flex-1 py-3 bg-[#161b22] border border-[#30363d] text-blue-400 font-bold rounded-xl hover:border-blue-400 transition-all">
+        <button onclick="document.getElementById('form-formador').classList.remove('hidden'); document.getElementById('form-sup').classList.add('hidden'); cargarTiendasFormador();" class="flex-1 py-3 bg-[#161b22] border border-[#30363d] text-blue-400 font-bold rounded-xl hover:border-blue-400 transition-all cursor-pointer">
             MODO FORMADOR (Infinix)
-        </button>
+        </button> 
     </div>
 
-    <!-- FORMULARIO 1: SUPERVISOR (Oculto por defecto, se muestra al hacer clic arriba) -->
-    <div id="form-sup" class="hidden bg-[#0d1117] p-6 rounded-2xl border border-[#30363d] shadow-xl">
-        <h3 class="text-sm font-black text-green-400 uppercase tracking-widest mb-4">Ingreso de Datos: Supervisión</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input type="text" id="sup-tienda" placeholder="Tienda / Punto de Venta" class="w-full bg-[#161b22] text-white p-3 rounded-lg border border-[#30363d] focus:border-green-400 outline-none text-xs">
-            <input type="text" id="sup-ciudad" placeholder="Ciudad / Zona" class="w-full bg-[#161b22] text-white p-3 rounded-lg border border-[#30363d] focus:border-green-400 outline-none text-xs">
-            <select id="sup-tipo" class="w-full bg-[#161b22] text-gray-400 p-3 rounded-lg border border-[#30363d] focus:border-green-400 outline-none text-xs">
-                <option value="">Tipo de Supervisión...</option>
+ <!-- FORMULARIO 1: SUPERVISOR (Actualizado, Conectado a Firebase y 3 Fotos) -->
+<div id="form-sup" class="hidden bg-darkCard p-6 rounded-2xl border border-darkBorder shadow-xl space-y-6 text-white text-xs">
+    <h3 class="text-sm font-black text-infinix uppercase tracking-widest border-b border-darkBorder pb-2">Ingreso de Datos: Seguimiento en Punto de Venta</h3>
+    
+    <!-- Información General -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label class="block font-bold text-gray-400 mb-1 uppercase">Tienda / Punto de Venta *</label>
+            <select id="sup-tienda" onchange="cargarDatosAutomaticosSupervisor(this.value)" class="w-full bg-black text-white p-3 rounded-lg border border-darkBorder focus:border-infinix outline-none cursor-pointer">
+                <option value="">Seleccione tienda...</option>
+            </select>
+        </div>
+        <div>
+            <label class="block font-bold text-gray-400 mb-1 uppercase">Tipo de Visita *</label>
+            <select id="sup-tipo" class="w-full bg-black text-white p-3 rounded-lg border border-darkBorder focus:border-infinix outline-none cursor-pointer">
                 <option value="Rutinaria">Rutinaria</option>
                 <option value="Programada">Programada</option>
                 <option value="Especial">Especial</option>
             </select>
-            <input type="file" id="sup-foto" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-green-600 file:text-white hover:file:bg-green-500 cursor-pointer">
         </div>
-        <textarea id="sup-observaciones" placeholder="Escribe las observaciones y compromisos aquí..." class="w-full mt-4 bg-[#161b22] text-white p-3 rounded-lg border border-[#30363d] focus:border-green-400 outline-none text-xs" rows="3"></textarea>
-        
-        <button onclick="alert('Motor de imagen en construcción 🚀')" class="w-full mt-6 py-4 bg-green-600 hover:bg-green-500 text-black font-black uppercase tracking-widest rounded-xl transition-all">
-            Generar Imagen de Reporte
-        </button>
     </div>
 
-    <!-- FORMULARIO 2: FORMADOR (Oculto por defecto) -->
-    <div id="form-formador" class="hidden bg-[#0d1117] p-6 rounded-2xl border border-[#30363d] shadow-xl">
-        <h3 class="text-sm font-black text-blue-400 uppercase tracking-widest mb-4">Ingreso de Datos: Formación</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input type="text" id="form-tienda" placeholder="Tienda Visitada" class="w-full bg-[#161b22] text-white p-3 rounded-lg border border-[#30363d] focus:border-blue-400 outline-none text-xs">
-            <input type="text" id="form-asesor" placeholder="Asesor Capacitado" class="w-full bg-[#161b22] text-white p-3 rounded-lg border border-[#30363d] focus:border-blue-400 outline-none text-xs">
-            <input type="text" id="form-temas" placeholder="Tema(s) Capacitados" class="w-full bg-[#161b22] text-white p-3 rounded-lg border border-[#30363d] focus:border-blue-400 outline-none text-xs">
-            <input type="file" id="form-foto" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
+    <!-- Equipo en Punto (Asesores) -->
+    <div class="bg-black/40 p-4 rounded-xl border border-darkBorder space-y-3">
+        <label class="block font-bold text-infinix uppercase tracking-wide">Equipo en Punto (Promotores presentes)</label>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+                <input type="text" id="sup-asesor-1" placeholder="Nombre del Asesor 1" class="w-full bg-black text-white p-2.5 rounded-lg border border-darkBorder outline-none mb-2">
+                <input type="text" id="sup-rol-1" placeholder="Rol / Posición (Ej: Promotor Pro)" class="w-full bg-black text-white p-2.5 rounded-lg border border-darkBorder outline-none">
+            </div>
+            <div>
+                <input type="text" id="sup-asesor-2" placeholder="Nombre del Asesor 2 (Opcional)" class="w-full bg-black text-white p-2.5 rounded-lg border border-darkBorder outline-none mb-2">
+                <input type="text" id="sup-rol-2" placeholder="Rol / Posición (Opcional)" class="w-full bg-black text-white p-2.5 rounded-lg border border-darkBorder outline-none">
+            </div>
         </div>
-        <textarea id="form-observaciones" placeholder="Escribe observaciones y recomendaciones aquí..." class="w-full mt-4 bg-[#161b22] text-white p-3 rounded-lg border border-[#30363d] focus:border-blue-400 outline-none text-xs" rows="3"></textarea>
-        
-        <button onclick="alert('Motor de imagen en construcción 🚀')" class="w-full mt-6 py-4 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest rounded-xl transition-all">
-            Generar Imagen de Reporte
-        </button>
     </div>
+
+    <!-- Objetivo de la Visita (Checkboxes) -->
+    <div class="bg-black/40 p-4 rounded-xl border border-darkBorder space-y-2">
+        <label class="block font-bold text-infinix uppercase tracking-wide">Objetivo de la Visita</label>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-300">
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="sup-obj" value="Verificación de indicadores de ventas" class="accent-infinix"> Verificación de indicadores de ventas</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="sup-obj" value="Revisión de ejecución en punto de venta" class="accent-infinix"> Revisión de ejecución en punto de venta</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="sup-obj" value="Acompañamiento comercial" class="accent-infinix"> Acompañamiento comercial</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="sup-obj" value="Verificación de inventario y precios" class="accent-infinix"> Verificación de inventario y precios</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="sup-obj" value="Cumplimiento de estándares de marca" class="accent-infinix"> Cumplimiento de estándares de marca</label>
+        </div>
+    </div>
+
+    <!-- Evaluación de Áreas Clave (1 a 5) -->
+    <div class="bg-black/40 p-4 rounded-xl border border-darkBorder space-y-3">
+        <label class="block font-bold text-infinix uppercase tracking-wide">Evaluación de Áreas Clave (Califica de 1 a 5)</label>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="text-[9px] text-gray-400 uppercase border-b border-darkBorder">
+                        <th class="p-2">Aspecto Observado</th>
+                        <th class="p-2 text-center w-10">1</th>
+                        <th class="p-2 text-center w-10">2</th>
+                        <th class="p-2 text-center w-10">3</th>
+                        <th class="p-2 text-center w-10">4</th>
+                        <th class="p-2 text-center w-10">5</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-darkBorder/50">
+                    <tr>
+                        <td class="p-2 font-medium text-white">Presentación Personal (Uniforme y aseo)</td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-1" value="1"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-1" value="2"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-1" value="3"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-1" value="4"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-1" value="5" checked></td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 font-medium text-white">Conocimiento de Producto (Dominio de beneficios)</td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-2" value="1"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-2" value="2"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-2" value="3"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-2" value="4"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-2" value="5" checked></td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 font-medium text-white">Ejecución en PDV (Exhibición y material POP)</td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-3" value="1"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-3" value="2"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-3" value="3"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-3" value="4"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-3" value="5" checked></td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 font-medium text-white">Labores Administrativas (DCR, inventarios, procesos)</td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-4" value="1"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-4" value="2"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-4" value="3"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-4" value="4"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-4" value="5" checked></td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 font-medium text-white">Cumplimiento de Indicadores (Ventas y metas)</td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-5" value="1"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-5" value="2"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-5" value="3"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-5" value="4"></td>
+                        <td class="p-2 text-center"><input type="radio" name="sup-eval-5" value="5" checked></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Indicadores de Desempeño (Manual + Auto Firebase) -->
+    <div class="bg-black/40 p-4 rounded-xl border border-darkBorder space-y-3">
+        <label class="block font-bold text-infinix uppercase tracking-wide">Indicadores de Desempeño (Sincronizados)</label>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-gray-400 mb-1 text-[10px]">Ventas del día (Unidades a registrar manualmente) *</label>
+                <input type="number" id="sup-ventas-dia" placeholder="Ej: 3" class="w-full bg-black text-white p-2.5 rounded-lg border border-darkBorder outline-none font-bold">
+            </div>
+            <div>
+                <label class="block text-gray-400 mb-1 text-[10px]">Ventas acumuladas (Automático desde Firebase)</label>
+                <input type="text" id="sup-ventas-acum" readonly class="w-full bg-black/60 text-infinix p-2.5 rounded-lg border border-darkBorder font-mono font-bold" value="Seleccione tienda...">
+            </div>
+            <div>
+                <label class="block text-gray-400 mb-1 text-[10px]">Cumplimiento de meta (Automático)</label>
+                <input type="text" id="sup-cumplimiento" readonly class="w-full bg-black/60 text-infinix p-2.5 rounded-lg border border-darkBorder font-mono font-bold" value="Seleccione tienda...">
+            </div>
+            <div>
+                <label class="block text-gray-400 mb-1 text-[10px]">ROI del punto (Ventas totales / Asesores en punto)</label>
+                <input type="text" id="sup-roi" readonly class="w-full bg-black/60 text-yellow-400 p-2.5 rounded-lg border border-darkBorder font-mono font-bold" value="Calculado automáticamente">
+            </div>
+        </div>
+        <div class="mt-3">
+            <textarea id="sup-obs-indicadores" placeholder="Observaciones específicas sobre los indicadores..." class="w-full bg-black text-white p-2.5 rounded-lg border border-darkBorder outline-none" rows="2"></textarea>
+        </div>
+    </div>
+
+    <!-- Observaciones Generales y Compromisos -->
+    <div class="space-y-3">
+        <textarea id="sup-observaciones" placeholder="Observaciones generales (Hallazgos, oportunidades)..." class="w-full bg-black text-white p-3 rounded-lg border border-darkBorder outline-none" rows="2"></textarea>
+        <textarea id="sup-compromisos" placeholder="Compromisos y acciones a seguir acordadas..." class="w-full bg-black text-white p-3 rounded-lg border border-darkBorder outline-none" rows="2"></textarea>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+                <label class="block font-bold text-gray-400 mb-1 uppercase text-[10px]">Evidencia Foto 1</label>
+                <input type="file" id="sup-foto-1" accept="image/*" class="w-full text-xs text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-bold file:bg-infinix file:text-black hover:file:bg-opacity-80 cursor-pointer">
+            </div>
+            <div>
+                <label class="block font-bold text-gray-400 mb-1 uppercase text-[10px]">Evidencia Foto 2</label>
+                <input type="file" id="sup-foto-2" accept="image/*" class="w-full text-xs text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-bold file:bg-infinix file:text-black hover:file:bg-opacity-80 cursor-pointer">
+            </div>
+            <div>
+                <label class="block font-bold text-gray-400 mb-1 uppercase text-[10px]">Evidencia Foto 3</label>
+                <input type="file" id="sup-foto-3" accept="image/*" class="w-full text-xs text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-bold file:bg-infinix file:text-black hover:file:bg-opacity-80 cursor-pointer">
+            </div>
+        </div>
+    </div>
+
+    <button onclick="compilarYGenerarReporte('supervisor')" class="w-full py-4 bg-infinix hover:bg-infinix-light text-black font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-infinix/20 cursor-pointer orbitron">
+        🚀 Generar Reporte de Supervisión Ejecutivo
+    </button>
+</div>
+ <!-- FORMULARIO 2: FORMADOR (Actualizado con 3 Fotos y Estilo Claro) -->
+<div id="form-formador" class="hidden bg-darkCard p-6 rounded-2xl border border-darkBorder shadow-xl space-y-6 text-white text-xs">
+    <h3 class="text-sm font-black text-infinix uppercase tracking-widest border-b border-darkBorder pb-2">Ingreso de Datos: Formación y Acompañamiento Ejecutivo</h3>
+    
+    <!-- Información General -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label class="block font-bold text-gray-400 mb-1 uppercase">Tienda Visitada *</label>
+            <select id="form-tienda" class="w-full bg-black text-white p-3 rounded-lg border border-darkBorder focus:border-infinix outline-none cursor-pointer">
+                <option value="">Seleccione tienda...</option>
+            </select>
+        </div>
+        <div>
+            <label class="block font-bold text-gray-400 mb-1 uppercase">Asesor Capacitado *</label>
+            <input type="text" id="form-asesor" placeholder="Nombre completo del asesor" class="w-full bg-black text-white p-3 rounded-lg border border-darkBorder focus:border-infinix outline-none">
+        </div>
+        <div>
+            <label class="block font-bold text-gray-400 mb-1 uppercase">Tema(s) Capacitado(s) *</label>
+            <input type="text" id="form-temas" placeholder="Ej: Hot 70, Argumentación..." class="w-full bg-black text-white p-3 rounded-lg border border-darkBorder focus:border-infinix outline-none">
+        </div>
+        <div>
+            <label class="block font-bold text-gray-400 mb-1 uppercase">Tipo de Visita *</label>
+            <select id="form-tipo-visita" class="w-full bg-black text-white p-3 rounded-lg border border-darkBorder focus:border-infinix outline-none cursor-pointer">
+                <option value="Capacitación">Capacitación</option>
+                <option value="Seguimiento">Seguimiento</option>
+                <option value="Acompañamiento">Acompañamiento</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Objetivos y Metodología (Selección) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-darkBorder">
+        <div class="bg-black/40 p-4 rounded-xl border border-darkBorder space-y-2">
+            <label class="block font-bold text-infinix uppercase tracking-wide">Objetivo de la Visita</label>
+            <div class="space-y-1.5 text-gray-300">
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="obj-visita" value="Formación en producto" class="accent-infinix"> Formación en producto</label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="obj-visita" value="Actualización de lanzamientos / novedades" class="accent-infinix"> Actualización de lanzamientos / novedades</label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="obj-visita" value="Refuerzo de argumentación comercial" class="accent-infinix"> Refuerzo de argumentación comercial</label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="obj-visita" value="Técnicas de venta y cierre" class="accent-infinix"> Técnicas de venta y cierre</label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="obj-visita" value="Experiencia de cliente" class="accent-infinix"> Experiencia de cliente</label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="obj-visita" value="Resolución de objeciones" class="accent-infinix"> Resolución de objeciones</label>
+            </div>
+        </div>
+
+        <div class="bg-black/40 p-4 rounded-xl border border-darkBorder space-y-2">
+            <label class="block font-bold text-infinix uppercase tracking-wide">Metodología Utilizada</label>
+            <div class="space-y-1.5 text-gray-300">
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="metodologia" value="Expositiva" class="accent-infinix"> Expositiva</label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="metodologia" value="Demostrativa" class="accent-infinix"> Demostrativa</label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="metodologia" value="Práctica / Role Play" class="accent-infinix"> Práctica / Role Play</label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="metodologia" value="Resolución de casos" class="accent-infinix"> Resolución de casos</label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="metodologia" value="Dinámica grupal" class="accent-infinix"> Dinámica grupal</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Evaluación de Aprendizaje (Calificación 1 a 5) -->
+    <div class="bg-black/40 p-4 rounded-xl border border-darkBorder space-y-3">
+        <label class="block font-bold text-infinix uppercase tracking-wide">Evaluación de Aprendizaje (Califica de 1 a 5)</label>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="text-[9px] text-gray-400 uppercase border-b border-darkBorder">
+                        <th class="p-2">Aspectos Evaluados</th>
+                        <th class="p-2 text-center w-10">1</th>
+                        <th class="p-2 text-center w-10">2</th>
+                        <th class="p-2 text-center w-10">3</th>
+                        <th class="p-2 text-center w-10">4</th>
+                        <th class="p-2 text-center w-10">5</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-darkBorder/50">
+                    <tr>
+                        <td class="p-2 font-medium text-white">Conocimiento de Producto</td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-1" value="1"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-1" value="2"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-1" value="3"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-1" value="4"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-1" value="5" checked></td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 font-medium text-white">Argumentación Comercial</td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-2" value="1"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-2" value="2"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-2" value="3"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-2" value="4"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-2" value="5" checked></td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 font-medium text-white">Técnicas de Venta y Cierre</td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-3" value="1"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-3" value="2"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-3" value="3"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-3" value="4"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-3" value="5" checked></td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 font-medium text-white">Manejo de Objeciones</td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-4" value="1"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-4" value="2"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-4" value="3"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-4" value="4"></td>
+                        <td class="p-2 text-center"><input type="radio" name="eval-4" value="5" checked></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Materiales, Duración y Nivel de Participación -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-black/40 p-4 rounded-xl border border-darkBorder space-y-2">
+            <label class="block font-bold text-infinix uppercase tracking-wide">Materiales Utilizados</label>
+            <div class="space-y-1 text-gray-300 text-[11px]">
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="material" value="Presentación / PPT"> Presentación / PPT</label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="material" value="Guías de producto"> Guías de producto</label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="material" value="Demo de producto"> Demo de producto</label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="material" value="Videos / Contenido digital"> Videos / Contenido digital</label>
+            </div>
+        </div>
+
+        <div class="bg-black/40 p-4 rounded-xl border border-darkBorder space-y-3">
+            <div>
+                <label class="block font-bold text-infinix uppercase tracking-wide mb-1">Duración (Minutos)</label>
+                <input type="text" id="form-duracion" placeholder="Ej: 45 min" class="w-full bg-black text-white p-2.5 rounded-lg border border-darkBorder outline-none">
+            </div>
+            <div>
+                <label class="block font-bold text-infinix uppercase tracking-wide mb-1">Participación del Asesor</label>
+                <select id="form-participacion" class="w-full bg-black text-white p-2.5 rounded-lg border border-darkBorder outline-none cursor-pointer">
+                    <option value="Muy alta">Muy alta</option>
+                    <option value="Alta">Alta</option>
+                    <option value="Media">Media</option>
+                    <option value="Baja">Baja</option>
+                    <option value="Muy baja">Muy baja</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="bg-black/40 p-4 rounded-xl border border-darkBorder space-y-3">
+            <label class="block font-bold text-infinix uppercase tracking-wide">Resultado General</label>
+            <select id="form-resultado" class="w-full bg-black text-white p-2.5 rounded-lg border border-darkBorder outline-none cursor-pointer">
+                <option value="Excelente comprensión y aplicación del tema">Excelente comprensión</option>
+                <option value="Comprendió y requiere refuerzo menor">Comprendió (refuerzo menor)</option>
+                <option value="Comprendió parcialmente, requiere refuerzo">Comprendió parcialmente</option>
+                <option value="No comprendió, requiere nueva formación">No comprendió</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Observaciones, Acuerdos y 3 Fotos -->
+    <div class="space-y-3 pt-2">
+        <textarea id="form-observaciones" placeholder="Observaciones y recomendaciones..." class="w-full bg-black text-white p-3 rounded-lg border border-darkBorder outline-none" rows="2"></textarea>
+        <textarea id="form-acuerdos" placeholder="Acuerdos y compromisos establecidos..." class="w-full bg-black text-white p-3 rounded-lg border border-darkBorder outline-none" rows="2"></textarea>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+                <label class="block font-bold text-gray-400 mb-1 uppercase text-[10px]">Evidencia Foto 1</label>
+                <input type="file" id="form-foto-1" accept="image/*" class="w-full text-xs text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-bold file:bg-infinix file:text-black hover:file:bg-opacity-80 cursor-pointer">
+            </div>
+            <div>
+                <label class="block font-bold text-gray-400 mb-1 uppercase text-[10px]">Evidencia Foto 2</label>
+                <input type="file" id="form-foto-2" accept="image/*" class="w-full text-xs text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-bold file:bg-infinix file:text-black hover:file:bg-opacity-80 cursor-pointer">
+            </div>
+            <div>
+                <label class="block font-bold text-gray-400 mb-1 uppercase text-[10px]">Evidencia Foto 3</label>
+                <input type="file" id="form-foto-3" accept="image/*" class="w-full text-xs text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-bold file:bg-infinix file:text-black hover:file:bg-opacity-80 cursor-pointer">
+            </div>
+        </div>
+    </div>
+
+    <button onclick="compilarYGenerarReporte('formador')" class="w-full py-4 bg-infinix hover:bg-infinix-light text-black font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-infinix/20 cursor-pointer orbitron">
+        🚀 Generar Reporte de Formación Ejecutivo
+    </button>
+</div>
 
 </div>
 <!-- ========================================== -->
@@ -1182,7 +1487,8 @@
                 <option value="WOM">WOM</option>
                 <option value="Alkosto / Ktronix">Alkosto / Ktronix</option>
                 <option value="Olímpica">Olímpica</option>
-                <option value="Independiente">Independiente</option>
+                <option value="Cencosud">Cencosud</option>
+                <option value="Alkosto Pasto">Alkosto Pasto</option>
             </select>
         </div>
         <div>
@@ -1304,6 +1610,7 @@
 <!-- PANEL GERENCIAL / MODO DIOS (Fase 2)       -->
 <!-- ========================================== -->
 <div id="panel-admin-gerencia" class="hidden w-full max-w-7xl mx-auto p-4 space-y-6 mt-8">
+   
     
     <!-- Encabezado Directivo -->
     <div class="flex justify-between items-center bg-[#0d1117] border border-green-500/50 p-6 rounded-lg shadow-lg shadow-green-900/20">
@@ -1343,6 +1650,11 @@
         </select>
     </div>
 </div>
+<!-- 4. Fecha Auditar (NUEVO CAJÓN) -->
+<div class="bg-[#161b22] border border-[#30363d] rounded-xl p-4 shadow-inner relative">
+    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">4. Fecha Auditar</label>
+    <input type="date" id="filtro-fecha-cierre" onchange="cargarVisorCierres()" class="w-full bg-[#0d0d11] border border-[#30363d] rounded-lg p-2.5 text-white text-sm outline-none focus:border-green-500 transition-all cursor-pointer">
+</div>
 <!-- 4 Tarjetas de KPIs Estratégicos -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
     <!-- Tarjeta 1: Venta Infinix -->
@@ -1373,28 +1685,30 @@
         <p class="text-[10px] text-gray-500 mt-1">Avance de Meta</p>
     </div>
 </div>
-<!-- Nueva Tabla: Radar Cara a Cara por Marca -->
-<div class="bg-[#161b22] border border-[#30363d] rounded-2xl p-5 mb-6 shadow-xl overflow-x-auto">
-    <h3 class="text-sm font-black text-blue-400 uppercase tracking-widest orbitron mb-4 flex items-center gap-2">
-        <span>🎯</span> Radar de Competencia: Top Marcas vs Infinix
-    </h3>
-    <table class="w-full text-left border-collapse whitespace-nowrap text-xs">
-        <thead>
-            <tr class="bg-black/60 text-[10px] font-bold uppercase tracking-wider text-gray-400 border-b border-darkBorder">
-                <th class="p-3 pl-4">Regional / Zona</th>
-                <th class="p-3">Tienda</th>
-                <th class="p-3 text-center">Marca Rival</th>
-                <th class="p-3 text-center text-gray-300">Ventas Rival</th>
-                <th class="p-3 text-center text-green-400">Ventas Infinix</th>
-                <th class="p-3 text-center text-yellow-400">Brecha (A favor / En contra)</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-darkBorder/50 font-mono" id="tabla-desglose-reportes">
-            <tr>
-                <td colspan="6" class="p-6 text-center text-gray-500 text-xs">Seleccione filtros para ver el radar de competencia.</td>
-            </tr>
-        </tbody>
-    </table>
+<!-- ================================================================= -->
+<!-- VISOR OPERATIVO DE REPORTES DE CIERRE                             -->
+<!-- ================================================================= -->
+<div class="bg-darkCard border border-darkBorder rounded-2xl p-6 shadow-xl mt-6">
+    <div class="flex flex-col md:flex-row justify-between items-center border-b border-darkBorder pb-4 mb-5 gap-4">
+        <div>
+            <h2 class="text-lg font-black text-green-400 uppercase tracking-wider">Visor Operativo de Reportes de Cierre</h2>
+            <p class="text-gray-400 text-xs mt-1">Auditoría visual de cierres diarios sincronizados con Fireboss.</p>
+        </div>
+        <button onclick="descargarExcelConsolidadoCierres()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer">
+            📥 Descargar Excel Consolidado
+        </button>
+    </div>
+
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-sm font-black text-white uppercase tracking-wide">Estado de Cierres en Punto</h3>
+        <span id="lbl-estado-visor" class="text-gray-400 font-mono text-[11px]">Esperando selección...</span>
+    </div>
+
+    <!-- Aquí se inyectarán las tarjetas (Estilo Auditoría Shopping) -->
+    <div id="grid-visor-cierres" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div class="text-center py-10 text-gray-500 col-span-full">Seleccione una fecha o tienda para visualizar los reportes.</div>
+    </div>
+</div>
 </div>
     <!-- PANEL ADMIN INDEPENDIENTE: GESTOR DE LISTAS DE CIERRE -->
     <div id="panel-admin-gestor-listas" class="hidden mb-8 bg-darkCard border-2 border-green-500/50 rounded-3xl p-6 shadow-[0_0_40px_rgba(0,255,102,0.15)] relative overflow-hidden">
@@ -1417,17 +1731,7 @@
             💾 GUARDAR Y ACTUALIZAR LISTAS NACIONALES
         </button>
     </div>
-    <!-- Botones de Acción -->
-    <div class="flex flex-wrap gap-4 justify-center mt-8 p-6 bg-[#161b22] rounded-lg border border-[#30363d]">
-        <button id="btn-descargar-consolidado" class="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded shadow-lg shadow-blue-500/30 transition-all flex items-center gap-2">
-            📥 Descargar Consolidado (Imagen/Excel)
-        </button>
-        
-        <!-- MODO DIOS: Solo visible para Jerson -->
-        <button id="btn-wipe-reset" class="hidden px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded shadow-lg shadow-red-500/30 transition-all items-center gap-2">
-            ⚠️ WIPE & RESET (Cierre de Mes Oficial)
-        </button>
-    </div>
+    
 
 </div>
     </main>
@@ -1455,7 +1759,7 @@
             
             <div class="flex justify-between items-start mb-6 border-b border-cyberMagenta/30 pb-4 relative z-10">
                 <div>
-                    <h3 class="textxl font-black text-white orbitron tracking-widest flex items-center gap-2">
+                    <h3 class="text-xl font-black text-white orbitron tracking-widest flex items-center gap-2">
                         <span class="text-cyberMagenta animate-pulse">⚠️</span> ALERTA DE COMBATE
                     </h3>
                     <p class="text-[10px] text-cyberMagenta font-bold tracking-widest uppercase mt-0.5">Reporte de Cambio de Precio en Campo</p>
@@ -2157,34 +2461,7 @@ const tLocal = typeof tienda !== 'undefined' ? tienda : '';
         }).catch(err => alert("Error: " + err));
     }
 }
-          // --- SISTEMA DE NOTIFICACIONES PUSH ---
-        function activarNotificaciones() {
-            const messaging = firebase.messaging();
-            
-            Notification.requestPermission().then((permission) => {
-                if (permission === 'granted') {
-                    console.log('Permiso de notificaciones concedido.');
-                    
-                    // Aquí el sistema le genera una "cédula" (Token) única a ese celular
-                    // Reemplazaremos 'TU_CLAVE_VAPID' en el siguiente paso
-                    messaging.getToken({ vapidKey: 'TU_CLAVE_VAPID' }).then((currentToken) => {
-                        if (currentToken) {
-                            console.log('Token del dispositivo:', currentToken);
-                            triggerCyberToast("SISTEMA PUSH ACTIVO", "Este dispositivo ya puede recibir alertas de combate.", true);
-                        } else {
-                            console.log('No se pudo generar el token.');
-                        }
-                    });
-                } else {
-                    console.log('El asesor bloqueó las notificaciones.');
-                }
-            });
-            
-            // Si la app está ABIERTA, muestra la notificación como un CyberToast tuyo
-            messaging.onMessage((payload) => {
-                triggerCyberToast(payload.notification.title, payload.notification.body, true);
-            });
-        }  
+ 
 // ==========================================
 // FUNCIONES MAESTRAS DE NAVEGACIÓN Y ROLES
 // ==========================================
@@ -2206,10 +2483,11 @@ function applyRolePermissions(role) {
     const btnShoppingTrainer = document.getElementById('btn-tab-shopping-trainer');
     const btnShoppingAdmin = document.getElementById('btn-tab-shopping-admin');
     
-    // 👇 ESTOS ERAN LOS PRÓFUGOS 👇
+    // 👇 
     const btnCierreVentas = document.getElementById('btn-tab-cierre-ventas');
     const btnCentralReportes = document.getElementById('btn-tab-reportes-admin');
     const btnAdminListas = document.getElementById('btn-tab-admin-listas');
+    const btnReporteVisitas = document.getElementById('btn-tab-reporte-visita');
     
     const tabsContainer = document.getElementById('main-tabs-container');
     const btnAlertRiv = document.getElementById('btn-alert-rival');
@@ -2222,7 +2500,7 @@ function applyRolePermissions(role) {
     let visibleTabs = 0;
 
     // 1. OCULTAMOS TODOS LOS BOTONES POR DEFECTO (Incluyendo los nuevos)
-    const allButtons = [btnArena, btnRadar, btnQuiz, btnShopping, btnCortex, btnAlertasMaster, btnTendenciasNacionales, btnCalculadora, btnAdminCalculadora, btnSalonFama, btnInventario, btnShoppingTrainer, btnShoppingAdmin, btnCierreVentas, btnCentralReportes, btnAdminListas];
+    const allButtons = [btnArena, btnRadar, btnQuiz, btnShopping, btnCortex, btnAlertasMaster, btnTendenciasNacionales, btnCalculadora, btnAdminCalculadora, btnSalonFama, btnInventario, btnShoppingTrainer, btnShoppingAdmin, btnCierreVentas, btnCentralReportes, btnAdminListas, btnCentralReportes, btnReporteVisitas];
     allButtons.forEach(b => { if(b) b.classList.add('hidden'); });
     
     if (btnAlertRiv) btnAlertRiv.classList.add('hidden');
@@ -2239,6 +2517,7 @@ function applyRolePermissions(role) {
     if (btnInventario) { btnInventario.classList.remove('hidden'); visibleTabs++; }
 
     // 3. LÓGICA ESTRICTA POR ROLES
+    if (btnCentralReportes) { btnCentralReportes.classList.remove('hidden'); visibleTabs++; }
     if (['ASESOR', 'TRAINER', 'SUPERVISOR', 'COORDINADOR', 'ADMIN'].includes(role)) {
         if (btnAlertRiv) btnAlertRiv.classList.remove('hidden');
         if (btnVentaRiv) btnVentaRiv.classList.remove('hidden');
@@ -2253,7 +2532,6 @@ function applyRolePermissions(role) {
         if (btnAdminCalculadora) { btnAdminCalculadora.classList.remove('hidden'); visibleTabs++; }
         
         // BOTONES EXCLUSIVOS DE ADMIN:
-        if (btnCentralReportes) { btnCentralReportes.classList.remove('hidden'); visibleTabs++; }
         if (btnAdminListas) { btnAdminListas.classList.remove('hidden'); visibleTabs++; }
 
         if (btnObjEditor) btnObjEditor.classList.remove('hidden');
@@ -2268,6 +2546,7 @@ function applyRolePermissions(role) {
         if (btnCentralReportes) { btnCentralReportes.classList.remove('hidden'); visibleTabs++; }
     }
     else if (role === 'SUPERVISOR' || role === 'COORDINADOR' || role === 'TRAINER') {
+        if (btnReporteVisitas && role !== 'COORDINADOR') { btnReporteVisitas.classList.remove('hidden'); visibleTabs++; }
         if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
         if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
         if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
@@ -2316,6 +2595,12 @@ function applyRolePermissions(role) {
         }
     }
 
+// 🔒 Candado a muerte para Reporte de Visitas
+const btnVisitaFinal = document.getElementById('btn-tab-reporte-visita');
+    if (btnVisitaFinal && !['SUPERVISOR', 'TRAINER', 'ADMIN'].includes(role)) {
+        btnVisitaFinal.classList.add('hidden');
+    }
+    
     switchTab('tab-comparativa');
 }
 
@@ -2334,7 +2619,7 @@ const btnCierre = document.getElementById('btn-tab-cierre-ventas');
         }
     }
             // 1. OCULTAR TODAS LAS SECCIONES HTML
-            const tabs = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping', 'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-calculadora', 'tab-admin-calculadora', 'tab-salon-fama', 'tab-inventario', 'tab-shopping-trainer', 'tab-shopping-admin', 'tab-cierre-ventas', 'panel-admin-gerencia', 'tab-admin-listas'];
+            const tabs = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping', 'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-calculadora', 'tab-admin-calculadora', 'tab-salon-fama', 'tab-inventario', 'tab-simulador', 'tab-shopping-trainer', 'tab-shopping-admin', 'tab-admin-listas', 'panel-admin-gerencia', 'tab-reporte-visita'];
             
             tabs.forEach(t => {
                 const el = document.getElementById(t);
@@ -2393,7 +2678,7 @@ const btnCierre = document.getElementById('btn-tab-cierre-ventas');
             const esJonathanFerro = (currentUserCode === 'CO1000429' || (currentUserName && currentUserName.toUpperCase().includes('FERRO')));
 
           // 2. APAGAR ESTILOS DE TODOS LOS BOTONES Y APLICAR RESTRICCIONES DE ROL
-          const buttons = ['btn-tab-comparativa', 'btn-tab-radar-caracteristicas', 'btn-tab-quiz', 'btn-tab-shopping', 'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales', 'btn-tab-calculadora', 'btn-tab-admin-calculadora', 'btn-tab-salon-fama', 'btn-tab-inventario', 'btn-tab-simulador', 'btn-tab-shopping-trainer', 'btn-tab-shopping-admin', 'btn-tab-reportes-admin', 'btn-tab-admin-listas'];
+          const buttons = ['btn-tab-comparativa', 'btn-tab-radar-caracteristicas', 'btn-tab-quiz', 'btn-tab-shopping', 'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales', 'btn-tab-calculadora', 'btn-tab-admin-calculadora', 'btn-tab-salon-fama', 'btn-tab-inventario', 'btn-tab-simulador', 'btn-tab-shopping-trainer', 'btn-tab-shopping-admin', 'btn-tab-admin-listas', 'btn-tab-reportes-admin', 'btn-tab-reporte-visita'];
             
             buttons.forEach(btnId => {
                 const element = document.getElementById(btnId);
@@ -2432,6 +2717,10 @@ const btnCierre = document.getElementById('btn-tab-cierre-ventas');
                     if (btnId === 'btn-tab-reportes-admin' && currentUserRole === 'ASESOR') {
                         element.classList.add('hidden');
                     }
+                    // Reporte de Visitas: Bloqueado a muerte para Asesores
+                    if (btnId === 'btn-tab-reporte-visita' && !['SUPERVISOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) {
+    element.classList.add('hidden');
+}
                 }
             });
 
@@ -4750,94 +5039,7 @@ function abrirModalPrecio(tipo) {
                 }
             }
             updateCortexVentasTable();
-        }
-
-        // --- CÓMPUTO COMPLETO ALGORÍTMICO DE TENDENCIAS GRUPALES Y REY SEMANAL ---
-        function updateCortexVentasTable() {
-            const tbody = document.getElementById('master-tendencias-tbody');
-            if (!tbody) return;
-
-            if (historicoVentasNacional.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-gray-500 font-mono text-xs">NO HAY REGISTROS EN EL HISTORIAL MÁSTER DE VENTAS DE ESTA SEMANA.</td></tr>`;
-                const globalLeaderContainer = document.getElementById('global-weekly-leader-container');
-                if (globalLeaderContainer) globalLeaderContainer.innerHTML = `<span class="text-gray-500 font-mono text-xs">Radar de tendencias despejado para el ciclo actual.</span>`;
-                return;
-            }
-
-            const ventasPorCanal = {};
-            const totalVentasGlobales = {};
-            
-            RETAILERS.forEach(r => { ventasPorCanal[r.name] = {}; });
-            
-            // Reductor analítico: itera la base nacional de la nube agrupando y sumando por canal and producto
-            historicoVentasNacional.forEach(venta => {
-                const canal = venta.canal;
-                const ref = `${venta.marca.toUpperCase()} ${venta.referencia.toUpperCase()}`;
-                if (!ventasPorCanal[canal]) ventasPorCanal[canal] = {};
-                if (!ventasPorCanal[canal][ref]) ventasPorCanal[canal][ref] = 0;
-                ventasPorCanal[canal][ref] += parseInt(venta.cantidad, 10);
-
-                if (!totalVentasGlobales[ref]) totalVentasGlobales[ref] = 0;
-                totalVentasGlobales[ref] += parseInt(venta.cantidad, 10);
-            });
-
-            tbody.innerHTML = '';
-            RETAILERS.forEach(retailer => {
-                const canalName = retailer.name;
-                const refs = ventasPorCanal[canalName] || {};
-                let lider = "Sin Movimiento", maxUnidades = 0, isTie = false;
-
-                Object.keys(refs).forEach(ref => {
-                    if (refs[ref] > maxUnidades) { maxUnidades = refs[ref]; lider = ref; isTie = false; }
-                    else if (refs[ref] === maxUnidades && maxUnidades > 0) isTie = true;
-                });
-
-                let rowHtml = `<tr class="hover:bg-darkBorder/20 transition-all"><td class="p-4 pl-6 font-bold text-white">${canalName}</td>`;
-                if (maxUnidades === 0) {
-                    rowHtml += `<td class="p-4 text-gray-500 font-mono text-xs">Sin registros</td><td class="p-4 text-center text-gray-500 font-mono">0</td><td class="p-4 text-center"><span class="text-gray-600 text-[10px] uppercase font-bold tracking-widest">INACTIVO</span></td>`;
-                } else {
-                    const isLiderInfinix = lider.toLowerCase().includes('infinix');
-                    const colorClass = isLiderInfinix ? 'text-infinix' : 'text-rival-light';
-                    const bgClass = isLiderInfinix ? 'bg-infinix/10 border-infinix/30' : 'bg-rival/10 border-rival/30';
-                    let refDisplay = isTie ? `<span class="text-yellow-500 font-black">Empate en la Cima</span>` : `<span class="${colorClass} font-black">${lider}</span>`;
-                    
-                    rowHtml += `<td class="p-4 ${isTie ? '' : bgClass + ' border'} rounded-lg">${refDisplay}</td><td class="p-4 text-center font-black text-white text-lg">${maxUnidades} <span class="text-[10px] text-gray-400 font-normal">UD(s)</span></td>`;
-                    if (isTie) rowHtml += `<td class="p-4 text-center"><span class="inline-flex items-center px-2 py-0.5 bg-yellow-500/15 text-yellow-500 rounded text-[9px] font-bold border border-yellow-500/30 tracking-widest uppercase">ZONA DISPUTA</span></td>`;
-                    else if (isLiderInfinix) rowHtml += `<td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 bg-infinix/20 text-infinix rounded shadow-[0_0_10px_rgba(57,255,20,0.3)] text-[10px] font-black border border-infinix/50 tracking-widest uppercase">👑 LÍDER INFINIX</span></td>`;
-                    else rowHtml += `<td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 bg-rival/20 text-rival-light rounded shadow-[0_0_10px_rgba(255,59,48,0.3)] text-[10px] font-black border border-rival/50 tracking-widest uppercase">⚠️ RIVAL LÍDER</span></td>`;
-                }
-                rowHtml += `</tr>`;
-                tbody.innerHTML += rowHtml;
-            });
-
-            // --- COMPUTAR EN TIEMPO REAL EL REY ABSOLUTO SEMANAL A NIVEL PAÍS ---
-            let globalLiderRef = "Ninguna";
-            let globalMaxUnidades = 0;
-            Object.keys(totalVentasGlobales).forEach(ref => {
-                if (totalVentasGlobales[ref] > globalMaxUnidades) {
-                    globalMaxUnidades = totalVentasGlobales[ref];
-                    globalLiderRef = ref;
-                }
-            });
-
-            const globalLeaderContainer = document.getElementById('global-weekly-leader-container');
-            if (globalLeaderContainer) {
-                globalLeaderContainer.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-full border border-infinix/40 bg-black flex items-center justify-center text-xl animate-pulse shadow-[0_0_10px_#00D100]">🏆</div>
-                        <div>
-                            <div class="text-[10px] uppercase font-bold text-infinix tracking-wider orbitron">PRODUCTO REY DE LA SEMANA (NACIONAL)</div>
-                            <div class="text-md font-black text-white uppercase tracking-wide truncate mt-0.5">${globalLiderRef}</div>
-                        </div>
-                    </div>
-                    <div class="text-left sm:text-right">
-                        <div class="text-[10px] text-gray-400 uppercase font-medium">Volumen Total Consolidado</div>
-                        <div class="text-xl font-mono font-black text-infinix mt-0.5">+${globalMaxUnidades} <span class="text-xs font-sans font-bold text-gray-300">UD(s)</span></div>
-                    </div>
-                `;
-            }
-        }
-
+        }              
 // --- SINCRONIZACIÓN MAESTRA COMPLETA A FIREBASE BLINDADA (ANTIVACIADO) ---
 function initCloudSincronizacion() {
             // 1. Listener de Shopping Precios (Corregido doc.exists sin paréntesis)
@@ -5550,6 +5752,231 @@ const cardHtml = `
                 `;
             }
         }
+        // =================================================================
+// MOTOR DE GENERACIÓN DE IMAGENES PARA REPORTES DE VISITA
+// =================================================================
+function compilarYGenerarReporte(tipo) {
+    const hoy = new Date().toLocaleDateString('es-CO');
+
+if (tipo === 'supervisor') {
+        const tienda = document.getElementById('sup-tienda').value || 'Sin tienda';
+        const tipoSup = document.getElementById('sup-tipo').value || 'Rutinaria';
+        const obs = document.getElementById('sup-observaciones').value || 'Sin observaciones';
+        const compromisos = document.getElementById('sup-compromisos').value || 'Sin compromisos';
+        const ventasDia = document.getElementById('sup-ventas-dia').value || '0';
+        const obsInd = document.getElementById('sup-obs-indicadores').value || 'Ninguna';
+
+        // Equipo en punto
+        const a1 = document.getElementById('sup-asesor-1').value.trim();
+        const r1 = document.getElementById('sup-rol-1').value.trim();
+        const a2 = document.getElementById('sup-asesor-2').value.trim();
+        const r2 = document.getElementById('sup-rol-2').value.trim();
+        
+        let equipoHtml = '';
+        if(a1) equipoHtml += `<div>• <strong>${a1}</strong> (${r1 || 'Promotor'})</div>`;
+        if(a2) equipoHtml += `<div>• <strong>${a2}</strong> (${r2 || 'Promotor'})</div>`;
+        if(!a1 && !a2) equipoHtml = 'No especificado';
+        document.getElementById('lbl-sup-equipo').innerHTML = equipoHtml;
+
+        // Recoger Objetivos
+        let objetivosArr = [];
+        document.querySelectorAll('input[name="sup-obj"]:checked').forEach(cb => objetivosArr.push(cb.value));
+        document.getElementById('lbl-sup-objetivos').textContent = objetivosArr.length > 0 ? objetivosArr.join(', ') : 'Ninguno seleccionado';
+
+        // Recoger puntajes Evaluación de Áreas Clave (1 a 5)
+        for(let i=1; i<=5; i++) {
+            const radioSelected = document.querySelector(`input[name="sup-eval-${i}"]:checked`);
+            document.getElementById(`lbl-sup-eval-${i}`).textContent = radioSelected ? radioSelected.value + ' / 5' : '-';
+        }
+
+        // Inyectar Indicadores automáticos y manuales
+        document.getElementById('lbl-sup-fecha').textContent = hoy;
+        document.getElementById('lbl-sup-tienda').textContent = tienda.toUpperCase();
+        document.getElementById('lbl-sup-tipo').textContent = tipoSup.toUpperCase();
+        document.getElementById('lbl-sup-ventasdia').textContent = ventasDia + " Unds";
+        document.getElementById('lbl-sup-ventasacum').textContent = cacheDatosTiendaSeleccionada.ventasAcum + " Unds";
+        document.getElementById('lbl-sup-cump').textContent = cacheDatosTiendaSeleccionada.cumplimiento;
+        document.getElementById('lbl-sup-roi').textContent = cacheDatosTiendaSeleccionada.roiPunto;
+        document.getElementById('lbl-sup-invtotal').textContent = cacheDatosTiendaSeleccionada.inventarioTotal + " Unds";
+        document.getElementById('lbl-sup-invdetalle').textContent = cacheDatosTiendaSeleccionada.desgloseInv;
+        document.getElementById('lbl-sup-obsind').textContent = obsInd;
+        document.getElementById('lbl-sup-obs').textContent = obs;
+        document.getElementById('lbl-sup-compromisos').textContent = compromisos;
+
+        // Manejador de las 3 Fotos de Supervisor
+        const supFotoInputs = [
+            { input: document.getElementById('sup-foto-1'), container: document.getElementById('sup-container-foto-1'), img: document.getElementById('sup-img-preview-1') },
+            { input: document.getElementById('sup-foto-2'), container: document.getElementById('sup-container-foto-2'), img: document.getElementById('sup-img-preview-2') },
+            { input: document.getElementById('sup-foto-3'), container: document.getElementById('sup-container-foto-3'), img: document.getElementById('sup-img-preview-3') }
+        ];
+
+        let supProcesadas = 0;
+        let supTotalFotos = supFotoInputs.filter(f => f.input.files && f.input.files[0]).length;
+
+        if (supTotalFotos === 0) {
+            document.getElementById('sup-img-placeholder').style.display = 'block';
+            ejecutarCaptura('lienzo-supervisor', `Reporte_Supervision_${tienda}.png`);
+        } else {
+            document.getElementById('sup-img-placeholder').style.display = 'none';
+            supFotoInputs.forEach(item => {
+                if (item.input.files && item.input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        item.img.src = e.target.result;
+                        item.container.style.display = 'block';
+                        supProcesadas++;
+                        if (supProcesadas === supTotalFotos) {
+                            ejecutarCaptura('lienzo-supervisor', `Reporte_Supervision_${tienda}.png`);
+                        }
+                    };
+                    reader.readAsDataURL(item.input.files[0]);
+                } else {
+                    item.container.style.display = 'none';
+                }
+            });
+        }
+    
+
+    } else if (tipo === 'formador') {
+        const tienda = document.getElementById('form-tienda').value || 'Sin tienda';
+        const asesor = document.getElementById('form-asesor').value || 'Sin asesor';
+        const temas = document.getElementById('form-temas').value || 'Sin temas';
+        const tipoVisita = document.getElementById('form-tipo-visita').value || 'Capacitación';
+        const duracion = document.getElementById('form-duracion').value || 'No especificada';
+        const participacion = document.getElementById('form-participacion').value || 'Media';
+        const resultado = document.getElementById('form-resultado').value || 'Comprendido';
+        const obs = document.getElementById('form-observaciones').value || 'Sin observaciones';
+        const acuerdos = document.getElementById('form-acuerdos').value || 'Sin acuerdos';
+
+        // Recoger Objetivos
+        let objetivosArr = [];
+        document.querySelectorAll('input[name="obj-visita"]:checked').forEach(cb => objetivosArr.push(cb.value));
+        document.getElementById('lbl-form-objetivos').textContent = objetivosArr.length > 0 ? objetivosArr.join(', ') : 'Ninguno seleccionado';
+
+        // Recoger Metodología
+        let metodologiaArr = [];
+        document.querySelectorAll('input[name="metodologia"]:checked').forEach(cb => metodologiaArr.push(cb.value));
+        document.getElementById('lbl-form-metodologia').textContent = metodologiaArr.length > 0 ? metodologiaArr.join(', ') : 'Ninguna seleccionada';
+
+        // Recoger Materiales
+        let materialesArr = [];
+        document.querySelectorAll('input[name="material"]:checked').forEach(cb => materialesArr.push(cb.value));
+        document.getElementById('lbl-form-materiales').textContent = materialesArr.length > 0 ? materialesArr.join(', ') : 'Ninguno seleccionado';
+
+        // Recoger puntajes de la Evaluación (1 a 5)
+        for(let i=1; i<=4; i++) {
+            const radioSelected = document.querySelector(`input[name="eval-${i}"]:checked`);
+            document.getElementById(`lbl-eval-${i}`).textContent = radioSelected ? radioSelected.value + ' / 5' : '-';
+        }
+
+        // Inyectar textos básicos
+        document.getElementById('lbl-form-fecha').textContent = hoy;
+        document.getElementById('lbl-form-tienda').textContent = tienda.toUpperCase();
+        document.getElementById('lbl-form-asesor').textContent = asesor.toUpperCase();
+        document.getElementById('lbl-form-temas').textContent = temas.toUpperCase();
+        document.getElementById('lbl-form-tipovisita').textContent = tipoVisita.toUpperCase();
+        document.getElementById('lbl-form-duracion').textContent = duracion;
+        document.getElementById('lbl-form-participacion').textContent = participacion;
+        document.getElementById('lbl-form-resultado').textContent = resultado;
+        document.getElementById('lbl-form-obs').textContent = obs;
+        document.getElementById('lbl-form-acuerdos').textContent = acuerdos;
+
+        // Sincronizar automáticamente ventas e inventario de Firebase al generar
+        const tiendaLimpia = tienda.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+        let ventasAcum = 0; let targetAcum = 0; let desgloseInvHtml = [];
+
+        db.collection("cierre_ventas_nacional").get().then(cierreSnap => {
+            cierreSnap.forEach(doc => {
+                const data = doc.data();
+                const tDoc = (data.tienda || '').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+                if (tDoc === tiendaLimpia || tDoc.includes(tiendaLimpia)) {
+                    ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'].forEach(d => {
+                        if (data[d] && data[d].infinix) {
+                            Object.values(data[d].infinix).forEach(item => {
+                                ventasAcum += Number(item.venta || 0);
+                                targetAcum += Number(item.target || 0);
+                            });
+                        }
+                    });
+                }
+            });
+
+            db.collection("inventario_nacional").get().then(invSnap => {
+                invSnap.forEach(doc => {
+                    const data = doc.data();
+                    const cDoc = (data.cadena || doc.id || '').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+                    if (cDoc === tiendaLimpia || cDoc.includes(tiendaLimpia)) {
+                        if (data.desglose) {
+                            Object.entries(data.desglose).forEach(([mod, cant]) => {
+                                desgloseInvHtml.push(`<strong>${mod}</strong>: ${cant} Unds`);
+                            });
+                        }
+                    }
+                });
+
+                const cump = targetAcum > 0 ? Math.round((ventasAcum / targetAcum) * 100) + '%' : '0%';
+                const roi = (ventasAcum / 1).toFixed(1); // 1 asesor base para formador
+
+                document.getElementById('lbl-form-ventasdia').textContent = "1 Unds"; // O manual si agregas input
+                document.getElementById('lbl-form-ventasacum').textContent = ventasAcum + " Unds";
+                document.getElementById('lbl-form-cump').textContent = cump;
+                document.getElementById('lbl-form-roi').textContent = roi;
+                document.getElementById('lbl-form-invdetalle').innerHTML = desgloseInvHtml.length > 0 ? desgloseInvHtml.join(' | ') : 'Sin inventario reportado';
+
+                // Procesar fotos y generar
+                procesarFotosYGenerarFormador(tienda);
+            });
+        });
+    }
+
+function procesarFotosYGenerarFormador(tienda) {
+    const fotoInputs = [
+        { input: document.getElementById('form-foto-1'), container: document.getElementById('container-foto-1'), img: document.getElementById('img-form-preview-1') },
+        { input: document.getElementById('form-foto-2'), container: document.getElementById('container-foto-2'), img: document.getElementById('img-form-preview-2') },
+        { input: document.getElementById('form-foto-3'), container: document.getElementById('container-foto-3'), img: document.getElementById('img-form-preview-3') }
+    ];
+
+    let procesadas = 0;
+    let totalSubidas = fotoInputs.filter(f => f.input.files && f.input.files[0]).length;
+
+    if (totalSubidas === 0) {
+        ejecutarCaptura('lienzo-formador', `Reporte_Formacion_${tienda}.png`);
+    } else {
+        fotoInputs.forEach(item => {
+            if (item.input.files && item.input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    item.img.src = e.target.result;
+                    item.container.style.display = 'block';
+                    procesadas++;
+                    if (procesadas === totalSubidas) {
+                        ejecutarCaptura('lienzo-formador', `Reporte_Formacion_${tienda}.png`);
+                    }
+                };
+                reader.readAsDataURL(item.input.files[0]);
+            } else {
+                item.container.style.display = 'none';
+            }
+        });
+    }
+}
+}
+
+function ejecutarCaptura(idLienzo, nombreArchivo) {
+    const elemento = document.getElementById(idLienzo);
+    setTimeout(() => {
+        html2canvas(elemento, { scale: 2, useCORS: true }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = nombreArchivo;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            alert('¡Reporte generado y descargado con éxito!');
+        }).catch(err => {
+            console.error("Error generando la imagen:", err);
+            alert("Hubo un error al generar la imagen del reporte.");
+        });
+    }, 400);
+}
     </script>
 
     <!-- MÓDULO INTEGRACIÓN HARDWARE CON IA -->
@@ -8017,7 +8444,7 @@ function configurarPanelPorRol(datosUsuario) {
 
     const panelAdmin = document.getElementById('panel-admin-gerencia');
     // ... de aquí para abajo dejas todo exactamente igual ...
-    const btnWipeReset = document.getElementById('btn-wipe-reset');
+
     const filtroZona = document.getElementById('filtro-zona-admin');
     const navCierreBtn = document.getElementById('btn-tab-cierre-ventas');
     const btnTabReportes = document.getElementById('btn-tab-reportes-admin'); // <--- NUEVO BOTÓN
@@ -8044,17 +8471,16 @@ function configurarPanelPorRol(datosUsuario) {
     // ... (el resto de tu lógica de filtros y permisos se queda igual)
    // LÓGICA DE CANDADOS Y PERMISOS
    if (rol === 'ADMIN') {
-        btnWipeReset.classList.remove('hidden'); // Botón rojo exclusivo para ti
+
 
         filtroZona.disabled = false;
         filtroZona.value = 'ALL';
     } else if (rol === 'GERENCIA') {
-        btnWipeReset.classList.add('hidden'); 
+    
         filtroZona.disabled = false;
         filtroZona.value = 'ALL';
     } else if (rol === 'COORDINADOR' || rol === 'SUPERVISOR' || rol === 'TRAINER') {
-        btnWipeReset.classList.add('hidden'); 
-        
+
         let opcionExiste = Array.from(filtroZona.options).some(opt => opt.value === zonaUser);
         if (opcionExiste) {
             filtroZona.value = zonaUser;
@@ -8141,6 +8567,124 @@ const diccionarioTiendasZonas = {
         "KTRONIX NQS", "KTRONIX SALITRE", "KTRONIX SUBA", "KTRONIX TITAN", "KTRONIX TUNJA", "KTRONIX UNICENTRO"
     ]
 };
+// Función exclusiva para el Reporte de Formación (No afecta ningún otro botón)
+function cargarTiendasFormador() {
+    const selectFormador = document.getElementById('form-tienda');
+    if (!selectFormador) return;
+
+    // Zona fija requerida para ti
+    const zonaObjetivo = "Nariño & Santander";
+    
+    if (typeof diccionarioTiendasZonas !== 'undefined' && diccionarioTiendasZonas[zonaObjetivo]) {
+        const tiendas = diccionarioTiendasZonas[zonaObjetivo];
+        selectFormador.innerHTML = '<option value="">-- Seleccione Tienda --</option>';
+        
+        tiendas.sort().forEach(tienda => {
+            const option = document.createElement('option');
+            option.value = tienda;
+            option.textContent = tienda;
+            selectFormador.appendChild(option);
+        });
+    }
+}
+// 1. Cargar las tiendas de Nariño & Santander en el selector de supervisor
+function cargarTiendasSupervisor() {
+    const selectSup = document.getElementById('sup-tienda');
+    if (!selectSup) return;
+
+    const zonaObjetivo = "Nariño & Santander";
+    if (typeof diccionarioTiendasZonas !== 'undefined' && diccionarioTiendasZonas[zonaObjetivo]) {
+        const tiendas = diccionarioTiendasZonas[zonaObjetivo];
+        selectSup.innerHTML = '<option value="">-- Seleccione Tienda / PDV --</option>';
+        tiendas.sort().forEach(tienda => {
+            const option = document.createElement('option');
+            option.value = tienda;
+            option.textContent = tienda;
+            selectSup.appendChild(option);
+        });
+    }
+}
+
+// Variable temporal para guardar datos de Firebase de la tienda seleccionada
+let cacheDatosTiendaSeleccionada = { ventasAcum: 0, cumplimiento: '0%', inventarioTotal: 0, desgloseInv: {} };
+
+// 2. Arrastrar información de Firebase al seleccionar la tienda
+async function cargarDatosAutomaticosSupervisor(nombreTienda) {
+    if (!nombreTienda) return;
+    
+    document.getElementById('sup-ventas-acum').value = "Buscando en Firebase...";
+    document.getElementById('sup-cumplimiento').value = "Buscando...";
+    document.getElementById('sup-roi').value = "Calculando...";
+
+    try {
+        const tiendaLimpia = nombreTienda.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+        let ventasAcum = 0;
+        let targetAcum = 0;
+
+        // A. Buscar en cierre de ventas
+        const cierreSnap = await db.collection("cierre_ventas_nacional").get();
+        cierreSnap.forEach(doc => {
+            const data = doc.data();
+            const tDoc = (data.tienda || '').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+            if (tDoc === tiendaLimpia || tDoc.includes(tiendaLimpia)) {
+                const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+                dias.forEach(d => {
+                    if (data[d] && data[d].infinix) {
+                        Object.values(data[d].infinix).forEach(item => {
+                            ventasAcum += Number(item.venta || 0);
+                            targetAcum += Number(item.target || 0);
+                        });
+                    }
+                });
+            }
+        });
+
+        // B. Buscar en inventario nacional
+        let invTotal = 0;
+        let desgloseInvText = [];
+        const invSnap = await db.collection("inventario_nacional").get();
+        invSnap.forEach(doc => {
+            const data = doc.data();
+            const cDoc = (data.cadena || doc.id || '').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+            if (cDoc === tiendaLimpia || cDoc.includes(tiendaLimpia)) {
+                invTotal = Number(data.totalUnits || 0);
+                if (data.desglose) {
+                    Object.entries(data.desglose).forEach(([mod, cant]) => {
+                        desgloseInvText.push(`${mod}: ${cant}`);
+                    });
+                }
+            }
+        });
+
+        const cumplimiento = targetAcum > 0 ? Math.round((ventasAcum / targetAcum) * 100) + '%' : '0%';
+
+        // Contar asesores en punto (si escribió 1 o 2)
+        let numAsesores = 0;
+        if (document.getElementById('sup-asesor-1').value.trim()) numAsesores++;
+        if (document.getElementById('sup-asesor-2').value.trim()) numAsesores++;
+        if (numAsesores === 0) numAsesores = 1; // Mínimo 1 para evitar división por cero
+
+        const roiPunto = (ventasAcum / numAsesores).toFixed(1);
+
+        // Guardar en caché para el reporte
+        cacheDatosTiendaSeleccionada = {
+            ventasAcum,
+            cumplimiento,
+            inventarioTotal: invTotal,
+            desgloseInv: desgloseInvText.join(' | ') || 'Sin inventario reportado',
+            roiPunto
+        };
+
+        // Pintar en los inputs del formulario
+        document.getElementById('sup-ventas-acum').value = ventasAcum + " Unidades";
+        document.getElementById('sup-cumplimiento').value = cumplimiento;
+        document.getElementById('sup-roi').value = roiPunto + " (Ventas / Asesores)";
+
+    } catch (e) {
+        console.error("Error cargando datos automáticos:", e);
+        document.getElementById('sup-ventas-acum').value = "Error al sincronizar";
+    }
+}
 // ============================================================================
 // 2. FUNCIÓN SÍNCRONA DIRECTA (Conectada al Login)
 // ============================================================================
@@ -8496,6 +9040,809 @@ cargarDatosCentralReportes = async function() {
         console.error("Error cargando detalle en Central de Reportes:", error);
     }
 };
-    </script>
+// =================================================================
+// VISOR OPERATIVO DE CIERRES DIARIOS (VERSIÓN BLINDADA Y LIBERADA)
+// =================================================================
+
+const ID_SELECTOR_TIENDA = 'filtro-tienda-admin'; 
+const COLECCION_CIERRES = 'cierre_ventas_nacional'; 
+const DIAS_SEMANA = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+
+window.reportesGlobales = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const selectorTiendaMaestro = document.getElementById(ID_SELECTOR_TIENDA); 
+    if(selectorTiendaMaestro) selectorTiendaMaestro.addEventListener('change', cargarVisorCierres);
+});
+
+// 🧠 BLINDAJE 1: Limpia paréntesis, puntos y convierte todo en guiones bajos limpios
+function formatearTiendaParaId(nombreTienda) {
+    // Transforma "EXITO SAN MATEO (CV)" en "EXITO_SAN_MATEO_CV_" para que coincida exacto con Firebase
+    return nombreTienda.toUpperCase().replace(/[^A-Z0-9Ñ]/g, '_').replace(/_+/g, '_');
+}
+
+// 🧠 BLINDAJE 2: Buscador Inteligente por Semana y Día
+function rastrearReporte(tiendaFormat, fechaIso, nombreDiaExacto) {
+    const d = new Date(fechaIso + 'T12:00:00');
+    const date = new Date(d.getTime());
+    date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
+    const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+
+    const opcionesSemana = [`W${weekNo}`, `W${weekNo + 1}`, `W${weekNo - 1}`];
+
+    for (let w of opcionesSemana) {
+        for (const [docId, docData] of Object.entries(window.reportesGlobales)) {
+            // El docId debe incluir la semana y el nombre formateado de la tienda (Ej: EXITO_SAN_MATEO_CUCUTA_CV_)
+            if (docId.includes(w) && docId.includes(tiendaFormat)) {
+                const infoDelDia = docData[nombreDiaExacto]; 
+                if (infoDelDia && (infoDelDia.asesorResponsable || infoDelDia.asesor || infoDelDia.cadena)) {
+                    return { docIdMatch: docId, reporteDiaMatch: infoDelDia };
+                }
+            }
+        }
+    }
+    return { docIdMatch: null, reporteDiaMatch: null };
+}
+
+async function cargarVisorCierres() {
+    const tiendaSelect = document.getElementById(ID_SELECTOR_TIENDA); 
+    const fechaInput = document.getElementById('filtro-fecha-cierre'); 
+    const grid = document.getElementById('grid-visor-cierres');
+    const lblEstado = document.getElementById('lbl-estado-visor');
+    
+    if (!grid) return;
+
+    const tiendaFiltro = tiendaSelect && tiendaSelect.value ? tiendaSelect.value : 'Consolidado General';
+    const fechaIso = fechaInput ? fechaInput.value : ''; 
+
+    if ((tiendaFiltro === 'ALL' || tiendaFiltro === 'Consolidado General') && !fechaIso) {
+        grid.innerHTML = '<div class="text-center py-10 text-gray-500 col-span-full">Por favor, seleccione una "Fecha Auditar" (Cajón 4).</div>';
+        lblEstado.textContent = 'Esperando selección...';
+        return;
+    }
+
+    grid.innerHTML = '<div class="text-center py-10 text-infinix animate-pulse col-span-full">Sincronizando reportes y evadiendo anomalías... ⏳</div>';
+    lblEstado.textContent = 'Consultando Fireboss...';
+
+    try {
+        const zonaObjetivo = "Nariño & Santander"; 
+        let listaTiendas = diccionarioTiendasZonas[zonaObjetivo] || [];
+        
+        const snap = await db.collection(COLECCION_CIERRES).get();
+        window.reportesGlobales = {}; 
+        snap.forEach(doc => window.reportesGlobales[doc.id] = doc.data());
+
+        grid.innerHTML = '';
+        let conReporteCount = 0;
+        let totalTarjetas = 0;
+
+        if (tiendaFiltro === 'ALL' || tiendaFiltro === 'Consolidado General') {
+            const partes = fechaIso.split('-');
+            const dateObj = new Date(partes[0], partes[1] - 1, partes[2]);
+            const nombreDiaExacto = DIAS_SEMANA[dateObj.getDay()];
+
+            listaTiendas.forEach(tienda => {
+                totalTarjetas++;
+                const tiendaFormat = formatearTiendaParaId(tienda);
+                const { docIdMatch, reporteDiaMatch } = rastrearReporte(tiendaFormat, fechaIso, nombreDiaExacto);
+
+                if (reporteDiaMatch) conReporteCount++;
+                grid.appendChild(construirTarjetaConBoton(tienda, fechaIso, reporteDiaMatch, nombreDiaExacto, docIdMatch));
+            });
+        } else {
+            const hoy = new Date();
+            const diasDelMes = [];
+            for (let i = 1; i <= hoy.getDate(); i++) {
+                const f = new Date(hoy.getFullYear(), hoy.getMonth(), i, 12, 0, 0);
+                diasDelMes.push(f.toISOString().split('T')[0]);
+            }
+
+            diasDelMes.reverse().forEach(fechaIter => {
+                totalTarjetas++;
+                const partes = fechaIter.split('-');
+                const dateObj = new Date(partes[0], partes[1] - 1, partes[2]);
+                const nombreDiaExacto = DIAS_SEMANA[dateObj.getDay()];
+                const tiendaFormat = formatearTiendaParaId(tiendaFiltro);
+                
+                const { docIdMatch, reporteDiaMatch } = rastrearReporte(tiendaFormat, fechaIter, nombreDiaExacto);
+
+                if (reporteDiaMatch) conReporteCount++;
+                grid.appendChild(construirTarjetaConBoton(tiendaFiltro, fechaIter, reporteDiaMatch, nombreDiaExacto, docIdMatch));
+            });
+        }
+
+        lblEstado.textContent = `Mostrando ${totalTarjetas} registros | ${conReporteCount} cierres recibidos, ${totalTarjetas - conReporteCount} faltantes.`;
+
+    } catch (e) {
+        console.error("Error conectando a Fireboss:", e);
+        grid.innerHTML = '<div class="text-center py-10 text-red-400 col-span-full">Error al procesar la información. Verifica la consola.</div>';
+    }
+}
+
+function construirTarjetaConBoton(tienda, fecha, reporteDelDia, nombreDia, docIdFirebase) {
+    const card = document.createElement('div');
+    const tieneReporte = !!reporteDelDia;
+    
+    // BLINDAJE 3: Busca el asesor sin importar si Firebase lo guardó como "asesorResponsable" o solo "asesor"
+    const asesor = tieneReporte ? (reporteDelDia.asesorResponsable || reporteDelDia.asesor || 'Asesor') : '---';
+    const totalDinero = tieneReporte ? (reporteDelDia.totalDineroDia || reporteDelDia.totalDinero || '0') : '0';
+    
+    card.className = `p-5 rounded-2xl border flex flex-col justify-between space-y-4 transition-all ${tieneReporte ? 'bg-black/60 border-infinix/40 shadow-xl shadow-infinix/10' : 'bg-red-950/10 border-red-500/20'}`;
+    
+    card.innerHTML = `
+        <div class="flex justify-between items-start">
+            <div>
+                <span class="text-[10px] text-gray-400 block font-mono uppercase tracking-widest">📅 ${nombreDia}, ${fecha}</span>
+                <h4 class="text-sm font-black text-white uppercase mt-1.5 leading-tight">${tienda}</h4>
+                ${tieneReporte ? `<p class="text-[10px] text-gray-500 mt-1 uppercase">👤 ${asesor}</p>` : ''}
+            </div>
+            <span class="px-2.5 py-1 rounded-md text-[9px] font-black tracking-widest whitespace-nowrap ${tieneReporte ? 'bg-infinix text-black' : 'bg-red-600 text-white'}">
+                ${tieneReporte ? '✓ RECIBIDO' : '⚠️ FALTANTE'}
+            </span>
+        </div>
+        
+        ${tieneReporte ? `
+            <div class="flex items-center justify-between border-t border-darkBorder pt-3 mb-2">
+                <span class="text-xs text-gray-400 font-bold">Total Reportado:</span>
+                <span class="text-sm font-black text-yellow-400">$ ${Number(totalDinero).toLocaleString('es-CO')}</span>
+            </div>
+            
+            <button onclick="dispararDescargaReporte('${docIdFirebase}')" class="w-full py-2.5 bg-[#161b22] hover:bg-infinix hover:text-black text-infinix border border-infinix/30 hover:border-infinix rounded-xl text-xs font-black tracking-widest transition-all duration-300 flex justify-center items-center gap-2 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                GENERAR REPORTE
+            </button>
+        ` : `
+            <div class="w-full h-20 bg-black/30 rounded-xl flex flex-col items-center justify-center border border-dashed border-red-500/20 text-red-400/70 text-[11px] font-bold mt-2 text-center">
+                <span>📵</span>
+                Sin información registrada
+            </div>
+        `}
+    `;
+    return card;
+}
+
+// 🚀 DESCARGA LIBERADA
+function dispararDescargaReporte(docId) {
+    const dataSemanaFirebase = window.reportesGlobales[docId];
+    if(!dataSemanaFirebase) return;
+    
+    // Ejecuta el motor directo sin alertas ni bloqueos
+    if (typeof dibujarMegaExcel === "function") {
+        dibujarMegaExcel(dataSemanaFirebase, dataSemanaFirebase.tienda, dataSemanaFirebase.semana);
+    } else {
+        console.error("Función dibujarMegaExcel no está disponible en este momento.");
+    }
+}
+// =================================================================
+// MOTOR DE EXCEL CONSOLIDADO DEFINITIVO (AUTOMATIZACIÓN TOTAL)
+// =================================================================
+
+async function descargarExcelConsolidadoCierres() {
+    const btnDescarga = document.querySelector('button[onclick="descargarExcelConsolidadoCierres()"]');
+    const textoOriginal = btnDescarga ? btnDescarga.innerHTML : 'Descargar Excel';
+    if(btnDescarga) {
+        btnDescarga.innerHTML = '⏳ Construyendo Consolidado Inteligente...';
+        btnDescarga.disabled = true;
+    }
+
+    try {
+        // 1. Cargar bases de datos
+        if (!window.reportesGlobales || Object.keys(window.reportesGlobales).length === 0) {
+            const snap = await db.collection(COLECCION_CIERRES).get();
+            window.reportesGlobales = {};
+            snap.forEach(doc => { window.reportesGlobales[doc.id] = doc.data(); });
+        }
+
+        const snapInv = await db.collection("inventario_nacional").get();
+        const inventarioGlobal = {};
+        snapInv.forEach(doc => {
+            inventarioGlobal[doc.id.toLowerCase().trim()] = doc.data();
+        });
+
+        const wb = new ExcelJS.Workbook();
+        wb.creator = 'ProTrainer Infinix';
+        wb.created = new Date();
+
+        const tiendaSelect = document.getElementById(ID_SELECTOR_TIENDA); 
+        const tiendaFiltro = tiendaSelect && tiendaSelect.value ? tiendaSelect.value : 'ALL';
+        const fechaInput = document.getElementById('filtro-fecha-cierre');
+        const fechaIso = fechaInput && fechaInput.value ? fechaInput.value : new Date().toISOString().split('T')[0];
+        
+        // 🧠 CEREBRO DE TIEMPO (Cálculo de ISO Week)
+        function getIsoWeek(dateObj) {
+            const t = new Date(dateObj.getTime());
+            t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
+            const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+            return Math.ceil((((t - yearStart) / 86400000) + 1) / 7);
+        }
+
+        function parseFechaStr(fechaStr) {
+            if (!fechaStr) return null;
+            const p = fechaStr.split(/[\/\-]/);
+            if(p.length !== 3) return null;
+            return new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0]), 12, 0, 0);
+        }
+
+        const dateObj = new Date(fechaIso + 'T12:00:00');
+        const mesActualNombre = dateObj.toLocaleString('es-ES', { month: 'long' }).toUpperCase();
+        
+        // Calcular las semanas únicas del mes
+        const uniqueWeeks = new Set();
+        const lastDayOfMonth = new Date(dateObj.getFullYear(), dateObj.getMonth() + 1, 0).getDate();
+        for (let d = 1; d <= lastDayOfMonth; d++) {
+            uniqueWeeks.add(getIsoWeek(new Date(dateObj.getFullYear(), dateObj.getMonth(), d, 12, 0, 0)));
+        }
+        
+        let semanasMes = Array.from(uniqueWeeks).map(w => `W${w}`).slice(0, 5);
+        while (semanasMes.length < 5) semanasMes.push(""); 
+
+        const currentWeekNum = getIsoWeek(dateObj);
+        const semanaActualStr = `W${currentWeekNum}`;
+
+        // Calcular fechas exactas de la semana actual (Lunes a Domingo)
+        const currentWeekDates = {};
+        const dayOfWeek = dateObj.getDay() || 7; 
+        const monday = new Date(dateObj.getTime());
+        monday.setDate(monday.getDate() - dayOfWeek + 1);
+        
+        const diasNombres = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
+        for(let i=0; i<7; i++) {
+            const t = new Date(monday.getTime());
+            t.setDate(t.getDate() + i);
+            const k = `${t.getDate()}/${t.getMonth()+1}/${t.getFullYear()}`;
+            currentWeekDates[k] = diasNombres[i];
+        }
+
+        const zonaObjetivo = "Nariño & Santander"; 
+        let listaTiendas = (tiendaFiltro === 'ALL' || tiendaFiltro === 'Consolidado General') ? (diccionarioTiendasZonas[zonaObjetivo] || []) : [tiendaFiltro];
+
+        const diasSemanaMap = { 'Lunes': 11, 'Martes': 12, 'Miercoles': 13, 'Jueves': 14, 'Viernes': 15, 'Sabado': 16, 'Domingo': 17 };
+
+        const modelosInfinix = [
+            { nombreUI: "GT 5 PRO", dbKey: "gt-5-pro" },
+            { nombreUI: "Infinix Smart 20", dbKey: "infinix-smart-20" },
+            { nombreUI: "Infinix Hot 60i", dbKey: "infinix-hot-60i" },
+            { nombreUI: "Infinix Hot 70", dbKey: "infinix-hot-70" },
+            { nombreUI: "Infinix Hot 60 Pro+", dbKey: "infinix-hot-60-pro+" },
+            { nombreUI: "Infinix Note Edge", dbKey: "infinix-note-edge" },
+            { nombreUI: "Infinix Note 60", dbKey: "infinix-note-60" },
+            { nombreUI: "Infinix Note 60 Pro", dbKey: "infinix-note-60-pro" },
+            { nombreUI: "Infinix Note 60 Ultra", dbKey: "infinix-note-60-ultra" },
+            { nombreUI: "Xpad 30 E", dbKey: "xpad-30e" }
+        ];
+
+        const marcasCompetencia = ["INFINIX", "XIAOMI", "HONOR", "TECNO", "OPPO", "REALME", "VIVO", "MOTOROLA", "SAMSUNG", "ZTE"]; 
+
+        for (const nombreTienda of listaTiendas) {
+            const nombrePestana = nombreTienda.substring(0, 31).replace(/[\\\/*\?:\[\]]/g, '');
+            const ws = wb.addWorksheet(nombrePestana);
+            
+            ws.columns = [
+                { width: 3 },  { width: 12 }, { width: 22 }, { width: 8 },  { width: 8 }, 
+                { width: 6 }, { width: 6 }, { width: 6 }, { width: 6 }, { width: 6 }, 
+                { width: 8 }, { width: 8 }, { width: 8 }, { width: 8 }, { width: 8 }, { width: 8 }, { width: 8 }, 
+                { width: 10 }, { width: 10 }, { width: 10 }, { width: 10 }, { width: 10 }
+            ];
+
+            const fontBold = { name: 'Arial', size: 10, bold: true };
+            const alignCenter = { vertical: 'middle', horizontal: 'center' };
+            const borderAll = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+            const fillGreen = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF92D050' } }; 
+            const fillOrange = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8CBAD' } }; 
+
+            const tiendaFormat = formatearTiendaParaId(nombreTienda);
+            
+            // 🧠 MOTOR DE AGREGACIÓN PURA (Ignora los nombres de documentos, se basa en la fecha real)
+            const storeData = { modelos: {}, marcas: {}, asesor: '---', cadena: 'INFINIX' };
+
+            for (const [docId, docData] of Object.entries(window.reportesGlobales)) {
+                if (docId.includes(tiendaFormat)) {
+                    for (const [nodeKey, nodeVal] of Object.entries(docData)) {
+                        if (typeof nodeVal === 'object' && nodeVal.fechaStr) {
+                            const dateNode = parseFechaStr(nodeVal.fechaStr);
+                            if (!dateNode) continue;
+                            
+                            const fStrKey = `${dateNode.getDate()}/${dateNode.getMonth()+1}/${dateNode.getFullYear()}`;
+                            const nodeWeekStr = `W${getIsoWeek(dateNode)}`;
+                            const isCurrentWeek = !!currentWeekDates[fStrKey];
+                            const isMonthWeek = semanasMes.includes(nodeWeekStr);
+
+                            if (storeData.asesor === '---' && (nodeVal.asesorResponsable || nodeVal.asesor)) storeData.asesor = nodeVal.asesorResponsable || nodeVal.asesor;
+                            if (storeData.cadena === 'INFINIX' && nodeVal.cadena) storeData.cadena = nodeVal.cadena;
+
+                            if (nodeVal.infinix) {
+                                for (const [mk, mVal] of Object.entries(nodeVal.infinix)) {
+                                    if (!storeData.modelos[mk]) storeData.modelos[mk] = {};
+                                    const v = Number(mVal.venta) || 0;
+                                    if (isCurrentWeek) {
+                                        const dayName = currentWeekDates[fStrKey];
+                                        storeData.modelos[mk][dayName] = (storeData.modelos[mk][dayName] || 0) + v;
+                                        if (mVal.target) storeData.modelos[mk].target = Number(mVal.target);
+                                    }
+                                    if (isMonthWeek && !isCurrentWeek) {
+                                        storeData.modelos[mk][nodeWeekStr] = (storeData.modelos[mk][nodeWeekStr] || 0) + v;
+                                    }
+                                }
+                            }
+
+                            if (nodeVal.competencia) {
+                                for (const [mk, mVal] of Object.entries(nodeVal.competencia)) {
+                                    const upperMk = mk.toUpperCase();
+                                    if (!storeData.marcas[upperMk]) storeData.marcas[upperMk] = {};
+                                    const v = Number(mVal.venta) || 0;
+                                    if (isCurrentWeek) {
+                                        const dayName = currentWeekDates[fStrKey];
+                                        storeData.marcas[upperMk][dayName] = (storeData.marcas[upperMk][dayName] || 0) + v;
+                                        if (mVal.target) storeData.marcas[upperMk].target = Number(mVal.target);
+                                        if (mVal.hc) storeData.marcas[upperMk].hc = Number(mVal.hc);
+                                    }
+                                    if (isMonthWeek && !isCurrentWeek) {
+                                        storeData.marcas[upperMk][nodeWeekStr] = (storeData.marcas[upperMk][nodeWeekStr] || 0) + v;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            let desgloseInv = {};
+            const tiendaKeyInv = nombreTienda.toLowerCase().replace(/[^a-z0-9]/g, '');
+            for (const [invId, invData] of Object.entries(inventarioGlobal)) {
+                if (invId.replace(/[^a-z0-9]/g, '').includes(tiendaKeyInv) && invData.desglose) {
+                    desgloseInv = invData.desglose; break;
+                }
+            }
+
+            // ==========================================
+            // CABECERAS
+            // ==========================================
+            ws.mergeCells('B2:V2');
+            const cellTitulo = ws.getCell('B2');
+            cellTitulo.value = 'FORMATO DE VENTAS DIARIO INFINIX';
+            cellTitulo.font = fontBold; cellTitulo.alignment = alignCenter; cellTitulo.border = { top: { style: 'thick' }, left: { style: 'thick' }, right: { style: 'thick' }, bottom: { style: 'thick' } };
+
+            ws.mergeCells('B3:C3'); ws.getCell('B3').value = 'ASESOR';
+            ws.mergeCells('D3:G3'); ws.getCell('D3').value = storeData.asesor;
+            ws.mergeCells('H3:M3'); ws.getCell('H3').value = nombreTienda;
+            ws.mergeCells('N3:Q3'); ws.getCell('N3').value = storeData.cadena;
+            ws.mergeCells('R3:V3'); ws.getCell('R3').value = zonaObjetivo;
+
+            ['B3','D3','H3','N3','R3'].forEach(c => { ws.getCell(c).font = fontBold; ws.getCell(c).alignment = alignCenter; ws.getCell(c).border = borderAll; });
+
+            ws.mergeCells('B4:B5'); ws.getCell('B4').value = mesActualNombre;
+            ws.mergeCells('C4:C5'); ws.getCell('C4').value = 'MODELO';
+            ws.mergeCells('D4:D5'); ws.getCell('D4').value = 'Target';
+            ws.mergeCells('E4:E5'); ws.getCell('E4').value = 'INV';
+            ws.mergeCells('F4:J4'); ws.getCell('F4').value = 'SEMANAS DEL MES'; ws.getCell('F4').fill = fillOrange;
+            ws.mergeCells('K4:Q4'); ws.getCell('K4').value = `SEMANA ACTUAL (${semanaActualStr})`; ws.getCell('K4').fill = fillGreen;
+            ws.mergeCells('R4:V4'); ws.getCell('R4').value = 'RESULTADO GENERAL'; ws.getCell('R4').fill = fillGreen;
+
+            const subCabeceras = [
+                { cell: 'F5', val: semanasMes[0] }, { cell: 'G5', val: semanasMes[1] }, { cell: 'H5', val: semanasMes[2] }, { cell: 'I5', val: semanasMes[3] }, { cell: 'J5', val: semanasMes[4] },
+                { cell: 'K5', val: 'L' }, { cell: 'L5', val: 'M' }, { cell: 'M5', val: 'M' }, { cell: 'N5', val: 'J' }, { cell: 'O5', val: 'V' }, { cell: 'P5', val: 'S' }, { cell: 'Q5', val: 'D' },
+                { cell: 'R5', val: 'Total Week' }, { cell: 'S5', val: 'Share Week' }, { cell: 'T5', val: 'Month' }, { cell: 'U5', val: 'CUMP.' }, { cell: 'V5', val: 'Share Month' }
+            ];
+
+            subCabeceras.forEach(item => { const c = ws.getCell(item.cell); c.value = item.val; c.fill = fillGreen; c.font = fontBold; c.alignment = alignCenter; c.border = borderAll; });
+            ['B4','C4','D4','E4','F4','K4','R4'].forEach(c => { ws.getCell(c).font = fontBold; ws.getCell(c).alignment = alignCenter; ws.getCell(c).border = borderAll; });
+
+            // ==========================================
+            // TABLA MODELOS INFINIX
+            // ==========================================
+            let startRow = 6;
+            ws.mergeCells(`B${startRow}:B${startRow + modelosInfinix.length - 1}`);
+            const cellMes = ws.getCell(`B${startRow}`);
+            cellMes.value = 'INFINIX'; cellMes.font = fontBold; cellMes.alignment = alignCenter; cellMes.border = borderAll;
+
+            modelosInfinix.forEach((modObj, index) => {
+                const r = startRow + index;
+                ws.getCell(`C${r}`).value = modObj.nombreUI;
+                ws.getCell(`C${r}`).border = borderAll; ws.getCell(`C${r}`).alignment = alignCenter;
+                if(modObj.nombreUI.includes("Note")) ws.getCell(`C${r}`).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFF00' } };
+
+                const mData = storeData.modelos[modObj.dbKey] || {};
+                
+                // Inventario
+                let invModelo = 0;
+                const cleanUIName = modObj.nombreUI.toLowerCase().replace(/[^a-z0-9]/g, '');
+                for (const [invKey, invVal] of Object.entries(desgloseInv)) {
+                    const invClean = invKey.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    if (invClean === cleanUIName || invClean.includes(cleanUIName) || cleanUIName.includes(invClean)) {
+                        invModelo = Number(invVal) || 0; break;
+                    }
+                }
+                ws.getCell(`E${r}`).value = invModelo; ws.getCell(`E${r}`).border = borderAll; ws.getCell(`E${r}`).alignment = alignCenter;
+
+                // 🧠 Lógica de Semanas y Espejo
+                for(let i=0; i<5; i++) {
+                    const col = 6 + i; 
+                    const wStr = semanasMes[i];
+                    if (!wStr || parseInt(wStr.replace('W','')) > currentWeekNum) {
+                        ws.getCell(r, col).value = ""; // Futuro en blanco
+                    } else if (wStr === semanaActualStr) {
+                        ws.getCell(r, col).value = { formula: `R${r}` }; // Espejo semana actual
+                    } else {
+                        ws.getCell(r, col).value = mData[wStr] !== undefined ? mData[wStr] : 0; // Pasado congelado
+                    }
+                    ws.getCell(r, col).border = borderAll; ws.getCell(r, col).alignment = alignCenter;
+                }
+
+                // 🧠 Lógica de Días Actuales (En Blanco si no hay nada)
+                for (const [diaNombre, colIndex] of Object.entries(diasSemanaMap)) {
+                    const c = ws.getCell(r, colIndex);
+                    c.value = mData[diaNombre] !== undefined ? mData[diaNombre] : ""; 
+                    c.border = borderAll; c.alignment = alignCenter;
+                }
+
+                ws.getCell(`D${r}`).value = mData.target || 0; ws.getCell(`D${r}`).border = borderAll; ws.getCell(`D${r}`).alignment = alignCenter;
+
+                ws.getCell(`R${r}`).value = { formula: `SUM(K${r}:Q${r})` }; ws.getCell(`R${r}`).border = borderAll; ws.getCell(`R${r}`).alignment = alignCenter; ws.getCell(`R${r}`).font = fontBold;
+                ws.getCell(`S${r}`).value = 0; ws.getCell(`S${r}`).border = borderAll; ws.getCell(`S${r}`).alignment = alignCenter;
+                ws.getCell(`T${r}`).value = { formula: `SUM(F${r}:J${r})` }; ws.getCell(`T${r}`).border = borderAll; ws.getCell(`T${r}`).alignment = alignCenter; 
+                ws.getCell(`U${r}`).value = { formula: `IF(D${r}>0, T${r}/D${r}, "-")` }; ws.getCell(`U${r}`).border = borderAll; ws.getCell(`U${r}`).alignment = alignCenter;
+                ws.getCell(`V${r}`).value = 0; ws.getCell(`V${r}`).border = borderAll; ws.getCell(`V${r}`).alignment = alignCenter;
+            });
+
+            const filaTotalModelos = startRow + modelosInfinix.length;
+            ws.mergeCells(`B${filaTotalModelos}:C${filaTotalModelos}`);
+            ws.getCell(`B${filaTotalModelos}`).value = 'TOTAL'; ws.getCell(`B${filaTotalModelos}`).font = fontBold; ws.getCell(`B${filaTotalModelos}`).fill = fillGreen; ws.getCell(`B${filaTotalModelos}`).alignment = alignCenter; ws.getCell(`B${filaTotalModelos}`).border = borderAll;
+            
+            for(let col = 4; col <= 22; col++) {
+                const colLetter = ws.getColumn(col).letter;
+                const c = ws.getCell(filaTotalModelos, col);
+                if (col >= 6 && col <= 20 && col !== 19) {
+                    c.value = { formula: `SUM(${colLetter}${startRow}:${colLetter}${filaTotalModelos-1})` };
+                } else if (col === 4 || col === 5) {
+                    c.value = { formula: `SUM(${colLetter}${startRow}:${colLetter}${filaTotalModelos-1})` };
+                } else { c.value = 0; }
+                c.fill = fillGreen; c.border = borderAll; c.font = fontBold; c.alignment = alignCenter;
+            }
+
+            // ==========================================
+            // TABLA GENERAL MARCAS COMPETENCIA
+            // ==========================================
+            let startRowMarcas = filaTotalModelos + 2;
+            
+            ws.mergeCells(`B${startRowMarcas}:B${startRowMarcas+1}`); ws.getCell(`B${startRowMarcas}`).value = mesActualNombre;
+            ws.mergeCells(`C${startRowMarcas}:C${startRowMarcas+1}`); ws.getCell(`C${startRowMarcas}`).value = 'MARCA';
+            ws.mergeCells(`D${startRowMarcas}:D${startRowMarcas+1}`); ws.getCell(`D${startRowMarcas}`).value = 'Target';
+            ws.mergeCells(`E${startRowMarcas}:E${startRowMarcas+1}`); ws.getCell(`E${startRowMarcas}`).value = 'HC';
+            ws.mergeCells(`F${startRowMarcas}:J${startRowMarcas}`); ws.getCell(`F${startRowMarcas}`).value = 'SEMANAS DEL MES'; ws.getCell(`F${startRowMarcas}`).fill = fillOrange;
+            ws.mergeCells(`K${startRowMarcas}:Q${startRowMarcas}`); ws.getCell(`K${startRowMarcas}`).value = `SEMANA ACTUAL (${semanaActualStr})`; ws.getCell(`K${startRowMarcas}`).fill = fillGreen;
+            ws.mergeCells(`R${startRowMarcas}:V${startRowMarcas}`); ws.getCell(`R${startRowMarcas}`).value = 'ZONA SANTANDER'; ws.getCell(`R${startRowMarcas}`).fill = fillGreen;
+            
+            const subCabMarcas = [
+                { cell: `F${startRowMarcas+1}`, val: semanasMes[0] }, { cell: `G${startRowMarcas+1}`, val: semanasMes[1] }, { cell: `H${startRowMarcas+1}`, val: semanasMes[2] }, { cell: `I${startRowMarcas+1}`, val: semanasMes[3] }, { cell: `J${startRowMarcas+1}`, val: semanasMes[4] },
+                { cell: `K${startRowMarcas+1}`, val: 'L' }, { cell: `L${startRowMarcas+1}`, val: 'M' }, { cell: `M${startRowMarcas+1}`, val: 'M' }, { cell: `N${startRowMarcas+1}`, val: 'J' }, { cell: `O${startRowMarcas+1}`, val: 'V' }, { cell: `P${startRowMarcas+1}`, val: 'S' }, { cell: `Q${startRowMarcas+1}`, val: 'D' },
+                { cell: `R${startRowMarcas+1}`, val: 'Week' }, { cell: `S${startRowMarcas+1}`, val: 'Share' }, { cell: `T${startRowMarcas+1}`, val: 'TTL MES' }, { cell: `U${startRowMarcas+1}`, val: 'ROI' }, { cell: `V${startRowMarcas+1}`, val: 'Share' }
+            ];
+
+            subCabMarcas.forEach(item => { const c = ws.getCell(item.cell); c.value = item.val; c.fill = fillGreen; c.font = fontBold; c.alignment = alignCenter; c.border = borderAll; });
+            ['B','C','D','E','F','K','R'].forEach(col => { ws.getCell(`${col}${startRowMarcas}`).font = fontBold; ws.getCell(`${col}${startRowMarcas}`).alignment = alignCenter; ws.getCell(`${col}${startRowMarcas}`).border = borderAll; });
+
+            let rowM = startRowMarcas + 2;
+            ws.mergeCells(`B${rowM}:B${rowM + marcasCompetencia.length - 1}`);
+            const cellM = ws.getCell(`B${rowM}`);
+            cellM.value = 'VENTA GENERAL TIENDA'; cellM.font = fontBold; cellM.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true }; cellM.border = borderAll;
+
+            marcasCompetencia.forEach((marca, idx) => {
+                const r = rowM + idx;
+                ws.getCell(`C${r}`).value = marca;
+                ws.getCell(`C${r}`).border = borderAll; ws.getCell(`C${r}`).alignment = alignCenter;
+                if(marca === "INFINIX") ws.getCell(`C${r}`).font = fontBold;
+
+                const mData = storeData.marcas[marca] || {};
+
+                for(let i=0; i<5; i++) {
+                    const col = 6 + i; 
+                    const wStr = semanasMes[i];
+                    if (!wStr || parseInt(wStr.replace('W','')) > currentWeekNum) {
+                        ws.getCell(r, col).value = ""; 
+                    } else if (wStr === semanaActualStr) {
+                        ws.getCell(r, col).value = { formula: `R${r}` };
+                    } else {
+                        ws.getCell(r, col).value = mData[wStr] !== undefined ? mData[wStr] : 0;
+                    }
+                    ws.getCell(r, col).border = borderAll; ws.getCell(r, col).alignment = alignCenter;
+                }
+
+                for (const [diaNombre, colIndex] of Object.entries(diasSemanaMap)) {
+                    const c = ws.getCell(r, colIndex);
+                    c.value = mData[diaNombre] !== undefined ? mData[diaNombre] : ""; 
+                    c.border = borderAll; c.alignment = alignCenter;
+                }
+
+                ws.getCell(`D${r}`).value = mData.target || 0; ws.getCell(`D${r}`).border = borderAll; ws.getCell(`D${r}`).alignment = alignCenter;
+                ws.getCell(`E${r}`).value = mData.hc || 0; ws.getCell(`E${r}`).border = borderAll; ws.getCell(`E${r}`).alignment = alignCenter;
+
+                ws.getCell(`R${r}`).value = { formula: `SUM(K${r}:Q${r})` }; ws.getCell(`R${r}`).border = borderAll; ws.getCell(`R${r}`).alignment = alignCenter; ws.getCell(`R${r}`).font = fontBold;
+                ws.getCell(`S${r}`).value = { formula: `IF(R$${rowM + marcasCompetencia.length}>0, R${r}/R$${rowM + marcasCompetencia.length}, 0)` }; ws.getCell(`S${r}`).numFmt = '0%'; ws.getCell(`S${r}`).border = borderAll; ws.getCell(`S${r}`).alignment = alignCenter;
+                ws.getCell(`T${r}`).value = { formula: `SUM(F${r}:J${r})` }; ws.getCell(`T${r}`).border = borderAll; ws.getCell(`T${r}`).alignment = alignCenter; 
+                ws.getCell(`U${r}`).value = 0; ws.getCell(`U${r}`).border = borderAll; ws.getCell(`U${r}`).alignment = alignCenter;
+                ws.getCell(`V${r}`).value = { formula: `IF(T$${rowM + marcasCompetencia.length}>0, T${r}/T$${rowM + marcasCompetencia.length}, 0)` }; ws.getCell(`V${r}`).numFmt = '0%'; ws.getCell(`V${r}`).border = borderAll; ws.getCell(`V${r}`).alignment = alignCenter;
+            });
+
+            const filaTotalMarcas = rowM + marcasCompetencia.length;
+            ws.mergeCells(`B${filaTotalMarcas}:C${filaTotalMarcas}`);
+            ws.getCell(`B${filaTotalMarcas}`).value = 'TOTAL'; ws.getCell(`B${filaTotalMarcas}`).font = fontBold; ws.getCell(`B${filaTotalMarcas}`).fill = fillGreen; ws.getCell(`B${filaTotalMarcas}`).alignment = alignCenter; ws.getCell(`B${filaTotalMarcas}`).border = borderAll;
+            
+            for(let col = 4; col <= 22; col++) {
+                const colLetter = ws.getColumn(col).letter;
+                const c = ws.getCell(filaTotalMarcas, col);
+                if (col >= 6 && col <= 20 && col !== 19) {
+                    c.value = { formula: `SUM(${colLetter}${rowM}:${colLetter}${filaTotalMarcas-1})` };
+                } else if (col === 4 || col === 5) {
+                    c.value = { formula: `SUM(${colLetter}${rowM}:${colLetter}${filaTotalMarcas-1})` };
+                } else if (col === 19 || col === 22) {
+                    c.value = 1; c.numFmt = '0%';
+                } else { c.value = 0; }
+                c.fill = fillGreen; c.border = borderAll; c.font = fontBold; c.alignment = alignCenter;
+            }
+        }
+
+        const buffer = await wb.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        saveAs(blob, `Consolidado_Ventas_${tiendaFiltro === 'ALL' ? 'General' : tiendaFiltro}_${mesActualNombre}.xlsx`);
+        
+        if(btnDescarga) { btnDescarga.innerHTML = textoOriginal; btnDescarga.disabled = false; }
+
+    } catch (error) {
+        console.error("Error al generar Excel final:", error);
+        alert("Ocurrió un error al generar el Excel. Revisa la consola.");
+        if(btnDescarga) { btnDescarga.innerHTML = textoOriginal; btnDescarga.disabled = false; }
+    }
+}
+
+</script>
+<!-- ================================================================= -->
+<!-- LIENZO OCULTO: REPORTE DE SUPERVISIÓN CLARO (ESTILO PROFESIONAL)  -->
+<!-- ================================================================= -->
+<div style="position: absolute; left: -9999px; top: 0; width: 950px; background: #f8fafc; color: #1e293b; font-family: 'Plus Jakarta Sans', Arial, sans-serif; padding: 35px; box-sizing: border-box;" id="lienzo-supervisor">
+    <div style="background: #ffffff; border: 2px solid #cbd5e1; border-radius: 16px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+        
+        <!-- Cabecera Corporativa -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #00D100; padding-bottom: 15px; margin-bottom: 20px;">
+            <div>
+                <h1 style="color: #000000; font-size: 26px; font-weight: 900; margin: 0; letter-spacing: 0.5px;">INFINIX</h1>
+                <span style="font-size: 10px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Terminal de Entrenamiento Elite</span>
+            </div>
+            <div style="text-align: center;">
+                <h2 style="font-size: 20px; font-weight: 900; margin: 0; color: #0f172a; letter-spacing: 0.5px;">REPORTE DE SUPERVISIÓN</h2>
+                <span style="font-size: 11px; color: #00D100; font-weight: 800; text-transform: uppercase;">Seguimiento en Punto de Venta</span>
+            </div>
+            <div style="background: #f1f5f9; padding: 10px 15px; border-radius: 10px; border: 1px solid #cbd5e1; text-align: right;">
+                <div style="font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase;">Fecha de visita</div>
+                <div style="font-size: 13px; font-weight: 900; color: #0f172a;" id="lbl-sup-fecha">-</div>
+            </div>
+        </div>
+
+        <!-- Información General -->
+        <div style="background: #f8fafc; padding: 15px 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
+            <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 10px;">ℹ️ Información General</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px;">
+                <div><strong style="color: #475569;">Tienda / PDV:</strong> <span id="lbl-sup-tienda" style="color: #0f172a; font-weight: 700;">-</span></div>
+                <div><strong style="color: #475569;">Tipo de Visita:</strong> <span id="lbl-sup-tipo" style="color: #0f172a; font-weight: 700;">-</span></div>
+                <div><strong style="color: #475569;">Supervisor:</strong> <span style="color: #0f172a; font-weight: 700;">Jershon Fabian Gomez Campos</span></div>
+                <div><strong style="color: #475569;">Zona:</strong> <span style="color: #0f172a; font-weight: 700;">Nariño & Santander</span></div>
+            </div>
+        </div>
+
+        <!-- Equipo en Punto y Objetivo (2 columnas) -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;">👥 Equipo en Punto</div>
+                <div id="lbl-sup-equipo" style="font-size: 11px; color: #334155; line-height: 1.5; font-weight: 600;">-</div>
+            </div>
+            <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;">🎯 Objetivo de la Visita</div>
+                <div id="lbl-sup-objetivos" style="font-size: 11px; color: #334155; line-height: 1.5; font-weight: 600;">-</div>
+            </div>
+        </div>
+
+        <!-- Evaluación de Áreas Clave (Tabla Limpia) -->
+        <div style="background: #f8fafc; padding: 15px 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
+            <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 10px;">📝 Evaluación de Áreas Clave (Puntaje 1 a 5)</div>
+            <table style="width: 100%; font-size: 11px; border-collapse: collapse; text-align: left;">
+                <tr style="color: #64748b; border-bottom: 2px solid #cbd5e1; font-weight: 800;">
+                    <th style="padding-bottom: 6px;">Aspecto Observado</th>
+                    <th style="text-align: center; width: 80px; padding-bottom: 6px;">Puntaje</th>
+                </tr>
+                <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 8px 0; color: #0f172a; font-weight: 700;">Presentación Personal (Uniforme y aseo)</td><td id="lbl-sup-eval-1" style="text-align: center; font-weight: 900; color: #00D100; font-size: 13px;">-</td></tr>
+                <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 8px 0; color: #0f172a; font-weight: 700;">Conocimiento de Producto (Dominio de beneficios)</td><td id="lbl-sup-eval-2" style="text-align: center; font-weight: 900; color: #00D100; font-size: 13px;">-</td></tr>
+                <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 8px 0; color: #0f172a; font-weight: 700;">Ejecución en PDV (Exhibición y material POP)</td><td id="lbl-sup-eval-3" style="text-align: center; font-weight: 900; color: #00D100; font-size: 13px;">-</td></tr>
+                <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 8px 0; color: #0f172a; font-weight: 700;">Labores Administrativas (DCR, inventarios, procesos)</td><td id="lbl-sup-eval-4" style="text-align: center; font-weight: 900; color: #00D100; font-size: 13px;">-</td></tr>
+                <tr><td style="padding: 8px 0; color: #0f172a; font-weight: 700;">Cumplimiento de Indicadores (Ventas y metas)</td><td id="lbl-sup-eval-5" style="text-align: center; font-weight: 900; color: #00D100; font-size: 13px;">-</td></tr>
+            </table>
+        </div>
+
+        <!-- Indicadores de Desempeño e Inventario -->
+        <div style="background: #f8fafc; padding: 15px 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 15px; font-size: 11px;">
+            <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;">📊 Indicadores de Desempeño e Inventario</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+                <div><strong>Ventas del Día:</strong> <span id="lbl-sup-ventasdia" style="color: #0f172a; font-weight: 700;">-</span></div>
+                <div><strong>Ventas Acumuladas:</strong> <span id="lbl-sup-ventasacum" style="color: #00D100; font-weight: 900;">-</span></div>
+                <div><strong>Cumplimiento de Meta:</strong> <span id="lbl-sup-cump" style="color: #0f172a; font-weight: 900;">-</span></div>
+                <div><strong>ROI del Punto:</strong> <span id="lbl-sup-roi" style="color: #eab308; font-weight: 900;">-</span></div>
+                <div><strong>Inventario Total Tienda:</strong> <span id="lbl-sup-invtotal" style="color: #0f172a; font-weight: 900;">-</span></div>
+            </div>
+            <div style="margin-top: 6px; border-top: 1px solid #e2e8f0; padding-top: 6px;">
+                <strong style="color: #475569;">Desglose de Inventario en PDV:</strong> <span id="lbl-sup-invdetalle" style="color: #334155; font-size: 10px;">-</span>
+            </div>
+            <div style="margin-top: 6px;"><strong style="color: #475569;">Obs. Indicadores:</strong> <span id="lbl-sup-obsind" style="color: #334155;">-</span></div>
+        </div>
+
+        <!-- Observaciones y Compromisos -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 6px;">💬 Observaciones Generales</div>
+                <div id="lbl-sup-obs" style="font-size: 11px; color: #334155; line-height: 1.4; font-weight: 600;">-</div>
+            </div>
+            <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 6px;">🤝 Compromisos / Acciones</div>
+                <div id="lbl-sup-compromisos" style="font-size: 11px; color: #334155; line-height: 1.4; font-weight: 600;">-</div>
+            </div>
+        </div>
+
+        <!-- Evidencia Fotográfica (Hasta 3 fotos) -->
+        <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; margin-bottom: 15px;">
+            <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 12px;">📷 Evidencia Fotográfica de la Visita</div>
+            <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                <div id="sup-container-foto-1" style="display: none; width: 280px; height: 180px; background: #e2e8f0; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1;">
+                    <img id="sup-img-preview-1" src="" style="width: 100%; height: 100%; object-fit: cover;" />
+                </div>
+                <div id="sup-container-foto-2" style="display: none; width: 280px; height: 180px; background: #e2e8f0; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1;">
+                    <img id="sup-img-preview-2" src="" style="width: 100%; height: 100%; object-fit: cover;" />
+                </div>
+                <div id="sup-container-foto-3" style="display: none; width: 280px; height: 180px; background: #e2e8f0; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1;">
+                    <img id="sup-img-preview-3" src="" style="width: 100%; height: 100%; object-fit: cover;" />
+                </div>
+            </div>
+            <div id="sup-img-placeholder" style="font-size: 11px; color: #64748b; padding: 15px;">Sin imágenes adjuntas</div>
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top: 15px; text-align: center; font-size: 10px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px; font-weight: 700;">
+            Tu seguimiento impulsa nuestros resultados. | Infinix Mobile
+        </div>
+    </div>
+</div>
+<!-- ================================================================= -->
+<!-- LIENZO OCULTO: REPORTE EJECUTIVO CLARO (ESTILO PROFESIONAL) -->
+<!-- ================================================================= -->
+<div style="position: absolute; left: -9999px; top: 0; width: 950px; background: #f8fafc; color: #1e293b; font-family: 'Plus Jakarta Sans', Arial, sans-serif; padding: 35px; box-sizing: border-box;" id="lienzo-formador">
+    <div style="background: #ffffff; border: 2px solid #cbd5e1; border-radius: 16px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+        
+        <!-- Cabecera Corporativa -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #00D100; padding-bottom: 15px; margin-bottom: 20px;">
+            <div>
+                <h1 style="color: #000000; font-size: 26px; font-weight: 900; margin: 0; letter-spacing: 0.5px;">INFINIX</h1>
+                <span style="font-size: 10px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Terminal de Entrenamiento Elite</span>
+            </div>
+            <div style="text-align: center;">
+                <h2 style="font-size: 20px; font-weight: 900; margin: 0; color: #0f172a; letter-spacing: 0.5px;">REPORTE DE VISITA</h2>
+                <span style="font-size: 11px; color: #00D100; font-weight: 800; text-transform: uppercase;">Formación y Acompañamiento</span>
+            </div>
+            <div style="background: #f1f5f9; padding: 10px 15px; border-radius: 10px; border: 1px solid #cbd5e1; text-align: right;">
+                <div style="font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase;">Fecha de visita</div>
+                <div style="font-size: 13px; font-weight: 900; color: #0f172a;" id="lbl-form-fecha">-</div>
+            </div>
+        </div>
+
+        <!-- Información General (Tarjeta) -->
+        <div style="background: #f8fafc; padding: 15px 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
+            <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">ℹ️ Información General</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px;">
+                <div><strong style="color: #475569;">Tienda Visitada:</strong> <span id="lbl-form-tienda" style="color: #0f172a; font-weight: 700;">-</span></div>
+                <div><strong style="color: #475569;">Asesor Capacitado:</strong> <span id="lbl-form-asesor" style="color: #0f172a; font-weight: 700;">-</span></div>
+                <div><strong style="color: #475569;">Formador:</strong> <span style="color: #0f172a; font-weight: 700;">Jershon Fabian Gomez Campos</span></div>
+                <div><strong style="color: #475569;">Tema(s):</strong> <span id="lbl-form-temas" style="color: #0f172a; font-weight: 700;">-</span></div>
+                <div><strong style="color: #475569;">Tipo de Visita:</strong> <span id="lbl-form-tipovisita" style="color: #0f172a; font-weight: 700;">-</span></div>
+            </div>
+        </div>
+
+        <!-- Objetivos y Metodología (2 columnas dinámicas) -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;">🎯 Objetivo de la Visita</div>
+                <div id="lbl-form-objetivos" style="font-size: 11px; color: #334155; line-height: 1.5; font-weight: 600;">-</div>
+            </div>
+            <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;">📊 Metodología Utilizada</div>
+                <div id="lbl-form-metodologia" style="font-size: 11px; color: #334155; line-height: 1.5; font-weight: 600;">-</div>
+            </div>
+        </div>
+<!-- SECCIÓN UNIFICADA: EVALUACIÓN DE APRENDIZAJE E INDICADORES (2 Columnas) -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            
+    <!-- COLUMNA IZQUIERDA: Evaluación de Aprendizaje -->
+    <div style="background: #f8fafc; padding: 15px 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+        <div style="font-size: 11px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;">📝 Evaluación de Aprendizaje (1 a 5)</div>
+        <table style="width: 100%; font-size: 10px; border-collapse: collapse; text-align: left;">
+            <tr style="color: #64748b; border-bottom: 2px solid #cbd5e1; font-weight: 800;">
+                <th style="padding-bottom: 4px;">Aspecto Evaluado</th>
+                <th style="text-align: center; width: 50px; padding-bottom: 4px;">Puntaje</th>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 6px 0; color: #0f172a; font-weight: 700;">Conocimiento de Producto</td><td id="lbl-eval-1" style="text-align: center; font-weight: 900; color: #00D100; font-size: 12px;">-</td></tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 6px 0; color: #0f172a; font-weight: 700;">Argumentación Comercial</td><td id="lbl-eval-2" style="text-align: center; font-weight: 900; color: #00D100; font-size: 12px;">-</td></tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 6px 0; color: #0f172a; font-weight: 700;">Técnicas de Venta y Cierre</td><td id="lbl-eval-3" style="text-align: center; font-weight: 900; color: #00D100; font-size: 12px;">-</td></tr>
+            <tr><td style="padding: 6px 0; color: #0f172a; font-weight: 700;">Manejo de Objeciones</td><td id="lbl-eval-4" style="text-align: center; font-weight: 900; color: #00D100; font-size: 12px;">-</td></tr>
+        </table>
+    </div>
+
+    <!-- COLUMNA DERECHA: Indicadores e Inventario por Referencia -->
+    <div style="background: #f8fafc; padding: 15px 20px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 10px;">
+        <div style="font-size: 11px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;">📊 Desempeño e Inventario en PDV</div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+            <div><strong>Ventas del Día:</strong> <span id="lbl-form-ventasdia" style="color: #0f172a; font-weight: 700;">-</span></div>
+            <div><strong>Ventas Acum:</strong> <span id="lbl-form-ventasacum" style="color: #00D100; font-weight: 900;">-</span></div>
+            <div><strong>Cumplimiento:</strong> <span id="lbl-form-cump" style="color: #0f172a; font-weight: 900;">-</span></div>
+            <div><strong>ROI del Punto:</strong> <span id="lbl-form-roi" style="color: #eab308; font-weight: 900;">-</span></div>
+        </div>
+
+        <div>
+            <strong style="color: #475569; display: block; margin-bottom: 3px;">Inventario por Referencia:</strong>
+            <div id="lbl-form-invdetalle" style="color: #334155; font-size: 9px; line-height: 1.4; background: #ffffff; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; max-height: 80px; overflow-y: auto;">
+                Sin datos de inventario
+            </div>
+        </div>
+    </div>
+
+</div>
+
+        <!-- Materiales y Métricas (2 columnas) -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;">📂 Materiales Utilizados</div>
+                <div id="lbl-form-materiales" style="font-size: 11px; color: #334155; line-height: 1.5; font-weight: 600;">-</div>
+            </div>
+            <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 11px;">
+                <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;">⏱️ Métricas de Sesión</div>
+                <div style="margin-bottom: 4px;"><strong style="color: #475569;">Duración:</strong> <span id="lbl-form-duracion" style="color: #0f172a; font-weight: 700;">-</span></div>
+                <div style="margin-bottom: 4px;"><strong style="color: #475569;">Participación:</strong> <span id="lbl-form-participacion" style="color: #0f172a; font-weight: 700;">-</span></div>
+                <div><strong style="color: #475569;">Resultado General:</strong> <span id="lbl-form-resultado" style="color: #00D100; font-weight: 900;">-</span></div>
+            </div>
+        </div>
+
+        <!-- Observaciones y Acuerdos -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 6px;">💬 Observaciones</div>
+                <div id="lbl-form-obs" style="font-size: 11px; color: #334155; line-height: 1.4; font-weight: 600;">-</div>
+            </div>
+            <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 6px;">🤝 Acuerdos / Compromisos</div>
+                <div id="lbl-form-acuerdos" style="font-size: 11px; color: #334155; line-height: 1.4; font-weight: 600;">-</div>
+            </div>
+        </div>
+
+        <!-- Evidencia Fotográfica (Hasta 3 fotos ordenadas abajo) -->
+        <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; margin-bottom: 15px;">
+            <div style="font-size: 12px; color: #00D100; font-weight: 900; text-transform: uppercase; margin-bottom: 12px;">📷 Evidencia Fotográfica de la Visita</div>
+            <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                <div id="container-foto-1" style="display: none; width: 280px; height: 180px; background: #e2e8f0; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1;">
+                    <img id="img-form-preview-1" src="" style="width: 100%; height: 100%; object-fit: cover;" />
+                </div>
+                <div id="container-foto-2" style="display: none; width: 280px; height: 180px; background: #e2e8f0; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1;">
+                    <img id="img-form-preview-2" src="" style="width: 100%; height: 100%; object-fit: cover;" />
+                </div>
+                <div id="container-foto-3" style="display: none; width: 280px; height: 180px; background: #e2e8f0; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1;">
+                    <img id="img-form-preview-3" src="" style="width: 100%; height: 100%; object-fit: cover;" />
+                </div>
+            </div>
+            <div id="img-form-placeholder" style="font-size: 11px; color: #64748b; padding: 15px;">Sin imágenes adjuntas</div>
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top: 15px; text-align: center; font-size: 10px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px; font-weight: 700;">
+            La formación constante es clave para una experiencia excepcional. | Infinix Mobile
+        </div>
+    </div>
+</div>
+
+ </script>
+
 </body>
 </html>
