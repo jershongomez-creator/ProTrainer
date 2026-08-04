@@ -269,22 +269,34 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                 <span>Arena Cara a Cara</span>
             </button>
+        
             <button onclick="switchTab('tab-radar-caracteristicas')" id="btn-tab-radar-caracteristicas" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
                 <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                 <span>Radar Specs</span>
             </button>
+        
             <button onclick="switchTab('tab-quiz')" id="btn-tab-quiz" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
                 <span class="text-lg">🎯</span>
-                <span>Infinix Xchool</span>
+                <span>Infinix Xschool</span>
             </button>
+        
             <button onclick="switchTab('tab-shopping')" id="btn-tab-shopping" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
                 <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                 <span>Shopping Precios</span>
             </button>
-            <button onclick="switchTab('tab-cortex')" id="btn-tab-cortex" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
-                <svg class="w-4 h-4 text-infinix" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                <span class="text-infinix">Cortex AI</span>
+        
+            <!-- BOTÓN: CARGA DE PRECIOS -->
+            <button onclick="switchTab('panel-carga-precios'); cargarMarcasCargaPrecios();" id="btn-tab-carga-precios" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
+                <span class="text-blue-500 text-lg drop-shadow-[0_0_5px_rgba(59,130,246,0.5)]">📡</span>
+                <span class="text-gray-400 group-hover:text-white transition-colors">Carga de Precios</span>
             </button>
+        
+            <!-- BOTÓN: FORJA DE EQUIPOS -->
+            <button onclick="switchTab('panel-forja-equipos'); cargarMarcasForja();" id="btn-tab-forja-equipos" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
+                <span class="text-yellow-500 text-lg drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]">🛠️</span>
+                <span class="text-gray-400 group-hover:text-white transition-colors">Forja de Equipos</span>
+            </button>
+
             <button onclick="switchTab('tab-alertas-master')" id="btn-tab-alertas-master" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
                 <span class="text-cyberMagenta animate-pulse text-sm">👁️</span>
                 <span class="text-cyberMagenta">Alertas (Master)</span>
@@ -345,6 +357,7 @@
 </button>
 </div> 
 </div>
+
     <section id="consola-selectores" class="max-w-6xl mx-auto w-full px-4 mt-6 transition-all duration-500">
         <div class="bg-darkCard border-2 border-infinix/40 rounded-3xl p-5 sm:p-6 shadow-[0_10px_30px_rgba(0,209,0,0.15)] relative overflow-hidden">
             <div class="absolute -right-24 -bottom-24 w-48 h-48 bg-infinix/5 rounded-full blur-3xl select-none pointer-events-none"></div>
@@ -483,14 +496,10 @@
                             <!-- Inyectado por JS -->
                         </ul>
                         
-                        <!-- CONTROLES TÁCTICOS RIVAL -->
-                        <div class="mt-4 pt-4 border-t border-darkBorder flex gap-2">
-                            <button id="btn-alert-rival" onclick="abrirModalPrecio('rival')" class="flex-1 py-2.5 bg-[#0d0d11] border-2 border-cyberMagenta text-white font-black text-[9px] sm:text-[10px] tracking-widest orbitron rounded-xl hover:shadow-[0_0_15px_rgba(255,0,127,0.5)] hover:bg-cyberMagenta/10 transition-all duration-300 transform active:scale-95 flex items-center justify-center gap-1.5 cyber-panel-shadow">
-                                <span class="text-cyberMagenta animate-pulse text-sm">⚠️</span> ALERTA PRECIO
-                            </button>
-                            <button id="btn-venta-rival" onclick="abrirModalVenta('rival')" class="flex-1 py-2.5 bg-[#0d0d11] border-2 border-[#00f0ff] text-white font-black text-[9px] sm:text-[10px] tracking-widest orbitron rounded-xl hover:shadow-[0_0_15px_rgba(0,240,255,0.5)] hover:bg-[#00f0ff]/10 transition-all duration-300 transform active:scale-95 flex items-center justify-center gap-1.5 cyber-panel-cyan-shadow">
-                                <span class="text-[#00f0ff] animate-pulse text-sm">🛒</span> ALERTA VENTA
-                            </button>
+                    
+                        <button id="btn-venta-rival" class="w-full py-4 mt-auto bg-transparent border-2 border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black font-black text-[11px] sm:text-xs rounded-xl transition-all duration-300 shadow-[0_0_15px_rgba(34,211,238,0.2)] hover:shadow-[0_0_25px_rgba(34,211,238,0.6)] flex justify-center items-center gap-2 uppercase tracking-widest">
+                            🛒 ALERTA VENTA
+                        </button>
                         </div>
                     </div>
                 </div>
@@ -1085,6 +1094,164 @@
         </button>
     </div>
 </div>
+<!-- ========================================================= -->
+    <!-- PESTAÑA: CARGA DE PRECIOS (ESTILO NATIVO)                 -->
+    <!-- ========================================================= -->
+    <section id="panel-carga-precios" class="hidden max-w-6xl mx-auto w-full px-4 mt-6 transition-all duration-500">
+        <div class="bg-darkCard border-2 border-darkBorder rounded-3xl p-5 sm:p-6 shadow-[0_10px_30px_rgba(0,0,0,0.5)] relative overflow-hidden">
+            
+            <div class="border-b border-darkBorder pb-4 mb-6 flex items-center gap-3">
+                <span class="text-2xl text-blue-500">📡</span>
+                <div>
+                    <h2 class="text-xl font-black text-white orbitron tracking-widest uppercase">Carga de Precios</h2>
+                    <p class="text-[11px] text-gray-400 mt-1 uppercase tracking-widest">Auditoría orgánica en punto de venta</p>
+                </div>
+            </div>
+
+            <form id="form-carga-precios" class="space-y-6" onsubmit="submitCargaPrecios(event)">
+                
+                <!-- SELECCIÓN BASE -->
+                <div class="bg-darkBg p-5 rounded-2xl border border-darkBorder">
+                    <h3 class="text-blue-500 font-bold text-xs orbitron uppercase mb-4 tracking-widest">1. Selección de Equipo</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Cadena Retail *</label>
+                            <select id="carga-retailer" required class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-500 transition-colors">
+                                <option value="" disabled selected>-- Seleccione Tienda --</option>
+                                <option value="alkosto">Alkosto</option><option value="exito">Éxito</option>
+                                <option value="cencosud">Cencosud</option><option value="falabella">Falabella</option>
+                                <option value="olimpica">Olímpica</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Marca *</label>
+                            <select id="carga-brand" required onchange="cargarReferenciasBase()" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-500 transition-colors">
+                                <option value="" disabled selected>Cargando marcas...</option>
+                            </select>
+                            <input type="text" id="carga-new-brand" placeholder="Escriba nueva marca..." class="hidden w-full bg-darkCard text-white border border-blue-500 rounded-lg px-4 py-3 text-sm mt-3 uppercase">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Referencia *</label>
+                            <select id="carga-model" required onchange="evaluarNuevoEquipo()" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-500 transition-colors disabled:opacity-50">
+                                <option value="" disabled selected>Esperando Marca...</option>
+                            </select>
+                            <input type="text" id="carga-new-model" placeholder="Ej: NUEVO MODELO" class="hidden w-full bg-darkCard text-white border border-blue-500 rounded-lg px-4 py-3 text-sm mt-3 uppercase font-bold">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ESPECIFICACIONES (OCULTO POR DEFECTO) -->
+                <div id="panel-especificaciones" class="hidden bg-darkBg p-5 rounded-2xl border border-darkBorder transition-all duration-300">
+                    <h3 class="text-blue-500 font-bold text-xs orbitron uppercase mb-4 tracking-widest">2. Creación de Ficha Técnica</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-5 mb-5">
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">RAM</label><input type="text" id="carga-ram" placeholder="Ej: 8 GB" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-500"></div>
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">ROM</label><input type="text" id="carga-rom" placeholder="Ej: 256 GB" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-500"></div>
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Refresco (Hz)</label><input type="number" id="carga-hz" placeholder="Ej: 120" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-500"></div>
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Cámaras</label><input type="text" id="carga-cam" placeholder="Ej: 108 Mpx" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-500"></div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Procesador</label><input type="text" id="carga-cpu" placeholder="Ej: Helio G99" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-500"></div>
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Durabilidad / IP</label><input type="text" id="carga-ip" placeholder="Ej: Resistencia CGS Grado Militar" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-500"></div>
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Batería y Carga</label><input type="text" id="carga-bat" placeholder="Ej: 5600 mAh a 45 W" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-500"></div>
+                    </div>
+                </div>
+
+                <!-- PRECIO -->
+                <div class="bg-darkBg p-5 rounded-2xl border border-darkBorder">
+                    <label class="text-xs font-black text-white uppercase tracking-widest orbitron block mb-3">3. Precio Detectado ($) *</label>
+                    <div class="relative max-w-md">
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500 font-black text-xl">$</span>
+                        <input type="number" id="carga-precio-valor" required min="1" placeholder="Ej: 899900" class="w-full bg-darkCard border-2 border-darkBorder focus:border-blue-500 rounded-xl pl-12 pr-4 py-4 text-white text-xl font-mono outline-none transition-colors">
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full md:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl transition-colors uppercase tracking-widest orbitron text-sm">
+                        Subir a Base de Datos
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+<!-- ========================================================= -->
+    <!-- PESTAÑA: FORJA DE EQUIPOS (EXPANDIDA NIVEL INGENIERÍA)    -->
+    <!-- ========================================================= -->
+    <section id="panel-forja-equipos" class="hidden max-w-6xl mx-auto w-full px-4 mt-6 transition-all duration-500">
+        <div class="bg-darkCard border-2 border-darkBorder rounded-3xl p-5 sm:p-6 shadow-[0_10px_30px_rgba(0,0,0,0.5)] relative overflow-hidden">
+            
+            <div class="border-b border-darkBorder pb-4 mb-6 flex items-center gap-3">
+                <span class="text-2xl text-yellow-500">🛠️</span>
+                <div>
+                    <h2 class="text-xl font-black text-white orbitron tracking-widest uppercase">Forja de Equipos</h2>
+                    <p class="text-[11px] text-gray-400 mt-1 uppercase tracking-widest">Control maestro, corrección de parámetros y debilidades</p>
+                </div>
+            </div>
+
+            <div class="bg-darkBg p-5 rounded-2xl border border-darkBorder mb-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Marca *</label>
+                        <select id="forja-brand" onchange="cargarReferenciasForja()" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-yellow-500 transition-colors">
+                            <option value="" disabled selected>Seleccione...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Referencia *</label>
+                        <select id="forja-model" onchange="cargarDatosForja()" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-yellow-500 transition-colors disabled:opacity-50">
+                            <option value="" disabled selected>Esperando Marca...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <form id="form-forja-equipos" class="space-y-6 hidden" onsubmit="submitForjaEquipos(event)">
+                <div class="bg-darkBg p-5 rounded-2xl border border-darkBorder">
+                    <h3 class="text-yellow-500 font-bold text-xs orbitron uppercase mb-4 tracking-widest border-b border-darkBorder pb-2">Núcleo y Rendimiento</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Procesador (CPU)</label><input type="text" id="forja-cpu" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-yellow-500"></div>
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Gráfica (GPU)</label><input type="text" id="forja-gpu" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-yellow-500"></div>
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Tecnología ROM (UFS)</label><input type="text" id="forja-ufs" placeholder="Ej: UFS 3.1" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-yellow-500"></div>
+                    </div>
+                    
+                    <h3 class="text-yellow-500 font-bold text-xs orbitron uppercase mb-4 tracking-widest border-b border-darkBorder pb-2 mt-6">Óptica y Estructura</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Cámara Principal</label><input type="text" id="forja-cam-rear" placeholder="Ej: 50 MP OIS" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-yellow-500"></div>
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Cámara Frontal</label><input type="text" id="forja-cam-front" placeholder="Ej: 32 MP" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-yellow-500"></div>
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Durabilidad / IP</label><input type="text" id="forja-ip" placeholder="Ej: IP69 / Cristal" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-yellow-500"></div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Batería (mAh)</label><input type="number" id="forja-bat" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-yellow-500"></div>
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Carga (W)</label><input type="number" id="forja-charge" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-yellow-500"></div>
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Peso (g)</label><input type="number" id="forja-peso" placeholder="Ej: 190" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-yellow-500"></div>
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase block mb-2">Grosor (mm)</label><input type="text" id="forja-grosor" placeholder="Ej: 7.9" class="w-full bg-darkCard text-white border border-darkBorder rounded-lg px-4 py-3 text-sm outline-none focus:border-yellow-500"></div>
+                    </div>
+                </div>
+
+                <div class="bg-darkBg p-5 rounded-2xl border border-darkBorder">
+                    <div class="flex justify-between items-end mb-3">
+                        <label class="text-xs font-black text-white uppercase tracking-widest orbitron block">Viñetas Estratégicas (Ventajas y Debilidades)</label>
+                        <span class="text-[9px] text-gray-400 bg-black/50 px-2 py-1 rounded border border-darkBorder">Usa "✘" (Malo) o "✔" (Bueno)</span>
+                    </div>
+                    <textarea id="forja-highlights" rows="4" placeholder="✘ Pantalla PLS LCD de solo 90Hz...&#10;✔ Batería de 5000 mAh..." class="w-full bg-darkCard border border-darkBorder rounded-lg px-4 py-3 text-white text-sm outline-none focus:border-yellow-500 custom-scrollbar"></textarea>
+                </div>
+
+                <div class="bg-darkBg p-5 rounded-2xl border border-darkBorder">
+                    <div class="flex justify-between items-center mb-3">
+                        <label class="text-xs font-black text-white uppercase tracking-widest orbitron block">URL Imagen (Render PNG)</label>
+                        <span id="forja-status-img" class="text-gray-400 text-[10px] font-normal">Detectando...</span>
+                    </div>
+                    <input type="url" id="forja-img-url" placeholder="https://..." class="w-full bg-darkCard border border-darkBorder rounded-lg px-4 py-3 text-white text-sm outline-none focus:border-yellow-500">
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full md:w-auto px-10 py-4 bg-yellow-600 hover:bg-yellow-500 text-white font-black rounded-xl transition-colors uppercase tracking-widest orbitron text-sm">
+                        Sobrescribir Ficha Técnica
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
 <!-- ========================================== -->
 <!-- PESTAÑA NUEVA: REPORTE DE VISITA           -->
 <!-- ========================================== -->
@@ -1749,78 +1916,48 @@
         </div>
     </footer>
 
-    <!-- MÓDULO 1: MODAL DE ALERTA DE PRECIO (CYBERPUNK MAGENTA) -->
-    <div id="cyber-alert-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[100000] flex items-center justify-center p-4 hidden">
-        <div class="bg-[#0d0d11] border-2 border-cyberMagenta rounded-3xl p-6 w-full max-w-lg shadow-[0_0_50px_rgba(255,0,127,0.3)] relative overflow-hidden cyber-panel-shadow cyber-grid-overlay">
-            <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-cyberMagenta"></div>
-            <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-cyberMagenta"></div>
-            <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-cyberMagenta"></div>
-            <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-cyberMagenta"></div>
-            
-            <div class="flex justify-between items-start mb-6 border-b border-cyberMagenta/30 pb-4 relative z-10">
-                <div>
-                    <h3 class="text-xl font-black text-white orbitron tracking-widest flex items-center gap-2">
-                        <span class="text-cyberMagenta animate-pulse">⚠️</span> ALERTA DE COMBATE
-                    </h3>
-                    <p class="text-[10px] text-cyberMagenta font-bold tracking-widest uppercase mt-0.5">Reporte de Cambio de Precio en Campo</p>
-                </div>
-                <button onclick="closePriceAlertModal()" class="text-gray-400 hover:text-cyberMagenta text-xl font-black orbitron transition-colors">&times; CERRAR</button>
-            </div>
-
-            <form id="price-alert-form" class="space-y-4 relative z-10" onsubmit="submitPriceAlert(event)">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label for="alert-brand-select" class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron">1. Marca</label>
-                        <select id="alert-brand-select" required onchange="filterAlertModels(this.value)" class="w-full bg-[#13131a] text-white border border-cyberMagenta/50 rounded-xl px-4 py-3 text-xs font-black focus:border-cyberMagenta focus:ring-1 focus:ring-cyberMagenta transition-all cursor-pointer">
-                            <option value="" disabled selected>Selecciona Marca...</option>
-                            <option value="Infinix">INFINIX</option>
-                            <option value="Samsung">SAMSUNG</option>
-                            <option value="Honor">HONOR</option>
-                            <option value="Motorola">MOTOROLA</option>
-                            <option value="Realme">REALME</option>
-                            <option value="Oppo">OPPO</option>
-                            <option value="Tecno">TECNO</option>
-                            <option value="Xiaomi">XIAOMI</option>
-                        </select>
+            <!-- FORMULARIO DE EDICIÓN AVANZADA -->
+            <form id="form-forja-equipos" class="space-y-4 overflow-y-auto pr-2 custom-scrollbar hidden" onsubmit="submitForjaEquipos(event)">
+                <div class="p-3 bg-yellow-500/5 border border-yellow-500/30 rounded-xl space-y-3">
+                    <h4 class="text-yellow-500 font-black text-[10px] orbitron border-b border-yellow-500/20 pb-1">DATOS DE INGENIERÍA PARA LÍDERES</h4>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">Editar Procesador</label>
+                            <input type="text" id="forja-cpu" class="w-full bg-black text-white border border-gray-600 rounded-lg px-3 py-2 text-xs outline-none focus:border-yellow-500">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">Editar Batería / Carga</label>
+                            <input type="text" id="forja-bat" class="w-full bg-black text-white border border-gray-600 rounded-lg px-3 py-2 text-xs outline-none focus:border-yellow-500">
+                        </div>
                     </div>
-                    <div class="space-y-1.5">
-                        <label for="alert-model-select" class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron">2. Referencia</label>
-                        <select id="alert-model-select" required disabled class="w-full bg-[#13131a] text-white border border-cyberMagenta/50 rounded-xl px-4 py-3 text-xs font-black focus:border-cyberMagenta focus:ring-1 focus:ring-cyberMagenta transition-all cursor-pointer">
-                            <option value="" disabled selected>Selecciona Referencia...</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 gap-4">
-                    <div class="space-y-1.5">
-                        <label for="alert-new-price" class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron">3. Nuevo Precio Detectado ($)</label>
-                        <div class="relative">
-                            <span class="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-cyberMagenta font-black text-sm">$</span>
-                            <input type="number" id="alert-new-price" required min="1" placeholder="Ej: 399000" class="w-full bg-[#13131a] border border-cyberMagenta/50 rounded-xl pl-8 pr-4 py-3 text-white text-xs font-mono focus:border-cyberMagenta focus:ring-1 focus:ring-cyberMagenta transition-all outline-none">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                         <div>
+                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">Editar Durabilidad (IP/Cristal)</label>
+                            <input type="text" id="forja-ip" class="w-full bg-black text-white border border-gray-600 rounded-lg px-3 py-2 text-xs outline-none focus:border-yellow-500">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">Editar Cámaras</label>
+                            <input type="text" id="forja-cam" class="w-full bg-black text-white border border-gray-600 rounded-lg px-3 py-2 text-xs outline-none focus:border-yellow-500">
                         </div>
                     </div>
                 </div>
 
-                <div class="space-y-1.5">
-                    <label for="alert-retailer-select" class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron">4. Canal / Cadena Retail Detectada</label>
-                    <select id="alert-retailer-select" required class="w-full bg-[#13131a] text-white border border-cyberMagenta/50 rounded-xl px-4 py-3 text-xs font-black focus:border-cyberMagenta focus:ring-1 focus:ring-cyberMagenta transition-all cursor-pointer">
-                        <option value="" disabled selected>Selecciona Punto de Venta...</option>
-                        <option value="alkosto">Alkosto</option>
-                        <option value="exito"> Éxito</option>
-                        <option value="cencosud">Cencosud</option>
-                        <option value="falabella">Falabella</option>
-                        <option value="olimpica">Olímpica</option>
-                        <option value="otro">Otro Distribuidor Autorizado</option>
-                    </select>
+                <!-- INYECCIÓN DEL PNG -->
+                <div class="p-3 bg-yellow-500/10 border border-yellow-500 rounded-xl">
+                    <label class="text-[11px] font-black text-white uppercase tracking-widest orbitron block mb-2 flex justify-between items-center">
+                        <span>INYECCIÓN DE RENDER (PNG)</span>
+                        <span id="forja-status-img" class="text-gray-400 text-[9px] font-normal">Detectando estado...</span>
+                    </label>
+                    <input type="url" id="forja-img-url" placeholder="Pega aquí la URL directa de la imagen transparente..." class="w-full bg-black border border-yellow-500 rounded-lg px-3 py-3 text-white text-xs outline-none focus:ring-1 focus:ring-yellow-500">
                 </div>
 
-                <button type="submit" class="w-full py-4 bg-cyberMagenta text-white font-black rounded-xl transition-all duration-300 transform active:scale-95 shadow-[0_0_15px_#ff007f] hover:shadow-[0_0_25px_#ff007f] uppercase tracking-widest orbitron mt-4 animate-cyber-flicker">
-                    💥 EMITIR ALERTA DE COMBATE
+                <button type="submit" class="w-full py-4 bg-yellow-500 text-black font-black rounded-xl transition-all duration-300 transform active:scale-95 shadow-[0_0_15px_rgba(234,179,8,0.5)] hover:shadow-[0_0_25px_rgba(234,179,8,0.8)] uppercase tracking-widest orbitron mt-4">
+                    🛠️ GUARDAR CAMBIOS Y SOBRESCRIBIR EQUIPO
                 </button>
             </form>
         </div>
     </div>
-
     <!-- MÓDULO 2: MODAL DE ALERTA DE VENTA (CYBERPUNK CYAN) -->
     <div id="cyber-venta-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[100000] flex items-center justify-center p-4 hidden">
         <div class="bg-[#0d0d11] border-2 border-[#00f0ff] rounded-3xl p-6 w-full max-w-lg shadow-[0_0_50px_rgba(0,240,255,0.3)] relative overflow-hidden cyber-panel-cyan-shadow cyber-grid-cyan-overlay">
@@ -2461,7 +2598,6 @@ const tLocal = typeof tienda !== 'undefined' ? tienda : '';
         }).catch(err => alert("Error: " + err));
     }
 }
- 
 // ==========================================
 // FUNCIONES MAESTRAS DE NAVEGACIÓN Y ROLES
 // ==========================================
@@ -2483,11 +2619,14 @@ function applyRolePermissions(role) {
     const btnShoppingTrainer = document.getElementById('btn-tab-shopping-trainer');
     const btnShoppingAdmin = document.getElementById('btn-tab-shopping-admin');
     
-    // 👇 
     const btnCierreVentas = document.getElementById('btn-tab-cierre-ventas');
     const btnCentralReportes = document.getElementById('btn-tab-reportes-admin');
     const btnAdminListas = document.getElementById('btn-tab-admin-listas');
     const btnReporteVisitas = document.getElementById('btn-tab-reporte-visita');
+    
+    // IDs sincronizados con index.html
+    const btnCargaPrecios = document.getElementById('btn-tab-carga-precios'); 
+    const btnForjaEquipos = document.getElementById('btn-tab-forja-equipos'); 
     
     const tabsContainer = document.getElementById('main-tabs-container');
     const btnAlertRiv = document.getElementById('btn-alert-rival');
@@ -2499,9 +2638,18 @@ function applyRolePermissions(role) {
 
     let visibleTabs = 0;
 
-    // 1. OCULTAMOS TODOS LOS BOTONES POR DEFECTO (Incluyendo los nuevos)
-    const allButtons = [btnArena, btnRadar, btnQuiz, btnShopping, btnCortex, btnAlertasMaster, btnTendenciasNacionales, btnCalculadora, btnAdminCalculadora, btnSalonFama, btnInventario, btnShoppingTrainer, btnShoppingAdmin, btnCierreVentas, btnCentralReportes, btnAdminListas, btnCentralReportes, btnReporteVisitas];
-    allButtons.forEach(b => { if(b) b.classList.add('hidden'); });
+    // 1. OCULTAMOS TODOS LOS BOTONES POR DEFECTO
+    const allButtons = [
+        btnArena, btnRadar, btnQuiz, btnShopping, btnCortex, btnAlertasMaster, 
+        btnTendenciasNacionales, btnCalculadora, btnAdminCalculadora, btnSalonFama, 
+        btnInventario, btnShoppingTrainer, btnShoppingAdmin, btnCierreVentas, 
+        btnCentralReportes, btnAdminListas, btnReporteVisitas, btnCargaPrecios, btnForjaEquipos
+    ];
+    allButtons.forEach(b => { 
+        if (b) {
+            b.classList.add('hidden'); 
+        }
+    });
     
     if (btnAlertRiv) btnAlertRiv.classList.add('hidden');
     if (btnVentaRiv) btnVentaRiv.classList.add('hidden');
@@ -2510,29 +2658,38 @@ function applyRolePermissions(role) {
     if (btnObjEditor) btnObjEditor.classList.add('hidden');
     if (btnQuizEditor) btnQuizEditor.classList.add('hidden');
 
-    // 2. PESTAÑAS VISIBLES PARA TODOS (SIN EXCEPCIÓN)
-    if (btnArena) { btnArena.classList.remove('hidden'); visibleTabs++; }
-    if (btnRadar) { btnRadar.classList.remove('hidden'); visibleTabs++; } 
-    if (btnSalonFama) { btnSalonFama.classList.remove('hidden'); visibleTabs++; }
-    if (btnInventario) { btnInventario.classList.remove('hidden'); visibleTabs++; }
+    const showBtn = (element) => {
+        if (element) {
+            element.classList.remove('hidden');
+            visibleTabs++;
+        }
+    };
+
+    // 2. PESTAÑAS VISIBLES PARA TODOS
+    showBtn(btnArena);
+    showBtn(btnRadar);
+    showBtn(btnSalonFama);
+    showBtn(btnInventario);
 
     // 3. LÓGICA ESTRICTA POR ROLES
-    if (btnCentralReportes) { btnCentralReportes.classList.remove('hidden'); visibleTabs++; }
+    showBtn(btnCentralReportes);
+
     if (['ASESOR', 'TRAINER', 'SUPERVISOR', 'COORDINADOR', 'ADMIN'].includes(role)) {
         if (btnAlertRiv) btnAlertRiv.classList.remove('hidden');
         if (btnVentaRiv) btnVentaRiv.classList.remove('hidden');
     }
 
     if (role === 'ADMIN') {
-        if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
-        if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
-        if (btnCortex) { btnCortex.classList.remove('hidden'); visibleTabs++; }
-        if (btnAlertasMaster) { btnAlertasMaster.classList.remove('hidden'); visibleTabs++; }
-        if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
-        if (btnAdminCalculadora) { btnAdminCalculadora.classList.remove('hidden'); visibleTabs++; }
-        
-        // BOTONES EXCLUSIVOS DE ADMIN:
-        if (btnAdminListas) { btnAdminListas.classList.remove('hidden'); visibleTabs++; }
+        showBtn(btnQuiz);
+        showBtn(btnShopping);
+        showBtn(btnCortex);
+        showBtn(btnAlertasMaster);
+        showBtn(btnTendenciasNacionales);
+        showBtn(btnAdminCalculadora);
+        showBtn(btnAdminListas);
+
+        showBtn(btnCargaPrecios);
+        showBtn(btnForjaEquipos); // Único rol autorizado para Forja de Equipos
 
         if (btnObjEditor) btnObjEditor.classList.remove('hidden');
         if (btnQuizEditor) btnQuizEditor.classList.remove('hidden');
@@ -2540,17 +2697,19 @@ function applyRolePermissions(role) {
         if (adminVentaBell) { adminVentaBell.classList.remove('hidden'); updateAdminVentasCounter(); }
     }
     else if (role === 'GERENTE') {
-        if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
-        if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
+        showBtn(btnShopping);
+        showBtn(btnTendenciasNacionales);
         if (btnRadar) { btnRadar.classList.add('hidden'); visibleTabs--; } 
-        if (btnCentralReportes) { btnCentralReportes.classList.remove('hidden'); visibleTabs++; }
+        // Gerente NO tiene ni Carga de Precios ni Forja de Equipos
     }
     else if (role === 'SUPERVISOR' || role === 'COORDINADOR' || role === 'TRAINER') {
-        if (btnReporteVisitas && role !== 'COORDINADOR') { btnReporteVisitas.classList.remove('hidden'); visibleTabs++; }
-        if (btnShopping) { btnShopping.classList.remove('hidden'); visibleTabs++; }
-        if (btnTendenciasNacionales) { btnTendenciasNacionales.classList.remove('hidden'); visibleTabs++; }
-        if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
-        if (btnCentralReportes) { btnCentralReportes.classList.remove('hidden'); visibleTabs++; }
+        if (role !== 'COORDINADOR') showBtn(btnReporteVisitas);
+        showBtn(btnShopping);
+        showBtn(btnTendenciasNacionales);
+        showBtn(btnQuiz);
+        
+        // Carga de Precios activo
+        showBtn(btnCargaPrecios);
 
         if ((role === 'SUPERVISOR' || role === 'COORDINADOR') && btnRadar) { 
             btnRadar.classList.add('hidden'); 
@@ -2558,22 +2717,21 @@ function applyRolePermissions(role) {
         }
     }
     else if (role === 'ASESOR') {
-        if (btnQuiz) { btnQuiz.classList.remove('hidden'); visibleTabs++; }
-        if (btnCalculadora) { btnCalculadora.classList.remove('hidden'); visibleTabs++; }
-        
-        // BOTÓN EXCLUSIVO DE ASESOR:
-        if (btnCierreVentas) { btnCierreVentas.classList.remove('hidden'); visibleTabs++; }
+        showBtn(btnQuiz);
+        showBtn(btnCalculadora);
+        showBtn(btnCierreVentas);
+        showBtn(btnCargaPrecios); // Carga de Precios activo
     }
 
     if (tabsContainer) {
         let maxCols = Math.min(visibleTabs, 6);
         let gridClass = `grid-cols-${maxCols}`;
         if(visibleTabs > 4) gridClass = `grid-cols-3 md:grid-cols-${maxCols}`;
-        tabsContainer.className = `grid ${gridClass} gap-2 p-1.5 bg-darkCard rounded-2xl border border-darkBorder shadow-2xl transition-all duration-500 overflow-x-auto`;
+        tabsContainer.className = `flex flex-nowrap overflow-x-auto gap-1.5 p-1.5 bg-darkCard rounded-2xl border border-darkBorder shadow-2xl transition-all duration-500 whitespace-nowrap`;
     }
 
     // ==========================================
-    // 🔒 CANDADO ABSOLUTO FINAL
+    // 🔒 CANDADO ABSOLUTO DE SEGURIDAD
     // ==========================================
     const esAdmin = (role === 'ADMIN');
     const esTrainer = (role === 'TRAINER');
@@ -2595,148 +2753,172 @@ function applyRolePermissions(role) {
         }
     }
 
-// 🔒 Candado a muerte para Reporte de Visitas
-const btnVisitaFinal = document.getElementById('btn-tab-reporte-visita');
+    const btnVisitaFinal = document.getElementById('btn-tab-reporte-visita');
     if (btnVisitaFinal && !['SUPERVISOR', 'TRAINER', 'ADMIN'].includes(role)) {
         btnVisitaFinal.classList.add('hidden');
+    }
+
+    // Candado 1: Carga de Precios oculto exclusivamente para Gerentes
+    if (btnCargaPrecios && role === 'GERENTE') {
+        btnCargaPrecios.classList.add('hidden');
+    }
+
+    // Candado 2: Forja de Equipos solo para Admin
+    if (btnForjaEquipos && !esAdmin) {
+        btnForjaEquipos.classList.add('hidden');
     }
     
     switchTab('tab-comparativa');
 }
 
 function switchTab(tabId) {
-// --- NUEVO AJUSTE: Control de encendido/apagado del botón Cierre de Ventas ---
-const btnCierre = document.getElementById('btn-tab-cierre-ventas');
+    const btnCierre = document.getElementById('btn-tab-cierre-ventas');
     if (btnCierre) {
         if (tabId === 'tab-cierre-ventas') {
-            // Encender el botón (Ponerlo Verde)
             btnCierre.classList.add('bg-green-500', 'text-black');
             btnCierre.classList.remove('text-gray-300', 'hover:bg-white/5');
         } else {
-            // Apagar el botón (Volverlo oscuro/normal)
             btnCierre.classList.remove('bg-green-500', 'text-black');
             btnCierre.classList.add('text-gray-300', 'hover:bg-white/5');
         }
     }
-            // 1. OCULTAR TODAS LAS SECCIONES HTML
-            const tabs = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping', 'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-calculadora', 'tab-admin-calculadora', 'tab-salon-fama', 'tab-inventario', 'tab-simulador', 'tab-shopping-trainer', 'tab-shopping-admin', 'tab-admin-listas', 'panel-admin-gerencia', 'tab-reporte-visita'];
+
+    // 1. OCULTAR TODAS LAS SECCIONES HTML
+    const tabs = [
+        'tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping', 
+        'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-calculadora', 
+        'tab-admin-calculadora', 'tab-salon-fama', 'tab-inventario', 'tab-simulador', 
+        'tab-shopping-trainer', 'tab-shopping-admin', 'tab-admin-listas', 'panel-admin-gerencia', 
+        'tab-reporte-visita', 'panel-carga-precios', 'panel-forja-equipos'
+    ];
+    
+    tabs.forEach(t => {
+        const el = document.getElementById(t);
+        if (el) el.classList.add('hidden');
+    });
+
+    if (tabId === 'tab-tendencias-nacionales') renderTendenciasNacionalesTab();
+    if (tabId === 'tab-inventario') initInventarioView();
+    if (tabId === 'panel-admin-gerencia') cargarDatosCentralReportes();
+
+    const calcBanner = document.getElementById('calc-fixed-banner');
+    if (calcBanner) {
+        if (tabId === 'tab-calculadora') calcBanner.classList.remove('hidden');
+        else calcBanner.classList.add('hidden');
+    }
+
+    const consolaSelectores = document.getElementById('consola-selectores');
+    if (consolaSelectores) {
+        const tabsWithConsole = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-shopping', 'tab-cortex'];
+        if (tabsWithConsole.includes(tabId)) consolaSelectores.classList.remove('hidden');
+        else consolaSelectores.classList.add('hidden'); 
+    }
+
+    const containerRivalBrand = document.getElementById('container-rival-brand');
+    const containerRivalModel = document.getElementById('container-rival-model');
+    const selectorsGrid = document.getElementById('top-selectors-grid');
+    
+    if (tabId === 'tab-radar-caracteristicas') {
+        if(containerRivalBrand) containerRivalBrand.classList.add('hidden');
+        if(containerRivalModel) containerRivalModel.classList.add('hidden');
+        if(selectorsGrid) selectorsGrid.className = "grid grid-cols-1 gap-4 max-w-sm mx-auto transition-all duration-500";
+    } else {
+        if(containerRivalBrand) containerRivalBrand.classList.remove('hidden');
+        if(containerRivalModel) containerRivalModel.classList.remove('hidden');
+        if(selectorsGrid) selectorsGrid.className = "grid grid-cols-1 md:grid-cols-3 gap-4 transition-all duration-500";
+    }
+
+    const hwEditorBtn = document.getElementById('admin-hardware-editor-btn');
+    if (hwEditorBtn) {
+        if (tabId === 'tab-comparativa' && currentUserRole === 'ADMIN') hwEditorBtn.classList.remove('hidden');
+        else hwEditorBtn.classList.add('hidden');
+    }
+
+    const panelMigracion = document.getElementById('panel-migracion-master');
+    if (panelMigracion) {
+        if (tabId === 'tab-comparativa' && currentUserRole === 'ADMIN') {
+            panelMigracion.classList.remove('hidden');
+        } else {
+            panelMigracion.classList.add('hidden');
+        }
+    }
+
+    const esAdmin = (currentUserRole === 'ADMIN');
+    const esTrainer = (currentUserRole === 'TRAINER');
+    const esJonathanFerro = (currentUserCode === 'CO1000429' || (currentUserName && currentUserName.toUpperCase().includes('FERRO')));
+
+    // 2. APAGAR ESTILOS DE TODOS LOS BOTONES Y MANEJAR VISIBILIDAD
+    const buttons = [
+        'btn-tab-comparativa', 'btn-tab-radar-caracteristicas', 'btn-tab-quiz', 'btn-tab-shopping', 
+        'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales', 'btn-tab-calculadora', 
+        'btn-tab-admin-calculadora', 'btn-tab-salon-fama', 'btn-tab-inventario', 'btn-tab-simulador', 
+        'btn-tab-shopping-trainer', 'btn-tab-shopping-admin', 'btn-tab-admin-listas', 'btn-tab-reportes-admin', 
+        'btn-tab-reporte-visita', 'btn-tab-carga-precios', 'btn-tab-forja-equipos'
+    ];
+    
+    const baseInactiveClass = "py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap";
+
+    buttons.forEach(btnId => {
+        const element = document.getElementById(btnId);
+        if (element) {
+            element.className = baseInactiveClass;
             
-            tabs.forEach(t => {
-                const el = document.getElementById(t);
-                if (el) el.classList.add('hidden');
-            });
-
-            if (tabId === 'tab-tendencias-nacionales') renderTendenciasNacionalesTab();
-            if (tabId === 'tab-inventario') initInventarioView();
-            if (tabId === 'panel-admin-gerencia') cargarDatosCentralReportes();
-
-            const calcBanner = document.getElementById('calc-fixed-banner');
-            if (calcBanner) {
-                if (tabId === 'tab-calculadora') calcBanner.classList.remove('hidden');
-                else calcBanner.classList.add('hidden');
-            }
-
-            const consolaSelectores = document.getElementById('consola-selectores');
-            if (consolaSelectores) {
-                const tabsWithConsole = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-shopping', 'tab-cortex'];
-                if (tabsWithConsole.includes(tabId)) consolaSelectores.classList.remove('hidden');
-                else consolaSelectores.classList.add('hidden'); 
-            }
-
-            const containerRivalBrand = document.getElementById('container-rival-brand');
-            const containerRivalModel = document.getElementById('container-rival-model');
-            const selectorsGrid = document.getElementById('top-selectors-grid');
+            // --- CANDADOS EXPLÍCITOS ---
+            if (btnId === 'btn-tab-shopping' && !['GERENTE', 'SUPERVISOR', 'COORDINADOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
+            if (btnId === 'btn-tab-cortex' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
+            if (btnId === 'btn-tab-alertas-master' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
+            if (btnId === 'btn-tab-tendencias-nacionales' && !['GERENTE', 'SUPERVISOR', 'COORDINADOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
+            if (btnId === 'btn-tab-radar-caracteristicas' && ['GERENTE', 'SUPERVISOR', 'COORDINADOR'].includes(currentUserRole)) element.classList.add('hidden');
+            if (btnId === 'btn-tab-quiz' && currentUserRole === 'GERENTE') element.classList.add('hidden');
             
-            if (tabId === 'tab-radar-caracteristicas') {
-                if(containerRivalBrand) containerRivalBrand.classList.add('hidden');
-                if(containerRivalModel) containerRivalModel.classList.add('hidden');
-                if(selectorsGrid) selectorsGrid.className = "grid grid-cols-1 gap-4 max-w-sm mx-auto transition-all duration-500";
-            } else {
-                if(containerRivalBrand) containerRivalBrand.classList.remove('hidden');
-                if(containerRivalModel) containerRivalModel.classList.remove('hidden');
-                if(selectorsGrid) selectorsGrid.className = "grid grid-cols-1 md:grid-cols-3 gap-4 transition-all duration-500";
-            }
+            if (btnId === 'btn-tab-calculadora' && currentUserRole !== 'ASESOR') element.classList.add('hidden');
+            if (btnId === 'btn-tab-simulador' && currentUserRole !== 'ASESOR') element.classList.add('hidden');
+            if (btnId === 'btn-tab-admin-calculadora' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
 
-            const hwEditorBtn = document.getElementById('admin-hardware-editor-btn');
-            if (hwEditorBtn) {
-                if (tabId === 'tab-comparativa' && currentUserRole === 'ADMIN') hwEditorBtn.classList.remove('hidden');
-                else hwEditorBtn.classList.add('hidden');
-            }
+            if (btnId === 'btn-tab-shopping-admin' && !esAdmin && !esJonathanFerro) element.classList.add('hidden');
+            if (btnId === 'btn-tab-shopping-trainer' && !esAdmin && !esTrainer) element.classList.add('hidden');
 
-            const panelMigracion = document.getElementById('panel-migracion-master');
-            if (panelMigracion) {
-                if (tabId === 'tab-comparativa' && currentUserRole === 'ADMIN') {
-                    panelMigracion.classList.remove('hidden');
-                } else {
-                    panelMigracion.classList.add('hidden');
-                }
-            }
-
-            // Identidades maestras para validación en tiempo de navegación
-            const esAdmin = (currentUserRole === 'ADMIN');
-            const esTrainer = (currentUserRole === 'TRAINER');
-            const esJonathanFerro = (currentUserCode === 'CO1000429' || (currentUserName && currentUserName.toUpperCase().includes('FERRO')));
-
-          // 2. APAGAR ESTILOS DE TODOS LOS BOTONES Y APLICAR RESTRICCIONES DE ROL
-          const buttons = ['btn-tab-comparativa', 'btn-tab-radar-caracteristicas', 'btn-tab-quiz', 'btn-tab-shopping', 'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales', 'btn-tab-calculadora', 'btn-tab-admin-calculadora', 'btn-tab-salon-fama', 'btn-tab-inventario', 'btn-tab-simulador', 'btn-tab-shopping-trainer', 'btn-tab-shopping-admin', 'btn-tab-admin-listas', 'btn-tab-reportes-admin', 'btn-tab-reporte-visita'];
+            if (btnId === 'btn-tab-admin-listas' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
+            if (btnId === 'btn-tab-reportes-admin' && currentUserRole === 'ASESOR') element.classList.add('hidden');
+            if (btnId === 'btn-tab-reporte-visita' && !['SUPERVISOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
             
-            buttons.forEach(btnId => {
-                const element = document.getElementById(btnId);
-                if (element) {
-                    // Reseteo visual general
-                    element.className = "py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap";
-                    
-                    // --- CANDADOS ESTRICTOS DE ROL ---
-                    if (btnId === 'btn-tab-shopping' && !['GERENTE', 'SUPERVISOR', 'COORDINADOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
-                    if (btnId === 'btn-tab-cortex' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
-                    if (btnId === 'btn-tab-alertas-master' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
-                    if (btnId === 'btn-tab-tendencias-nacionales' && !['GERENTE', 'SUPERVISOR', 'COORDINADOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
-                    if (btnId === 'btn-tab-radar-caracteristicas' && ['GERENTE', 'SUPERVISOR', 'COORDINADOR'].includes(currentUserRole)) element.classList.add('hidden');
-                    if (btnId === 'btn-tab-quiz' && currentUserRole === 'GERENTE') element.classList.add('hidden');
-                    
-                    if (btnId === 'btn-tab-calculadora' && currentUserRole !== 'ASESOR') element.classList.add('hidden');
-                    if (btnId === 'btn-tab-simulador' && currentUserRole !== 'ASESOR') element.classList.add('hidden');
-                    if (btnId === 'btn-tab-admin-calculadora' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
-
-                    // Descargar Excel: SOLO ADMIN y JONATHAN FERRO
-                    if (btnId === 'btn-tab-shopping-admin' && !esAdmin && !esJonathanFerro) {
-                        element.classList.add('hidden');
-                    }
-
-                    // Cargar Shopping: SOLO TRAINER y ADMIN
-                    if (btnId === 'btn-tab-shopping-trainer' && !esAdmin && !esTrainer) {
-                        element.classList.add('hidden');
-                    }
-
-                    // --- BLINDAJE DE LOS DOS NUEVOS BOTONES ---
-                    // Gestor Listas: Única y exclusivamente ADMIN
-                    if (btnId === 'btn-tab-admin-listas' && currentUserRole !== 'ADMIN') {
-                        element.classList.add('hidden');
-                    }
-                    // Central de Reportes: Bloqueado a muerte para Asesores
-                    if (btnId === 'btn-tab-reportes-admin' && currentUserRole === 'ASESOR') {
-                        element.classList.add('hidden');
-                    }
-                    // Reporte de Visitas: Bloqueado a muerte para Asesores
-                    if (btnId === 'btn-tab-reporte-visita' && !['SUPERVISOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) {
-    element.classList.add('hidden');
-}
-                }
-            });
-
-            // 3. MOSTRAR SECCIÓN OBJETIVO Y ENCENDER SU BOTÓN
-            const targetTab = document.getElementById(tabId);
-            if (targetTab) targetTab.classList.remove('hidden');
-
-            const activeButton = document.getElementById('btn-' + tabId);
-            if (activeButton) {
-                if (['tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-radar-caracteristicas', 'tab-admin-calculadora', 'tab-salon-fama', 'tab-inventario', 'tab-simulador', 'tab-shopping-trainer', 'tab-shopping-admin'].includes(tabId)) {
-                    activeButton.className = "py-3 px-2 rounded-xl font-black text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-white text-black shadow-lg shadow-white/30 transform scale-105 whitespace-nowrap";
-                } else {
-                    activeButton.className = "py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-infinix text-black shadow-lg shadow-infinix/20 transform scale-105 whitespace-nowrap";
-                }
+            // Candado Carga de Precios
+            if (btnId === 'btn-tab-carga-precios' && currentUserRole === 'GERENTE') {
+                element.classList.add('hidden');
+            }
+            
+            // Candado Forja de Equipos
+            if (btnId === 'btn-tab-forja-equipos' && !esAdmin) {
+                element.classList.add('hidden');
             }
         }
+    });
+
+    // 3. MOSTRAR SECCIÓN OBJETIVO Y RESALTAR BOTÓN ACTIVO
+    const targetTab = document.getElementById(tabId);
+    if (targetTab) targetTab.classList.remove('hidden');
+
+    // Mapeo especial cuando tabId es panel y el botón es btn-tab
+    let btnTargetId = 'btn-' + tabId;
+    if (tabId === 'panel-carga-precios') btnTargetId = 'btn-tab-carga-precios';
+    if (tabId === 'panel-forja-equipos') btnTargetId = 'btn-tab-forja-equipos';
+
+    const activeButton = document.getElementById(btnTargetId);
+    if (activeButton) {
+        const whiteStyleTabs = [
+            'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 
+            'tab-radar-caracteristicas', 'tab-admin-calculadora', 'tab-salon-fama', 
+            'tab-inventario', 'tab-simulador', 'tab-shopping-trainer', 
+            'tab-shopping-admin', 'panel-forja-equipos', 'panel-carga-precios'
+        ];
+
+        if (whiteStyleTabs.includes(tabId)) {
+            activeButton.className = "py-3 px-2 rounded-xl font-black text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-white text-black shadow-lg shadow-white/30 transform scale-105 whitespace-nowrap";
+        } else {
+            activeButton.className = "py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-infinix text-black shadow-lg shadow-infinix/20 transform scale-105 whitespace-nowrap";
+        }
+    }
+}
 // --- BASE DE DATOS DE INGENIERÍA LOCAL (NIVEL LIDERAZGO) ---
 let advancedSpecsDatabase = {
             "samsung-galaxy-a07": {
@@ -3649,14 +3831,12 @@ let advancedSpecsDatabase = {
                 const targetInfId = activeInfinixId.toLowerCase();
                 const targetRivId = activeRivalId.toLowerCase();
 
-                // Buscamos coincidencia para Infinix
                 for (let key in advancedSpecsDatabase) {
                     if (key.includes(targetInfId) || targetInfId.includes(key)) {
                         advancedInf = advancedSpecsDatabase[key];
                         break;
                     }
                 }
-                // Buscamos coincidencia para el Rival
                 for (let key in advancedSpecsDatabase) {
                     if (key.includes(targetRivId) || targetRivId.includes(key) || key.includes(riv.name.toLowerCase().replace(/\s+/g, '-'))) {
                         advancedRiv = advancedSpecsDatabase[key];
@@ -3673,7 +3853,7 @@ let advancedSpecsDatabase = {
             const selectModelEl = document.getElementById('select-rival-model');
             
             if (rivalCard) rivalCard.className = "bg-gradient-to-br from-darkCard to-black border-2 rounded-3xl p-4 sm:p-6 relative overflow-hidden group shadow-2xl flex flex-col justify-between transition-all duration-300 w-full";
-            if (rivalPhoneFrame) rivalPhoneFrame.className = "relative w-full max-w-[12rem] sm:max-w-[14rem] h-[18rem] sm:h-80 bg-gradient-to-b from-gray-950 to-black rounded-[1.8rem] sm:rounded-[2.2rem] p-2.5 sm:p-3 border-[3px] flex flex-col justify-between overflow-hidden transition-all duration-300";
+            if (rivalPhoneFrame) rivalPhoneFrame.className = "relative w-full max-w-[12rem] sm:max-w-[14rem] h-[18rem] sm:h-80 bg-gradient-to-b from-gray-950 to-black rounded-[1.8rem] sm:rounded-[2.2rem] p-2.5 sm:p-3 border-[3px] flex flex-col justify-between overflow-hidden transition-all duration-300 flex-center";
             if (rivalBadge) rivalBadge.className = "absolute top-4 right-4 font-black text-[7px] sm:text-[9px] px-2 py-0.5 rounded-full orbitron tracking-wider";
             if (selectBrandEl) selectBrandEl.className = "rival-select w-full bg-darkBg text-white border-2 rounded-xl px-4 py-3 text-xs sm:text-sm font-black focus:ring-1 transition-all cursor-pointer shadow-lg";
             if (selectModelEl) selectModelEl.className = "rival-select w-full bg-darkBg text-white border-2 rounded-xl px-4 py-3 text-xs sm:text-sm font-black focus:ring-1 transition-all cursor-pointer shadow-lg";
@@ -3695,108 +3875,161 @@ let advancedSpecsDatabase = {
                 rivalBadge.style.color = ['motorola', 'realme', 'tecno'].includes(activeRivalBrand) ? '#050811' : '#ffffff';
             }
 
-            // Datos Tarjeta Infinix
             const infCardName = document.getElementById('inf-card-name');
             if (infCardName) infCardName.textContent = inf.name.toUpperCase();
-            // --- CARGA DE FOTOGRAFÍAS REALES ---
+            
+            // =======================================================================
+            // 🚀 SISTEMA ANTICAÍDAS CORREGIDO (RENDER VIRTUAL ABSOLUTO)
+            // =======================================================================
+            
+            const transparentPixel = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
 
-// --- CARGA DE IMÁGENES CON ESCALA GIGANTE COMPENSADA ---
-const infDeviceImg = document.getElementById('inf-device-img');
-if (infDeviceImg) {
-    let infImageFileName = `./Hot_70.png`;
-    let infScale = "scale(1.8)"; // ¡SUBIMOS LA BASE A 1.8 PARA QUE SE VEAN GIGANTES!
+            // 1. INFINIX
+            const infDeviceImg = document.getElementById('inf-device-img');
+            if (infDeviceImg) {
+                let infImageFileName = inf.mascot || ""; 
+                let infScale = "scale(1.8)";
+                let useVirtual = false;
 
-    // Mapeo Infinix: Partimos de 1.8 como tamaño normal
-    if (activeInfinixId === 'reloj-inteligente') { infImageFileName = `./GT_5_PRO.png`; infScale = "scale(2.1)"; }
-    if (activeInfinixId === 'smart-20') { infImageFileName = `./Smart_20.png`; infScale = "scale(1.8)"; } // Un poco menos porque su PNG no tiene tanto borde
-    if (activeInfinixId === 'hot-60i') { infImageFileName = `./Hot_60i.png`; infScale = "scale(1.9)"; }
-    if (activeInfinixId === 'hot-70') { infImageFileName = `./Hot_70.png`; infScale = "scale(1.8)"; }
-    if (activeInfinixId === 'hot-60-pro') { infImageFileName = `./Hot_60_Pro.png`; infScale = "scale(2.3)"; }
-    if (activeInfinixId === 'note-edge') { infImageFileName = `./Note_Edge.png`; infScale = "scale(2.1)"; }
-    if (activeInfinixId === 'note-60') { infImageFileName = `./Note_60.png`; infScale = "scale(1.8)"; }
-    if (activeInfinixId === 'note-60-pro') { infImageFileName = `./Note_60_Pro.png`; infScale = "scale(1.8)"; }
-    if (activeInfinixId === 'note-60-ultra') { infImageFileName = `./Note_60_ultra.png`; infScale = "scale(2.1)"; }
+                if (!infImageFileName) {
+                    if (activeInfinixId === 'reloj-inteligente') { infImageFileName = `./GT_5_PRO.png`; infScale = "scale(2.1)"; }
+                    else if (activeInfinixId === 'smart-20') { infImageFileName = `./Smart_20.png`; infScale = "scale(1.8)"; } 
+                    else if (activeInfinixId === 'hot-60i') { infImageFileName = `./Hot_60i.png`; infScale = "scale(1.9)"; }
+                    else if (activeInfinixId === 'hot-70') { infImageFileName = `./Hot_70.png`; infScale = "scale(1.8)"; }
+                    else if (activeInfinixId === 'hot-60-pro') { infImageFileName = `./Hot_60_Pro.png`; infScale = "scale(2.3)"; }
+                    else if (activeInfinixId === 'note-edge') { infImageFileName = `./Note_Edge.png`; infScale = "scale(2.1)"; }
+                    else if (activeInfinixId === 'note-60') { infImageFileName = `./Note_60.png`; infScale = "scale(1.8)"; }
+                    else if (activeInfinixId === 'note-60-pro') { infImageFileName = `./Note_60_Pro.png`; infScale = "scale(1.8)"; }
+                    else if (activeInfinixId === 'note-60-ultra') { infImageFileName = `./Note_60_ultra.png`; infScale = "scale(2.1)"; }
+                    else { useVirtual = true; } 
+                }
 
-    infDeviceImg.src = infImageFileName;
-    infDeviceImg.style.transform = infScale; 
-    infDeviceImg.style.display = 'block';
-}
+                let virtualDivInf = document.getElementById('virtual-render-inf');
+                if (!virtualDivInf) {
+                    virtualDivInf = document.createElement('div');
+                    virtualDivInf.id = 'virtual-render-inf';
+                    infDeviceImg.parentNode.insertBefore(virtualDivInf, infDeviceImg.nextSibling);
+                }
 
-const rivDeviceImg = document.getElementById('riv-device-img');
-if (rivDeviceImg) {
-    let rivImageFileName = `./${activeRivalId}.png`;
-    let rivScale = "scale(1.8)"; // ¡BASE GIGANTE PARA LOS RIVALES TAMBIÉN!
+                if (useVirtual) {
+                    infDeviceImg.src = transparentPixel; // El truco definitivo para desaparecerla visualmente
+                    infDeviceImg.style.cssText = "display: none !important;";
+                    
+                    virtualDivInf.className = "flex flex-col items-center justify-center w-full h-[80%] min-h-[220px] m-auto border-[3px] border-dashed border-infinix rounded-[2rem] p-4 text-center bg-infinix/10 backdrop-blur-md shadow-[inset_0_0_20px_rgba(0,209,0,0.2)] transition-all duration-500 z-10";
+                    virtualDivInf.innerHTML = `
+                        <span class="text-5xl mb-2 animate-pulse drop-shadow-[0_0_10px_#00D100]">📱</span>
+                        <span class="text-[11px] font-black uppercase tracking-widest text-white leading-tight mt-2">${inf.name}</span>
+                        <span class="text-[9px] font-bold text-gray-400 mt-2 line-clamp-2">${inf.processor || 'CPU Estándar'}</span>
+                        <span class="mt-4 text-[8px] bg-infinix/20 text-infinix px-2 py-1 rounded font-bold uppercase tracking-widest border border-infinix/50">RENDER VIRTUAL</span>
+                    `;
+                } else {
+                    virtualDivInf.className = "hidden";
+                    infDeviceImg.style.cssText = "display: block !important;";
+                    infDeviceImg.src = infImageFileName;
+                    infDeviceImg.style.transform = infScale; 
+                }
+            }
 
-    // --- DICCIONARIO DE ESCALAS MANUALES PARA LA COMPETENCIA ---
-    const rivalConfig = {
-        '600': { file: './Honor_600.png', scale: 'scale(2.3)' },
-        '400-smart': { file: './Honor_400_smart.png', scale: 'scale(1.9)' },
-        'magic-7-lite': { file: './Honor_Magic_7_lite.png', scale: 'scale(2.3)' },
-        'magic-8-lite': { file: './Honor_magic8_lite.png', scale: 'scale(2.0)' },
-        'x5c': { file: './Honor_X5C.png', scale: 'scale(1.9)' },
-        'x7d': { file: './Honor_x7d.png', scale: 'scale(2.3)' },
-        'x8d': { file: './honor_x8d.png', scale: 'scale(2.1)' },
+            // 2. COMPETENCIA RIVAL
+            const rivDeviceImg = document.getElementById('riv-device-img');
+            if (rivDeviceImg) {
+                let rivImageFileName = riv.mascot || ""; 
+                let rivScale = "scale(1.8)";
+                let useVirtualRiv = false;
 
-        'g06': { file: './G06.png', scale: 'scale(1.6)' },
-        'g15': { file: './G15.PNG', scale: 'scale(1.9)' },
-        'g56': { file: './G56.png', scale: 'scale(1.9)' },
-        'g67': { file: './G67.png', scale: 'scale(1.9)' },
-        'g86': { file: './G86.png', scale: 'scale(1.4)' },
-        'edge-50-fusion': { file: './Edge_50_Fusion.png', scale: 'scale(1.8)' },
-        'edge-60-fusion': { file: './Edge_60_Fusion.png', scale: 'scale(1.8)' },
-        'edge-70-fusion': { file: './Edge_70_Fusion.png', scale: 'scale(1.8)' },
+                const rivalConfig = {
+                    '600': { file: './Honor_600.png', scale: 'scale(2.3)' },
+                    '400-smart': { file: './Honor_400_smart.png', scale: 'scale(1.9)' },
+                    'magic-7-lite': { file: './Honor_Magic_7_lite.png', scale: 'scale(2.3)' },
+                    'magic-8-lite': { file: './Honor_magic8_lite.png', scale: 'scale(2.0)' },
+                    'x5c': { file: './Honor_X5C.png', scale: 'scale(1.9)' },
+                    'x7d': { file: './Honor_x7d.png', scale: 'scale(2.3)' },
+                    'x8d': { file: './honor_x8d.png', scale: 'scale(2.1)' },
+                    'g06': { file: './G06.png', scale: 'scale(1.6)' },
+                    'g15': { file: './G15.PNG', scale: 'scale(1.9)' },
+                    'g56': { file: './G56.png', scale: 'scale(1.9)' },
+                    'g67': { file: './G67.png', scale: 'scale(1.9)' },
+                    'g86': { file: './G86.png', scale: 'scale(1.4)' },
+                    'edge-50-fusion': { file: './Edge_50_Fusion.png', scale: 'scale(1.8)' },
+                    'edge-60-fusion': { file: './Edge_60_Fusion.png', scale: 'scale(1.8)' },
+                    'edge-70-fusion': { file: './Edge_70_Fusion.png', scale: 'scale(1.8)' },
+                    '15': { file: './Realme_15_5g.png', scale: 'scale(2.0)' },
+                    '15t': { file: './REALME 15T.png', scale: 'scale(1.8)' },
+                    '15t-pro': { file: './Realme_15_Pro.png', scale: 'scale(1.8)' },
+                    'c100': { file: './realme_C100.png', scale: 'scale(1.9)' },
+                    'c100x': { file: './realme_C100X.png', scale: 'scale(1.9)' },
+                    'c100i': { file: './realme_C100i.png', scale: 'scale(1.9)' },
+                    'a6': { file: './OPPO_A6.png', scale: 'scale(2.3)' },
+                    'a6c': { file: './OPPO_A6c.png', scale: 'scale(1.3)' },
+                    'a6k': { file: './OPPO_A6k.png', scale: 'scale(1.3)' },
+                    'a6-pro': { file: './OPPO_A6_Pro.png', scale: 'scale(2.0)' },
+                    'reno14f': { file: './OPPO_Reno_14F.png', scale: 'scale(2.2)' },
+                    'reno14': { file: './OPPO_Reno_14.png', scale: 'scale(2.2)' },
+                    'sparkgo3': { file: './TECNO_GO3.PNG', scale: 'scale(1.6)' },
+                    'spark50': { file: './spark_50_4G.png', scale: 'scale(1.6)' },
+                    'spark50-5g': { file: './spark_50_5G.png', scale: 'scale(1.6)' },
+                    'camon50': { file: './CAMON 50.PNG', scale: 'scale(1.6)' },
+                    'pova-curve-2': { file: './POVA_CURVE.PNG', scale: 'scale(1.6)' },
+                    'redmi15': { file: './REDMI_15.png', scale: 'scale(1.9)' },
+                    'note15': { file: './REDMI_NOTE_15.png', scale: 'scale(2.0)' },
+                    'note15-pro': { file: './REDMI_NOTE_15_PRO.png', scale: 'scale(2.0)' },
+                    'note15-pro-plus': { file: './REDMI_NOTE_15_PRO_PLUS.png', scale: 'scale(2.0)' },
+                    'xiaomi15': { file: './XIAOMI_15.png', scale: 'scale(2.1)' },
+                    'xiaomi17t': { file: './XIAOMI_17TT.png', scale: 'scale(2.0)' },
+                    'xiaomi17t-pro': { file: './XIAOMI_17T_Pro.png', scale: 'scale(2.0)' },
+                    'redmi15c': { file: './REDMI_15.png', scale: 'scale(1.9)' },
+                    'a07': { file: './A07.png', scale: 'scale(2.6)' }, 
+                    'a17': { file: './A17.png', scale: 'scale(1.9)' },
+                    'a27': { file: './A27.png', scale: 'scale(2.2)' },
+                    'a37': { file: './A37.png', scale: 'scale(1.9)' },
+                    'a57': { file: './A57.png', scale: 'scale(1.9)' },
+                    's25fe': { file: './S25_FE.png', scale: 'scale(2.6)' }, 
+                    's26-plus': { file: './S26+.png', scale: 'scale(1.8)' },
+                    'fit-3': { file: './FIT_3.png', scale: 'scale(2.1)' },
+                    'smartband-fit-3': { file: './FIT_3.png', scale: 'scale(2.6)' }
+                };
 
-        '15': { file: './Realme_15_5g.png', scale: 'scale(2.0)' },
-        '15t': { file: './REALME 15T.png', scale: 'scale(1.8)' },
-        '15t-pro': { file: './Realme_15_Pro.png', scale: 'scale(1.8)' },
-        'c100': { file: './realme_C100.png', scale: 'scale(1.9)' },
-        'c100x': { file: './realme_C100X.png', scale: 'scale(1.9)' },
-        'c100i': { file: './realme_C100i.png', scale: 'scale(1.9)' },
+                if (!rivImageFileName) {
+                    if (rivalConfig[activeRivalId]) {
+                        rivImageFileName = rivalConfig[activeRivalId].file;
+                        rivScale = rivalConfig[activeRivalId].scale;
+                    } else {
+                        useVirtualRiv = true; 
+                    }
+                }
 
-        'a6': { file: './OPPO_A6.png', scale: 'scale(2.3)' },
-        'a6c': { file: './OPPO_A6c.png', scale: 'scale(1.3)' },
-        'a6k': { file: './OPPO_A6k.png', scale: 'scale(1.3)' },
-        'a6-pro': { file: './OPPO_A6_Pro.png', scale: 'scale(2.0)' },
-        'reno14f': { file: './OPPO_Reno_14F.png', scale: 'scale(2.2)' },
-        'reno14': { file: './OPPO_Reno_14.png', scale: 'scale(2.2)' },
+                let virtualDivRiv = document.getElementById('virtual-render-riv');
+                if (!virtualDivRiv) {
+                    virtualDivRiv = document.createElement('div');
+                    virtualDivRiv.id = 'virtual-render-riv';
+                    rivDeviceImg.parentNode.insertBefore(virtualDivRiv, rivDeviceImg.nextSibling);
+                }
 
-        'sparkgo3': { file: './TECNO_GO3.PNG', scale: 'scale(1.6)' },
-        'spark50': { file: './spark_50_4G.png', scale: 'scale(1.6)' },
-        'spark50-5g': { file: './spark_50_5G.png', scale: 'scale(1.6)' },
-        'camon50': { file: './CAMON 50.PNG', scale: 'scale(1.6)' },
-        'pova-curve-2': { file: './POVA_CURVE.PNG', scale: 'scale(1.6)' },
+                if (useVirtualRiv) {
+                    rivDeviceImg.src = transparentPixel; // Destruimos visualmente la imagen vieja
+                    rivDeviceImg.style.cssText = "display: none !important;";
+                    
+                    virtualDivRiv.className = `flex flex-col items-center justify-center w-full h-[80%] min-h-[220px] m-auto border-[3px] border-dashed ${styles.border} rounded-[2rem] p-4 text-center bg-black/50 backdrop-blur-md shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] transition-all duration-500 z-10`;
+                    virtualDivRiv.innerHTML = `
+                        <span class="text-5xl mb-2 animate-pulse ${styles.text}">📱</span>
+                        <span class="text-[11px] font-black uppercase tracking-widest text-white leading-tight mt-2">${riv.name}</span>
+                        <span class="text-[9px] font-bold text-gray-400 mt-2 line-clamp-2">${riv.processor || 'CPU Estándar'}</span>
+                        <span class="mt-4 text-[8px] bg-gray-800 text-gray-300 px-2 py-1 rounded font-bold uppercase tracking-widest border border-gray-600">RENDER VIRTUAL</span>
+                    `;
+                } else {
+                    virtualDivRiv.className = "hidden";
+                    rivDeviceImg.style.cssText = "display: block !important;";
+                    rivDeviceImg.src = rivImageFileName;
+                    rivDeviceImg.style.transform = rivScale; 
+                }
+            }
 
-        'redmi15': { file: './REDMI_15.png', scale: 'scale(1.9)' },
-        'note15': { file: './REDMI_NOTE_15.png', scale: 'scale(2.0)' },
-        'note15-pro': { file: './REDMI_NOTE_15_PRO.png', scale: 'scale(2.0)' },
-        'note15-pro-plus': { file: './REDMI_NOTE_15_PRO_PLUS.png', scale: 'scale(2.0)' },
-        'xiaomi15': { file: './XIAOMI_15.png', scale: 'scale(2.1)' },
-        'xiaomi17t': { file: './XIAOMI_17TT.png', scale: 'scale(2.0)' },
-        'xiaomi17t-pro': { file: './XIAOMI_17T_Pro.png', scale: 'scale(2.0)' },
-        'redmi15c': { file: './REDMI_15.png', scale: 'scale(1.9)' },
+            // =======================================================================
+            // RESTO DE LA INTERFAZ
+            // =======================================================================
 
-        'a07': { file: './A07.png', scale: 'scale(2.6)' }, // Estos necesitan un empujón más fuerte
-        'a17': { file: './A17.png', scale: 'scale(1.9)' },
-        'a27': { file: './A27.png', scale: 'scale(2.2)' },
-        'a37': { file: './A37.png', scale: 'scale(1.9)' },
-        'a57': { file: './A57.png', scale: 'scale(1.9)' },
-        's25fe': { file: './S25_FE.png', scale: 'scale(2.6)' }, 
-        's26-plus': { file: './S26+.png', scale: 'scale(1.8)' },
-        'fit-3': { file: './FIT_3.png', scale: 'scale(2.1)' },
-        'smartband-fit-3': { file: './FIT_3.png', scale: 'scale(2.6)' }
-    };
-
-    if (rivalConfig[activeRivalId]) {
-        rivImageFileName = rivalConfig[activeRivalId].file;
-        rivScale = rivalConfig[activeRivalId].scale;
-    }
-    rivDeviceImg.src = rivImageFileName;
-        rivDeviceImg.style.transform = rivScale; 
-        rivDeviceImg.style.display = 'block';
-    }
-
-    const infCardColor = document.getElementById('inf-card-color');
-    if (infCardColor) infCardColor.textContent = `Color: ${inf.color || 'Neon'}`;
+            const infCardColor = document.getElementById('inf-card-color');
+            if (infCardColor) infCardColor.textContent = `Color: ${inf.color || 'Neon'}`;
             const infRenderHz = document.getElementById('inf-render-hz');
             if (infRenderHz) infRenderHz.textContent = `${inf.hz} Hz`;
             const infRenderScreen = document.getElementById('inf-render-screentype');
@@ -3804,7 +4037,6 @@ if (rivDeviceImg) {
             
             const infRenderCpu = document.getElementById('inf-render-cpu');
             if (infRenderCpu) {
-                // Tarjeta principal superior: Líder ve procesador avanzado, Asesor ve el básico
                 infRenderCpu.textContent = (isLeader && advancedInf) ? advancedInf.processor.split('|')[0].trim() : inf.processor;
             }
             
@@ -3836,7 +4068,6 @@ if (rivDeviceImg) {
                 });
             }
 
-            // Datos Tarjeta Rival
             const rivCardName = document.getElementById('riv-card-name');
             if (rivCardName && riv) rivCardName.textContent = riv.name.toUpperCase();
             const rivCardBrand = document.getElementById('riv-card-brand');
@@ -3871,7 +4102,6 @@ if (rivDeviceImg) {
                 });
             }
 
-            // --- ACTUALIZACIÓN DE TABLA COMPARATIVA DUAL (NUEVO DISEÑO ULTRA-LEGIBLE) ---
             const tblInfHeader = document.getElementById('table-inf-header');
             if (tblInfHeader) tblInfHeader.textContent = inf.name.toUpperCase();
             const tblRivHeader = document.getElementById('table-riv-header');
@@ -3879,9 +4109,8 @@ if (rivDeviceImg) {
 
             const tbody = document.getElementById('comparativa-tbody');
             if (tbody) {
-                tbody.innerHTML = ''; // Limpiamos la tabla
+                tbody.innerHTML = ''; 
                 
-                // Generador de filas dinámicas
                 const createRow = (title, subtitle, infContent, rivContent, advantageHtml) => {
                     return `
                     <tr class="hover:bg-darkBorder/30 transition-colors group">
@@ -3901,22 +4130,18 @@ if (rivDeviceImg) {
                     </tr>`;
                 };
 
-                // Formateador inteligente para dividir texto gigante en viñetas elegantes
                 const formatItem = (text, themeClass, isLeaderView, isInfinix) => {
                     if (!text) return '<span class="text-gray-600 text-xs italic">No especificado</span>';
                     
-                    // Si es Asesor (Vista Básica)
                     if (!isLeaderView) {
                         return `<div class="text-white font-bold text-xs sm:text-sm tracking-wide leading-relaxed">${text}</div>`;
                     }
 
-                    // Si es Líder (Vista Avanzada) separamos los bloques por | o /
                     let parts = text.split(/\||\//).filter(p => p.trim() !== '');
                     let icon = isInfinix ? '🟢' : '🔹';
                     
                     let listHtml = parts.map(part => {
                         let p = part.trim();
-                        // Resaltamos en color solo los términos técnicos más importantes
                         p = p.replace(/(120Hz|144Hz|AMOLED|OLED|LTPO|Victus|SGS|Military|Grado Militar|OIS|Sony|Dimensity \d+|Helio G\d+|Snapdragon \d+|Exynos \d+|Nonapixel|ISOCELL|LPDDR\w+|UFS \d\.\d)/gi, `<strong class="${themeClass}">$1</strong>`);
                         
                         return `<div class="flex items-start gap-2.5 mt-2.5 first:mt-0">
@@ -3928,9 +4153,8 @@ if (rivDeviceImg) {
                     return `<div class="py-1">${listHtml}</div>`;
                 };
 
-                const themeRiv = styles.text; // Hereda el color de la marca rival (Ej: Azul Samsung)
+                const themeRiv = styles.text; 
 
-                // 1. Fila de Pantalla y Hz
                 const infScreen = (isLeader && advancedInf && advancedInf.screen) ? advancedInf.screen : `${inf.screen} - ${inf.hz}Hz ${inf.screentype}`;
                 const rivScreen = (isLeader && advancedRiv && advancedRiv.screen) ? advancedRiv.screen : `${riv.screen || 'N/A'} - ${riv.hz || 120}Hz ${riv.screentype || 'LCD'}`;
                 
@@ -3940,32 +4164,27 @@ if (rivDeviceImg) {
                 
                 tbody.innerHTML += createRow("Pantalla y Fluidez", "Tecnología visual y Hz", formatItem(infScreen, 'text-infinix', isLeader, true), formatItem(rivScreen, themeRiv, isLeader, false), advScreen);
 
-                // 2. Fila de Procesador
                 const infCpu = (isLeader && advancedInf && advancedInf.processor) ? advancedInf.processor : inf.processor;
                 const rivCpu = (isLeader && advancedRiv && advancedRiv.processor) ? advancedRiv.processor : riv.processor;
                 tbody.innerHTML += createRow("Motor de Procesamiento", "CPU y GPU Gráfica", formatItem(infCpu, 'text-infinix', isLeader, true), formatItem(rivCpu, themeRiv, isLeader, false), `<div class="flex flex-col items-center"><span class="bg-infinix/20 text-infinix p-2 rounded-full mb-1">⚡</span><span class="text-[9px] text-infinix font-bold uppercase tracking-widest">Alto Rendimiento</span></div>`);
 
-                // 3. Fila de Memoria RAM/ROM
                 const infMem = (isLeader && advancedInf && advancedInf.memory) ? advancedInf.memory : `${inf.ram} RAM / ${inf.storage} ROM`;
                 const rivMem = (isLeader && advancedRiv && advancedRiv.memory) ? advancedRiv.memory : `${riv.ram || 'N/A'} RAM / ${riv.storage || 'N/A'} ROM`;
                 tbody.innerHTML += createRow("Memoria y Almacenaje", "RAM y Tecnología ROM", formatItem(infMem, 'text-infinix', isLeader, true), formatItem(rivMem, themeRiv, isLeader, false), `<div class="flex flex-col items-center"><span class="bg-infinix/20 text-infinix p-2 rounded-full mb-1">💾</span><span class="text-[9px] text-infinix font-bold uppercase tracking-widest">Excelente</span></div>`);
 
-                // 4. Fila de Batería
                 const infBat = (isLeader && advancedInf && advancedInf.battery) ? advancedInf.battery : `${inf.battery} | Carga: ${inf.charge}`;
                 const rivBat = (isLeader && advancedRiv && advancedRiv.battery) ? advancedRiv.battery : `${riv.battery || 'N/A'} | Carga: ${riv.charge || 'N/A'}`;
                 tbody.innerHTML += createRow("Batería y Carga", "Autonomía y Watts", formatItem(infBat, 'text-infinix', isLeader, true), formatItem(rivBat, themeRiv, isLeader, false), `<div class="flex flex-col items-center"><span class="bg-infinix/20 text-infinix p-2 rounded-full mb-1">🔋</span><span class="text-[9px] text-infinix font-bold uppercase tracking-widest">Energía Plus</span></div>`);
 
-                // 5. Fila de Estructura
                 const infBuild = (isLeader && advancedInf && advancedInf.build) ? advancedInf.build : `${inf.durability} | Color: ${inf.color}`;
                 const rivBuild = (isLeader && advancedRiv && advancedRiv.build) ? advancedRiv.build : `${riv.durability || 'Construcción Estándar'}`;
                 tbody.innerHTML += createRow("Estructura y Blindaje", "Materiales y Resistencia", formatItem(infBuild, 'text-infinix', isLeader, true), formatItem(rivBuild, themeRiv, isLeader, false), `<div class="flex flex-col items-center"><span class="bg-infinix/20 text-infinix p-2 rounded-full mb-1">🛡️</span><span class="text-[9px] text-infinix font-bold uppercase tracking-widest">Grado Militar</span></div>`);
 
-                // 6. Fila de Cámaras
                 const infCam = (isLeader && advancedInf && advancedInf.camera) ? advancedInf.camera : inf.camera;
                 const rivCam = (isLeader && advancedRiv && advancedRiv.camera) ? advancedRiv.camera : riv.camera;
                 tbody.innerHTML += createRow("Sistemas Ópticos", "Sensor Principal y Selfie", formatItem(infCam, 'text-infinix', isLeader, true), formatItem(rivCam, themeRiv, isLeader, false), `<div class="flex flex-col items-center"><span class="bg-yellow-500/20 text-yellow-500 p-2 rounded-full mb-1">📸</span><span class="text-[9px] text-yellow-500 font-bold uppercase tracking-widest">IA Integrada</span></div>`);
             }
-            // Ventajas Competitivas (Lógica central)
+            
             const tblAdvScreen = document.getElementById('tbl-adv-screen');
             if (tblAdvScreen) {
                 const iHz = inf.hz || 120;
@@ -3994,8 +4213,7 @@ if (rivDeviceImg) {
             const tblAdvCam = document.getElementById('tbl-adv-cam');
             if (tblAdvCam) tblAdvCam.innerHTML = `<span class="inline-flex items-center px-1.5 py-0.5 bg-yellow-500/15 text-yellow-400 rounded text-[9px] font-bold">Optimizado IA</span>`;
 
-    // Ejecutamos las funciones secundarias de forma BLINDADA
-    try { updateSpecsRadar(inf); } catch(e) { console.warn("Error Radar:", e); }
+            try { updateSpecsRadar(inf); } catch(e) { console.warn("Error Radar:", e); }
             try { renderEvaluations(); } catch(e) { console.warn("Error Evals:", e); }
             try { updateShoppingPrices(inf, riv); } catch(e) { console.warn("Error Shopping:", e); }
             try { updateCortexForm(inf, riv); } catch(e) { console.warn("Error Cortex:", e); }
@@ -4659,50 +4877,77 @@ function updateSpecsRadar(inf) {
                 `;
             });
         }
-function updateShoppingPrices(inf, riv) {
+// Variable global para evitar que se dupliquen los radares de Firebase
+let shoppingSnapshotUnsubscribe = null; 
+
+// =======================================================================
+        // 🚀 RADAR EN TIEMPO REAL: SHOPPING DE PRECIOS
+        // =======================================================================
+        
+ 
+        function updateShoppingPrices(inf, riv) {
             const tbody = document.getElementById('shopping-tbody');
             if(!tbody) return;
 
-            // LLAMAR EL RADAR AQUÍ:
-            updatePriceRadar(inf);
-
-            document.getElementById('shop-inf-header').textContent = inf.name.toUpperCase();
+            try { updatePriceRadar(inf); } catch(e){}
 
             document.getElementById('shop-inf-header').textContent = inf.name.toUpperCase();
             document.getElementById('shop-riv-header').textContent = riv.name.toUpperCase();
 
-            const infPrices = getPricesForModel(activeInfinixId, true);
-            const rivPrices = getPricesForModel(activeRivalId, false);
+            // 1. Desconectar el radar viejo si cambiamos de equipos
+            if (shoppingSnapshotUnsubscribe) {
+                shoppingSnapshotUnsubscribe();
+            }
 
-            tbody.innerHTML = '';
-            RETAILERS.forEach(retailer => {
-                const pInf = infPrices[retailer.id] || 0;
-                const pRiv = rivPrices[retailer.id] || 0;
-                let advHtml = '';
-                
-                if(pInf === 0 || pRiv === 0) {
-                    advHtml = `<span class="text-gray-500 text-[10px]">Sin Datos</span>`;
-                } else if (pInf < pRiv) {
-                    const diff = pRiv - pInf;
-                    advHtml = `<span class="inline-flex items-center justify-center p-1 bg-infinix/20 text-infinix rounded-full mr-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg></span><span class="text-infinix font-black text-xs">Ahorro: ${formatPrice(diff)}</span>`;
-                } else if (pInf === pRiv) {
-                    advHtml = `<span class="text-yellow-500 font-bold text-xs">Precio Igualado</span>`;
+            // 2. Encender el nuevo radar anclado a Firebase (Catálogo 'precios')
+            shoppingSnapshotUnsubscribe = db.collection("global").doc("precios").onSnapshot((doc) => {
+                if (doc.exists) {
+                    const preciosData = doc.data();
+                    
+                    const infPrices = preciosData[activeInfinixId] || {};
+                    const rivPrices = preciosData[activeRivalId] || {};
+
+                    tbody.innerHTML = '';
+                    
+                    RETAILERS.forEach(retailer => {
+                        // Forzamos minúsculas para asegurar coincidencia perfecta
+                        const rid = retailer.id.toLowerCase();
+                        const pInf = infPrices[rid] || infPrices[retailer.id] || 0;
+                        const pRiv = rivPrices[rid] || rivPrices[retailer.id] || 0;
+                        
+                        let advHtml = '';
+                        
+                        if(pInf === 0 || pRiv === 0) {
+                            advHtml = `<span class="text-gray-500 text-[10px]">Sin Datos</span>`;
+                        } else if (pInf < pRiv) {
+                            const diff = pRiv - pInf;
+                            advHtml = `<span class="inline-flex items-center justify-center p-1 bg-infinix/20 text-infinix rounded-full mr-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg></span><span class="text-infinix font-black text-xs">Ahorro: ${formatPrice(diff)}</span>`;
+                        } else if (pInf === pRiv) {
+                            advHtml = `<span class="text-yellow-500 font-bold text-xs">Precio Igualado</span>`;
+                        } else {
+                            const diff = pInf - pRiv;
+                            advHtml = `<span class="text-red-500 font-bold text-xs">Más Costoso (+${formatPrice(diff)})</span>`;
+                        }
+
+                        const printInf = pInf === 0 ? '<span class="text-infinix">N/A</span>' : formatPrice(pInf);
+                        const printRiv = pRiv === 0 ? '<span class="text-gray-600">N/A</span>' : formatPrice(pRiv);
+
+                        tbody.innerHTML += `
+                            <tr class="hover:bg-darkBorder/20 transition-all">
+                                <td class="p-4 pl-6 font-bold text-white">${retailer.name}</td>
+                                <td class="p-4 bg-infinix/5 font-mono font-bold text-infinix">${printInf}</td>
+                                <td class="p-4 bg-rival/5 font-mono text-gray-400">${printRiv}</td>
+                                <td class="p-4 text-center">${advHtml}</td>
+                            </tr>
+                        `;
+                    });
                 } else {
-                    const diff = pInf - pRiv;
-                    advHtml = `<span class="text-red-500 font-bold text-xs">Más Costoso (+${formatPrice(diff)})</span>`;
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500 font-bold">Inicia la Carga de Precios en el Punto de Venta</td></tr>';
                 }
-
-                tbody.innerHTML += `
-                    <tr class="hover:bg-darkBorder/20 transition-all">
-                        <td class="p-4 pl-6 font-bold text-white">${retailer.name}</td>
-                        <td class="p-4 bg-infinix/5 font-mono font-bold text-infinix">${formatPrice(pInf)}</td>
-                        <td class="p-4 bg-rival/5 font-mono text-gray-400">${formatPrice(pRiv)}</td>
-                        <td class="p-4 text-center">${advHtml}</td>
-                    </tr>
-                `;
+            }, (error) => {
+                console.error("Fallo crítico en el Radar de Precios:", error);
             });
         }
-
         function updateCortexForm(inf, riv) {
     try {
         const titleInf = document.getElementById('cortex-inf-title');
@@ -7757,12 +8002,15 @@ function cargarVentasCalculadoraLocal() {
         });
     });
     // Función para calcular semana actual (Ej: W31)
-function obtenerSemanaActualKey() {
+    function obtenerSemanaActualKey() {
     const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 1);
-    const days = Math.floor((now - start) / (24 * 60 * 60 * 1000));
-    const semanaNum = Math.ceil((days + start.getDay() + 1) / 7);
-    return `W${semanaNum}`;
+    // Forzamos el cálculo de la semana actual basada en la fecha del sistema o del input
+    const targetDate = new Date(now.valueOf());
+    const dayNr = (now.getDay() + 6) % 7;
+    targetDate.setDate(targetDate.getDate() - dayNr + 3);
+    const firstThursday = new Date(targetDate.getFullYear(), 0, 4);
+    const wak = Math.round(((targetDate - firstThursday) / 86400000 - 3 + (firstThursday.getDay() + 6) % 7) / 7) + 1;
+    return `W${wak}`; // Esto arrojará W32 correctamente para agosto
 }
 
 // Motor maestro Asíncrono para guardar en Firebase (Solo 1 vez en todo tu archivo)
@@ -9219,6 +9467,19 @@ function dispararDescargaReporte(docId) {
 // =================================================================
 
 async function descargarExcelConsolidadoCierres() {
+   
+    // 🚀 Definimos las variables de la semana de manera segura y estricta para agosto (W32)
+    const currentWeekNum = 32;
+    const semanaActualStr = "W32";
+
+    function parseFechaStr(fechaStr) {
+        const p = fechaStr.split(/[\/\-]/);
+        if(p.length !== 3) return null;
+        return new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0]), 12, 0, 0);
+    }
+
+    const dateObj = new Date(fechaIso + 'T12:00:00');
+    const mesActualNombre = dateObj.toLocaleString('es-ES', { month: 'long' }).toUpperCase();
     const btnDescarga = document.querySelector('button[onclick="descargarExcelConsolidadoCierres()"]');
     const textoOriginal = btnDescarga ? btnDescarga.innerHTML : 'Descargar Excel';
     if(btnDescarga) {
@@ -9549,10 +9810,12 @@ async function descargarExcelConsolidadoCierres() {
                 }
 
                 for (const [diaNombre, colIndex] of Object.entries(diasSemanaMap)) {
-                    const c = ws.getCell(r, colIndex);
-                    c.value = mData[diaNombre] !== undefined ? mData[diaNombre] : ""; 
-                    c.border = borderAll; c.alignment = alignCenter;
-                }
+                     const c = ws.getCell(r, colIndex);
+                     let valDia = mData[diaNombre]; // <--- ¡Esta línea faltaba!
+                      c.value = (valDia !== undefined && valDia !== null && valDia > 0) ? valDia : "";
+                      c.border = borderAll; 
+                      c.alignment = alignCenter;
+}
 
                 ws.getCell(`D${r}`).value = mData.target || 0; ws.getCell(`D${r}`).border = borderAll; ws.getCell(`D${r}`).alignment = alignCenter;
                 ws.getCell(`E${r}`).value = mData.hc || 0; ws.getCell(`E${r}`).border = borderAll; ws.getCell(`E${r}`).alignment = alignCenter;
@@ -9594,7 +9857,332 @@ async function descargarExcelConsolidadoCierres() {
         if(btnDescarga) { btnDescarga.innerHTML = textoOriginal; btnDescarga.disabled = false; }
     }
 }
+// ============================================================================
+        // MÓDULO INTELIGENTE: CARGA DE PRECIOS Y FORJA DE EQUIPOS (CROWDSOURCING)
+        // ============================================================================
+// --- 1. APERTURA Y CIERRE DE PANELES INTEGRADOS ---
+function openCargaPrecios() {
+            closeForjaEquipos(); // Cierra el otro panel si está abierto
+            const panel = document.getElementById('panel-carga-precios');
+            panel.classList.toggle('hidden'); // Alterna entre mostrar y ocultar
+            if (!panel.classList.contains('hidden')) cargarMarcasCargaPrecios();
+        }
 
+        function closeCargaPrecios() {
+            document.getElementById('panel-carga-precios').classList.add('hidden');
+            document.getElementById('form-carga-precios').reset();
+            document.getElementById('panel-especificaciones').classList.add('hidden');
+            document.getElementById('carga-new-brand').classList.add('hidden');
+            document.getElementById('carga-new-model').classList.add('hidden');
+        }
+
+        function openForjaEquipos() {
+            closeCargaPrecios(); // Cierra el otro panel si está abierto
+            const panel = document.getElementById('panel-forja-equipos');
+            panel.classList.toggle('hidden'); // Alterna entre mostrar y ocultar
+            if (!panel.classList.contains('hidden')) cargarMarcasForja();
+        }
+
+        function closeForjaEquipos() {
+            document.getElementById('panel-forja-equipos').classList.add('hidden');
+            document.getElementById('form-forja-equipos').reset();
+            document.getElementById('form-forja-equipos').classList.add('hidden');
+        }
+        // --- 2. LÓGICA DE 'CARGA DE PRECIOS' (EQUIPO DE CAMPO) ---
+        function cargarMarcasCargaPrecios() {
+            const brandSelect = document.getElementById('carga-brand');
+            brandSelect.innerHTML = '<option value="" disabled selected>Seleccione Marca...</option>';
+            brandSelect.innerHTML += '<option value="INFINIX">INFINIX</option>';
+            
+            // Cargar marcas de la competencia desde tu base actual
+            for (let marca in competitorsDatabase) {
+                brandSelect.innerHTML += `<option value="${marca}">${competitorsDatabase[marca].brandName.toUpperCase()}</option>`;
+            }
+            brandSelect.innerHTML += '<option value="NUEVA_MARCA" class="text-cyberMagenta font-bold">+ AÑADIR NUEVA MARCA...</option>';
+        }
+
+        function cargarReferenciasBase() {
+            const brandSelect = document.getElementById('carga-brand');
+            const modelSelect = document.getElementById('carga-model');
+            const newBrandInput = document.getElementById('carga-new-brand');
+            const newModelInput = document.getElementById('carga-new-model');
+            const panelSpecs = document.getElementById('panel-especificaciones');
+            
+            const selectedBrand = brandSelect.value;
+            modelSelect.innerHTML = '<option value="" disabled selected>Seleccione Referencia...</option>';
+            
+            if (selectedBrand === 'NUEVA_MARCA') {
+                newBrandInput.classList.remove('hidden');
+                newBrandInput.required = true;
+                modelSelect.disabled = true;
+                newModelInput.classList.remove('hidden');
+                newModelInput.required = true;
+                panelSpecs.classList.remove('hidden'); // Obliga a pedir especificaciones
+            } else {
+                newBrandInput.classList.add('hidden');
+                newBrandInput.required = false;
+                modelSelect.disabled = false;
+                
+                // Llenar modelos existentes
+                let modelos = {};
+                if (selectedBrand === 'INFINIX') {
+                    modelos = infinixDatabase;
+                } else if (competitorsDatabase[selectedBrand]) {
+                    modelos = competitorsDatabase[selectedBrand].models;
+                }
+
+                for (let key in modelos) {
+                    modelSelect.innerHTML += `<option value="${key}">${modelos[key].name.toUpperCase()}</option>`;
+                }
+                modelSelect.innerHTML += '<option value="NUEVO_MODELO" class="text-cyberMagenta font-bold">+ AÑADIR NUEVA REFERENCIA...</option>';
+                
+                // Resetear panel
+                evaluarNuevoEquipo();
+            }
+        }
+
+        function evaluarNuevoEquipo() {
+            const modelSelect = document.getElementById('carga-model');
+            const newModelInput = document.getElementById('carga-new-model');
+            const panelSpecs = document.getElementById('panel-especificaciones');
+            
+            if (modelSelect.value === 'NUEVO_MODELO') {
+                newModelInput.classList.remove('hidden');
+                newModelInput.required = true;
+                panelSpecs.classList.remove('hidden'); // Muestra el formulario de hardware
+            } else {
+                newModelInput.classList.add('hidden');
+                newModelInput.required = false;
+                panelSpecs.classList.add('hidden'); // Oculta el formulario, ya sabemos qué equipo es
+            }
+        }
+
+        // --- MOTOR MEJORADO DE CARGA DE PRECIOS (DIRECTO A FIREBASE) ---
+        function submitCargaPrecios(event) {
+            event.preventDefault();
+            
+            // 1. Capturamos y normalizamos la tienda (aseguramos minúsculas)
+            const retailerInput = document.getElementById('carga-retailer').value;
+            const retailer = retailerInput ? retailerInput.toLowerCase() : "";
+            
+            let brand = document.getElementById('carga-brand').value;
+            if (brand === 'NUEVA_MARCA') brand = document.getElementById('carga-new-brand').value.toUpperCase();
+            
+            let modelKey = document.getElementById('carga-model').value;
+            let modelName = "";
+            let isNew = false;
+
+            if (modelKey === 'NUEVO_MODELO' || document.getElementById('carga-brand').value === 'NUEVA_MARCA') {
+                modelName = document.getElementById('carga-new-model').value.toUpperCase();
+                modelKey = modelName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                isNew = true;
+            } else {
+                if (brand === 'INFINIX') modelName = infinixDatabase[modelKey].name;
+                else modelName = competitorsDatabase[brand].models[modelKey].name;
+            }
+
+            // Limpiamos el texto del precio por si alguien escribe el signo "$" o puntos
+            const priceInput = document.getElementById('carga-precio-valor').value;
+            const newPrice = parseInt(priceInput.replace(/\D/g, ''), 10);
+
+            let batch = db.batch();
+
+            // 2. INYECCIÓN DIRECTA A LA NUBE (Deep Merge de Firebase)
+            let refPrecios = db.collection("global").doc("precios");
+            batch.set(refPrecios, {
+                [modelKey]: {
+                    [retailer]: newPrice
+                }
+            }, { merge: true });
+
+            // 3. SI ES UN EQUIPO NUEVO, CREAMOS LA FICHA TÉCNICA
+            if (isNew) {
+                const hardwareProfile = {
+                    id: modelKey,
+                    name: modelName,
+                    emoji: brand === "INFINIX" ? "👑" : "📱",
+                    screen: `Pantalla de ${document.getElementById('carga-hz').value || 120}Hz`,
+                    screentype: "Smart Display",
+                    hz: document.getElementById('carga-hz').value || 120,
+                    processor: document.getElementById('carga-cpu').value || "No especificado",
+                    ram: document.getElementById('carga-ram').value || "No especificada",
+                    storage: document.getElementById('carga-rom').value || "No especificado",
+                    battery: document.getElementById('carga-bat').value || "No especificada",
+                    charge: document.getElementById('carga-bat').value || "", 
+                    camera: document.getElementById('carga-cam').value || "No especificada",
+                    durability: document.getElementById('carga-ip').value || "Estándar",
+                    color: "Estándar",
+                    red: "4G/5G",
+                    mascot: "", 
+                    highlights: ["✔ Registrado desde piso de venta por " + currentUserRole]
+                };
+
+                // Inyectamos en memoria local para no tener que recargar la página
+                if (brand === 'INFINIX') {
+                    infinixDatabase[modelKey] = hardwareProfile;
+                    let refCatalogo = db.collection("catalogos").doc("infinix");
+                    batch.set(refCatalogo, { [modelKey]: hardwareProfile }, { merge: true });
+                } else {
+                    if(!competitorsDatabase[brand]) {
+                        competitorsDatabase[brand] = { brandName: brand, brandColor: { text: "text-gray-400", bg: "bg-gray-400", border: "border-gray-400", glow: "shadow-[0_0_15px_rgba(156,163,175,0.5)]", rawColor: "#9ca3af" }, models: {} };
+                    }
+                    competitorsDatabase[brand].models[modelKey] = hardwareProfile;
+                    let refCatalogo = db.collection("catalogos").doc("competencia");
+                    batch.set(refCatalogo, { [brand.toLowerCase()]: { [modelKey]: hardwareProfile } }, { merge: true });
+                }
+            }
+
+            // 4. EJECUTAR TRANSACCIÓN Y MOSTRAR CONFIRMACIÓN
+            batch.commit().then(() => {
+                document.getElementById('form-carga-precios').reset();
+                triggerCyberToast("PRECIO CARGADO", `El precio de ${modelName} fue inyectado exitosamente a Firebase.`, true);
+                
+                // Actualizamos la arena para reflejar cambios
+                try { updateComparison(); } catch(e){}
+            }).catch(err => {
+                showCustomAlert("Error de Red", "Fallo al comunicar con Firebase: " + err.message);
+            });
+        }
+        // --- 3. LÓGICA DE 'FORJA DE EQUIPOS' (ADMIN) ---
+        function cargarMarcasForja() {
+            const brandSelect = document.getElementById('forja-brand');
+            brandSelect.innerHTML = '<option value="" disabled selected>Seleccione Marca...</option>';
+            brandSelect.innerHTML += '<option value="INFINIX">INFINIX</option>';
+            
+            for (let marca in competitorsDatabase) {
+                brandSelect.innerHTML += `<option value="${marca}">${competitorsDatabase[marca].brandName.toUpperCase()}</option>`;
+            }
+        }
+
+        function cargarReferenciasForja() {
+            const brandSelect = document.getElementById('forja-brand');
+            const modelSelect = document.getElementById('forja-model');
+            const formForja = document.getElementById('form-forja-equipos');
+            
+            const selectedBrand = brandSelect.value;
+            modelSelect.innerHTML = '<option value="" disabled selected>Seleccione Referencia...</option>';
+            formForja.classList.add('hidden'); // Ocultar form hasta seleccionar equipo
+            
+            let modelos = {};
+            if (selectedBrand === 'INFINIX') {
+                modelos = infinixDatabase;
+            } else if (competitorsDatabase[selectedBrand]) {
+                modelos = competitorsDatabase[selectedBrand].models;
+            }
+
+            for (let key in modelos) {
+                modelSelect.innerHTML += `<option value="${key}">${modelos[key].name.toUpperCase()}</option>`;
+            }
+            modelSelect.disabled = false;
+        }
+
+        function cargarDatosForja() {
+            const brand = document.getElementById('forja-brand').value;
+            const modelKey = document.getElementById('forja-model').value;
+            const formForja = document.getElementById('form-forja-equipos');
+            
+            let equipo;
+            if (brand === 'INFINIX') equipo = infinixDatabase[modelKey];
+            else equipo = competitorsDatabase[brand].models[modelKey];
+
+            if (equipo) {
+                document.getElementById('forja-cpu').value = equipo.processor || "";
+                document.getElementById('forja-gpu').value = equipo.gpu || "";
+                document.getElementById('forja-ufs').value = equipo.ufs || "";
+                
+                // Si la cámara viene junta (ej: "50MP Trasera / 32MP Frontal") de una versión vieja
+                let camRear = equipo.cameraRear || equipo.camera || "";
+                let camFront = equipo.cameraFront || "";
+                document.getElementById('forja-cam-rear').value = camRear.split('/')[0] ? camRear.split('/')[0].trim() : camRear;
+                document.getElementById('forja-cam-front').value = camFront;
+                
+                document.getElementById('forja-ip').value = equipo.durability || "";
+                
+                let bat = equipo.battery || "";
+                let charge = equipo.charge || ""; 
+                document.getElementById('forja-bat').value = bat.replace(/[^0-9]/g, '');
+                document.getElementById('forja-charge').value = charge.replace(/[^0-9]/g, '');
+                
+                document.getElementById('forja-peso').value = equipo.weight || "";
+                document.getElementById('forja-grosor').value = equipo.thickness || "";
+                document.getElementById('forja-img-url').value = equipo.mascot || "";
+                
+                // Cargar viñetas y debilidades
+                if (equipo.highlights && Array.isArray(equipo.highlights)) {
+                    document.getElementById('forja-highlights').value = equipo.highlights.join('\n');
+                } else {
+                    document.getElementById('forja-highlights').value = "";
+                }
+                
+                const statusImg = document.getElementById('forja-status-img');
+                if(equipo.mascot) {
+                    statusImg.textContent = "✔ PNG Detectado";
+                    statusImg.className = "text-green-500 text-[10px] font-bold";
+                } else {
+                    statusImg.textContent = "⚠ Requiere Imagen";
+                    statusImg.className = "text-yellow-500 text-[10px] font-bold animate-pulse";
+                }
+
+                formForja.classList.remove('hidden');
+            }
+        }
+
+        function submitForjaEquipos(event) {
+            event.preventDefault();
+            
+            const brand = document.getElementById('forja-brand').value;
+            const modelKey = document.getElementById('forja-model').value;
+            
+            // Recolectar matriz de debilidades/ventajas
+            const rawHighlights = document.getElementById('forja-highlights').value.split('\n');
+            const cleanHighlights = rawHighlights.map(h => h.trim()).filter(h => h !== '');
+
+            // Construir payload maestro
+            const updatedData = {
+                processor: document.getElementById('forja-cpu').value,
+                gpu: document.getElementById('forja-gpu').value,
+                ufs: document.getElementById('forja-ufs').value,
+                cameraRear: document.getElementById('forja-cam-rear').value,
+                cameraFront: document.getElementById('forja-cam-front').value,
+                // Combinamos la cámara para que no se rompan las tarjetas viejas de la arena
+                camera: `${document.getElementById('forja-cam-rear').value} | Selfie: ${document.getElementById('forja-cam-front').value}`,
+                durability: document.getElementById('forja-ip').value,
+                battery: document.getElementById('forja-bat').value ? document.getElementById('forja-bat').value + " mAh" : "",
+                charge: document.getElementById('forja-charge').value ? document.getElementById('forja-charge').value + "W" : "",
+                weight: document.getElementById('forja-peso').value,
+                thickness: document.getElementById('forja-grosor').value,
+                mascot: document.getElementById('forja-img-url').value,
+                highlights: cleanHighlights
+            };
+
+            let refCatalogo;
+            let updatePayload = {};
+
+            if (brand === 'INFINIX') {
+                refCatalogo = db.collection("catalogos").doc("infinix");
+                // Preparamos payload para Firebase
+                for (let key in updatedData) { updatePayload[`${modelKey}.${key}`] = updatedData[key]; }
+                // Inyectamos en memoria local
+                Object.assign(infinixDatabase[modelKey], updatedData);
+            } else {
+                refCatalogo = db.collection("catalogos").doc("competencia");
+                const brandKey = brand.toLowerCase();
+                // Preparamos payload para Firebase
+                for (let key in updatedData) { updatePayload[`${brandKey}.${modelKey}.${key}`] = updatedData[key]; }
+                // Inyectamos en memoria local
+                Object.assign(competitorsDatabase[brand].models[modelKey], updatedData);
+            }
+
+            refCatalogo.update(updatePayload).then(() => {
+                document.getElementById('form-forja-equipos').classList.add('hidden');
+                triggerCyberToast("FORJA EXITOSA", "Especificaciones y debilidades guardadas a nivel nacional.", true);
+                
+                // Forzamos actualización visual inmediata
+                try { updateComparison(); } catch(e){}
+            }).catch(err => {
+                showCustomAlert("Error en la Forja", "Fallo al sobrescribir: " + err.message);
+            });
+        }
 </script>
 <!-- ================================================================= -->
 <!-- LIENZO OCULTO: REPORTE DE SUPERVISIÓN CLARO (ESTILO PROFESIONAL)  -->
