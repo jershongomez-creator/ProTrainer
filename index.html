@@ -56,6 +56,30 @@
     </script>
     
     <style>
+/* BLINDAJE PARA BOTÓN Y MODAL */
+.btn-alerta-seguro {
+    position: relative !important;
+    z-index: 50 !important; /* Lo pone por encima de cualquier imagen fantasma */
+    background-color: transparent !important;
+    border: 2px solid #00f0ff !important;
+    color: #00f0ff !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+}
+.btn-alerta-seguro:hover {
+    background-color: #00f0ff !important;
+    color: #000000 !important;
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.8) !important;
+}
+
+#cyber-venta-modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 9999999 !important; /* Capa super suprema, encima del footer y el header */
+}
         .hidden { display: none !important; }
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Great+Vibes&display=swap');
         body {
@@ -495,15 +519,13 @@
                         <ul id="riv-card-bullets" class="space-y-3 text-xs sm:text-sm my-4 text-gray-400">
                             <!-- Inyectado por JS -->
                         </ul>
-                        
-                    
-                        <button id="btn-venta-rival" class="w-full py-4 mt-auto bg-transparent border-2 border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black font-black text-[11px] sm:text-xs rounded-xl transition-all duration-300 shadow-[0_0_15px_rgba(34,211,238,0.2)] hover:shadow-[0_0_25px_rgba(34,211,238,0.6)] flex justify-center items-center gap-2 uppercase tracking-widest">
+    
+                        <button onclick="abrirModalVentaDefinitivo()" type="button" class="w-full py-4 mt-auto font-black text-[11px] sm:text-xs rounded-xl flex justify-center items-center gap-2 uppercase tracking-widest btn-alerta-seguro">
                             🛒 ALERTA VENTA
                         </button>
-                        </div>
-                    </div>
                 </div>
             </div>
+        </div>
 
             <div class="bg-darkCard rounded-3xl border border-darkBorder overflow-hidden shadow-2xl">
                 <div class="p-6 border-b border-darkBorder bg-darkCard/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -981,6 +1003,11 @@
                     <!-- Inyectado por JS -->
                 </div>
 
+<div class="mt-6 mb-2 bg-black/40 p-4 rounded-2xl border border-darkBorder">
+    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Cargar Planilla Administrativa (Opcional)</label>
+    <input type="file" id="inv-pdf-upload" accept="application/pdf" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:bg-blue-600/20 file:text-blue-400 hover:file:bg-blue-600 hover:file:text-white transition-all cursor-pointer">
+    <p class="text-[9px] text-gray-500 mt-1.5 italic">Asegúrate de subir la carpeta completa en un único archivo PDF.</p>
+</div>
                 <button onclick="guardarInventario()" class="w-full mt-6 py-4 bg-blue-600 text-white font-black rounded-xl uppercase tracking-widest orbitron hover:bg-blue-500 transition-all transform active:scale-95 shadow-[0_0_15px_rgba(59,130,246,0.4)] flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                     SUBIR REPORTE DE INVENTARIO
@@ -1038,6 +1065,16 @@
                                 <th class="p-3 text-center">Última Act.</th>
                                 <th class="p-3">Detalle Stock (Ref)</th>
                             </tr>
+                            <thead class="bg-black/40 text-[9px] sm:text-xs font-bold uppercase tracking-wider text-gray-300 border-b border-darkBorder">
+                                <tr>
+                                    <th class="p-3 pl-4">Asesor / Zona</th>
+                                    <th class="p-3">Cadena (PDV)</th>
+                                    <th class="p-3 text-blue-400 text-center">Total UD</th>
+                                    <th class="p-3 text-center">Última Act.</th>
+                                    <th class="p-3">Detalle Stock (Ref)</th>
+                                    <th class="p-3 text-center text-red-400">Planilla PDF</th> <!-- NUEVA COLUMNA AQUÍ -->
+                                </tr>
+                            </thead> 
                         </thead>
                         <tbody class="divide-y divide-darkBorder/50 text-xs font-mono" id="inv-admin-tbody">
                             <!-- Inyectado por JS -->
@@ -1120,7 +1157,8 @@
                                 <option value="" disabled selected>-- Seleccione Tienda --</option>
                                 <option value="alkosto">Alkosto</option><option value="exito">Éxito</option>
                                 <option value="cencosud">Cencosud</option><option value="falabella">Falabella</option>
-                                <option value="olimpica">Olímpica</option>
+                                <option value="olimpica">Olímpica</option><option value="Wom">Wom</option>
+                                <option value="Alkosto Pasto">Alkosto Pasto</option>
                             </select>
                         </div>
                         <div>
@@ -1958,78 +1996,7 @@
             </form>
         </div>
     </div>
-    <!-- MÓDULO 2: MODAL DE ALERTA DE VENTA (CYBERPUNK CYAN) -->
-    <div id="cyber-venta-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[100000] flex items-center justify-center p-4 hidden">
-        <div class="bg-[#0d0d11] border-2 border-[#00f0ff] rounded-3xl p-6 w-full max-w-lg shadow-[0_0_50px_rgba(0,240,255,0.3)] relative overflow-hidden cyber-panel-cyan-shadow cyber-grid-cyan-overlay">
-            <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-[#00f0ff]"></div>
-            <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-[#00f0ff]"></div>
-            <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-[#00f0ff]"></div>
-            <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-[#00f0ff]"></div>
-            
-            <div class="flex justify-between items-start mb-6 border-b border-[#00f0ff]/30 pb-4 relative z-10">
-                <div>
-                    <h3 class="text-xl font-black text-white orbitron tracking-widest flex items-center gap-2">
-                        <span class="text-[#00f0ff] animate-pulse">🛒</span> ALERTA DE VENTA
-                    </h3>
-                    <p class="text-[10px] text-[#00f0ff] font-bold tracking-widest uppercase mt-0.5">Reporte de Dispositivos Comercializados</p>
                 </div>
-                <button onclick="closeModalVenta()" class="text-gray-400 hover:text-[#00f0ff] text-xl font-black orbitron transition-colors">&times; CERRAR</button>
-            </div>
-
-            <form id="venta-alert-form" class="space-y-4 relative z-10" onsubmit="submitVentaAlert(event)">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label for="venta-brand-select" class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron">1. Marca</label>
-                        <select id="venta-brand-select" required onchange="filterVentaModels(this.value)" class="w-full bg-[#13131a] text-white border border-[#00f0ff]/50 rounded-xl px-4 py-3 text-xs font-black focus:border-[#00f0ff] focus:ring-1 focus:ring-[#00f0ff] transition-all cursor-pointer">
-                            <option value="" disabled selected>Selecciona Marca...</option>
-                            <option value="Infinix">INFINIX</option>
-                            <option value="Samsung">SAMSUNG</option>
-                            <option value="Honor">HONOR</option>
-                            <option value="Motorola">MOTOROLA</option>
-                            <option value="Realme">REALME</option>
-                            <option value="Oppo">OPPO</option>
-                            <option value="Tecno">TECNO</option>
-                            <option value="Xiaomi">XIAOMI</option>
-                        </select>
-                    </div>
-                    <div class="space-y-1.5">
-                        <label for="venta-model-select" class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron">2. Referencia</label>
-                        <select id="venta-model-select" required disabled class="w-full bg-[#13131a] text-white border border-[#00f0ff]/50 rounded-xl px-4 py-3 text-xs font-black focus:border-[#00f0ff] focus:ring-1 focus:ring-[#00f0ff] transition-all cursor-pointer">
-                            <option value="" disabled selected>Selecciona Referencia...</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 gap-4">
-                    <div class="space-y-1.5">
-                        <label for="venta-cantidad" class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron">3. Cantidad Vendida</label>
-                        <div class="relative">
-                            <span class="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-[#00f0ff] font-black text-sm">#</span>
-                            <input type="number" id="venta-cantidad" required min="1" max="100" placeholder="Ej: 1" class="w-full bg-[#13131a] border border-[#00f0ff]/50 rounded-xl pl-8 pr-4 py-3 text-white text-xs font-mono focus:border-[#00f0ff] focus:ring-1 focus:ring-[#00f0ff] transition-all outline-none">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-1.5">
-                    <label for="venta-retailer-select" class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron">4. Canal Retail</label>
-                    <select id="venta-retailer-select" required class="w-full bg-[#13131a] text-white border border-[#00f0ff]/50 rounded-xl px-4 py-3 text-xs font-black focus:border-[#00f0ff] focus:ring-1 focus:ring-[#00f0ff] transition-all cursor-pointer">
-                        <option value="" disabled selected>Selecciona Punto de Venta...</option>
-                        <option value="alkosto">Alkosto</option>
-                        <option value="exito"> Éxito</option>
-                        <option value="cencosud">Cencosud</option>
-                        <option value="falabella">Falabella</option>
-                        <option value="olimpica">Olímpica</option>
-                        <option value="otro">Otro Distribuidor</option>
-                    </select>
-                </div>
-
-                <button type="submit" class="w-full py-4 bg-[#00f0ff] text-black font-black rounded-xl transition-all duration-300 transform active:scale-95 shadow-[0_0_15px_#00f0ff] hover:shadow-[0_0_25px_#00f0ff] uppercase tracking-widest orbitron mt-4 animate-cyan-flicker">
-                    🚀 REGISTRAR VENTA
-                </button>
-            </form>
-        </div>
-    </div>
-
     <!-- MÓDULO ADMIN: LOG DE NOTIFICACIONES DE PRECIO -->
     <div id="admin-notifications-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[100000] flex items-center justify-center p-4 hidden">
         <div class="bg-[#0d0d11] border-2 border-cyberMagenta rounded-3xl p-6 w-full max-w-2xl shadow-[0_0_50px_rgba(255,0,127,0.3)] relative overflow-hidden cyber-panel-shadow cyber-grid-overlay max-h-[80vh] flex flex-col">
@@ -2772,24 +2739,26 @@ function applyRolePermissions(role) {
 }
 
 function switchTab(tabId) {
+    // --- 0. CONTROL ESPECIAL PARA EL BOTÓN DE CIERRE DE VENTAS ---
     const btnCierre = document.getElementById('btn-tab-cierre-ventas');
     if (btnCierre) {
         if (tabId === 'tab-cierre-ventas') {
             btnCierre.classList.add('bg-green-500', 'text-black');
-            btnCierre.classList.remove('text-gray-300', 'hover:bg-white/5');
+            btnCierre.classList.remove('text-gray-400', 'hover:text-white');
         } else {
             btnCierre.classList.remove('bg-green-500', 'text-black');
-            btnCierre.classList.add('text-gray-300', 'hover:bg-white/5');
+            btnCierre.classList.add('text-gray-400', 'hover:text-white');
         }
     }
 
-    // 1. OCULTAR TODAS LAS SECCIONES HTML
+    // 1. OCULTAR TODAS LAS SECCIONES HTML (Faltaba incluir Cierre de Ventas aquí)
     const tabs = [
         'tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping', 
         'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-calculadora', 
         'tab-admin-calculadora', 'tab-salon-fama', 'tab-inventario', 'tab-simulador', 
         'tab-shopping-trainer', 'tab-shopping-admin', 'tab-admin-listas', 'panel-admin-gerencia', 
-        'tab-reporte-visita', 'panel-carga-precios', 'panel-forja-equipos'
+        'tab-reporte-visita', 'panel-carga-precios', 'panel-forja-equipos',
+        'tab-cierre-ventas' // <-- ¡SOLUCIÓN! Ahora sí se ocultará correctamente al cambiar de pestaña
     ];
     
     tabs.forEach(t => {
@@ -2797,6 +2766,7 @@ function switchTab(tabId) {
         if (el) el.classList.add('hidden');
     });
 
+    // 2. DISPARADORES DE FUNCIONES ESPECÍFICAS AL ABRIR PESTAÑAS
     if (tabId === 'tab-tendencias-nacionales') renderTendenciasNacionalesTab();
     if (tabId === 'tab-inventario') initInventarioView();
     if (tabId === 'panel-admin-gerencia') cargarDatosCentralReportes();
@@ -2843,11 +2813,11 @@ function switchTab(tabId) {
         }
     }
 
+    // 3. APAGAR ESTILOS DE TODOS LOS DEMÁS BOTONES Y MANEJAR VISIBILIDAD
     const esAdmin = (currentUserRole === 'ADMIN');
     const esTrainer = (currentUserRole === 'TRAINER');
     const esJonathanFerro = (currentUserCode === 'CO1000429' || (currentUserName && currentUserName.toUpperCase().includes('FERRO')));
 
-    // 2. APAGAR ESTILOS DE TODOS LOS BOTONES Y MANEJAR VISIBILIDAD
     const buttons = [
         'btn-tab-comparativa', 'btn-tab-radar-caracteristicas', 'btn-tab-quiz', 'btn-tab-shopping', 
         'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales', 'btn-tab-calculadora', 
@@ -2883,39 +2853,37 @@ function switchTab(tabId) {
             if (btnId === 'btn-tab-reporte-visita' && !['SUPERVISOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
             
             // Candado Carga de Precios
-            if (btnId === 'btn-tab-carga-precios' && currentUserRole === 'GERENTE') {
-                element.classList.add('hidden');
-            }
+            if (btnId === 'btn-tab-carga-precios' && currentUserRole === 'GERENTE') element.classList.add('hidden');
             
             // Candado Forja de Equipos
-            if (btnId === 'btn-tab-forja-equipos' && !esAdmin) {
-                element.classList.add('hidden');
-            }
+            if (btnId === 'btn-tab-forja-equipos' && !esAdmin) element.classList.add('hidden');
         }
     });
 
-    // 3. MOSTRAR SECCIÓN OBJETIVO Y RESALTAR BOTÓN ACTIVO
+    // 4. MOSTRAR SECCIÓN OBJETIVO Y RESALTAR BOTÓN ACTIVO
     const targetTab = document.getElementById(tabId);
     if (targetTab) targetTab.classList.remove('hidden');
 
-    // Mapeo especial cuando tabId es panel y el botón es btn-tab
-    let btnTargetId = 'btn-' + tabId;
-    if (tabId === 'panel-carga-precios') btnTargetId = 'btn-tab-carga-precios';
-    if (tabId === 'panel-forja-equipos') btnTargetId = 'btn-tab-forja-equipos';
+    // Resaltar botones normales (Omitimos el de cierre de ventas porque tiene estilos propios y ya se manejó arriba)
+    if (tabId !== 'tab-cierre-ventas') {
+        let btnTargetId = 'btn-' + tabId;
+        if (tabId === 'panel-carga-precios') btnTargetId = 'btn-tab-carga-precios';
+        if (tabId === 'panel-forja-equipos') btnTargetId = 'btn-tab-forja-equipos';
 
-    const activeButton = document.getElementById(btnTargetId);
-    if (activeButton) {
-        const whiteStyleTabs = [
-            'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 
-            'tab-radar-caracteristicas', 'tab-admin-calculadora', 'tab-salon-fama', 
-            'tab-inventario', 'tab-simulador', 'tab-shopping-trainer', 
-            'tab-shopping-admin', 'panel-forja-equipos', 'panel-carga-precios'
-        ];
+        const activeButton = document.getElementById(btnTargetId);
+        if (activeButton) {
+            const whiteStyleTabs = [
+                'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 
+                'tab-radar-caracteristicas', 'tab-admin-calculadora', 'tab-salon-fama', 
+                'tab-inventario', 'tab-simulador', 'tab-shopping-trainer', 
+                'tab-shopping-admin', 'panel-forja-equipos', 'panel-carga-precios'
+            ];
 
-        if (whiteStyleTabs.includes(tabId)) {
-            activeButton.className = "py-3 px-2 rounded-xl font-black text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-white text-black shadow-lg shadow-white/30 transform scale-105 whitespace-nowrap";
-        } else {
-            activeButton.className = "py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-infinix text-black shadow-lg shadow-infinix/20 transform scale-105 whitespace-nowrap";
+            if (whiteStyleTabs.includes(tabId)) {
+                activeButton.className = "py-3 px-2 rounded-xl font-black text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-white text-black shadow-lg shadow-white/30 transform scale-105 whitespace-nowrap";
+            } else {
+                activeButton.className = "py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 bg-infinix text-black shadow-lg shadow-infinix/20 transform scale-105 whitespace-nowrap";
+            }
         }
     }
 }
@@ -5029,26 +4997,137 @@ let shoppingSnapshotUnsubscribe = null;
                 if(logVentasNacional.length > 0) counter.classList.add('animate-pulse'); else counter.classList.remove('animate-pulse');
             }
         }
-// --- CONTROLADORES DE MODALES DE ALERTA DE PRECIO Y VENTA ---
-function abrirModalPrecio(tipo) {
-            const modal = document.getElementById('cyber-alert-modal');
-            if (modal) modal.classList.remove('hidden');
+// =================================================================
+// CEREBRO DE SINCRONIZACIÓN DE MODALES (SOBRESCRIBE ERRORES)
+// =================================================================
+
+function abrirModalVentaDefinitivo() {
+    const modal = document.getElementById('cyber-venta-modal');
+    if (modal) {
+        document.body.appendChild(modal); 
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        window.scrollTo(0, 0);
+
+        // 1. Inyectar marcas
+        const brandSelect = document.getElementById('venta-brand-select');
+        if (brandSelect) {
+            brandSelect.innerHTML = '<option value="" disabled selected>Selecciona Marca...</option><option value="infinix">INFINIX</option>';
+            for (let marca in competitorsDatabase) {
+                // Forzamos a minúsculas
+                brandSelect.innerHTML += `<option value="${marca.toLowerCase()}">${competitorsDatabase[marca].brandName.toUpperCase()}</option>`;
+            }
+        }
+        
+        // 2. Inyectar Canales Retail estrictamente desde la variable RETAILERS (Sin inyecciones manuales)
+        const retailerSelect = document.getElementById('venta-retailer-select');
+        if (retailerSelect && typeof RETAILERS !== 'undefined') {
+            retailerSelect.innerHTML = '<option value="" disabled selected>Selecciona Punto de Venta...</option>';
+            RETAILERS.forEach(r => {
+                retailerSelect.innerHTML += `<option value="${r.id.toLowerCase()}">${r.name}</option>`;
+            });
+        }
+        
+        // 3. Reiniciar referencias
+        const modelSelect = document.getElementById('venta-model-select');
+        if (modelSelect) {
+            modelSelect.innerHTML = '<option value="" disabled selected>Selecciona Referencia...</option>';
+            modelSelect.disabled = true;
+        }
+    }
+}
+
+function cargarReferenciasVenta(brandKey) {
+    const modelSelect = document.getElementById('venta-model-select');
+    if (!modelSelect) return;
+    
+    modelSelect.innerHTML = '<option value="" disabled selected>Selecciona Referencia...</option>';
+    modelSelect.disabled = false;
+
+    let modelos = {};
+    const cleanKey = brandKey.toLowerCase();
+    
+    // Arrastramos directo de la Forja (Infinix y Rivales)
+    if (cleanKey === 'infinix') {
+        modelos = infinixDatabase;
+    } else if (competitorsDatabase[cleanKey]) {
+        modelos = competitorsDatabase[cleanKey].models;
+    }
+
+    for (let key in modelos) {
+        modelSelect.innerHTML += `<option value="${key}">${modelos[key].name.toUpperCase()}</option>`;
+    }
+}
+
+function cerrarModalVentaDefinitivo() {
+    const modal = document.getElementById('cyber-venta-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// CORRECCIÓN SIMULTÁNEA: CARGA DE PRECIOS
+function cargarMarcasCargaPrecios() {
+    const brandSelect = document.getElementById('carga-brand');
+    if(brandSelect) {
+        brandSelect.innerHTML = '<option value="" disabled selected>Seleccione Marca...</option><option value="infinix">INFINIX</option>';
+        for (let marca in competitorsDatabase) {
+            brandSelect.innerHTML += `<option value="${marca.toLowerCase()}">${competitorsDatabase[marca].brandName.toUpperCase()}</option>`;
+        }
+        brandSelect.innerHTML += '<option value="NUEVA_MARCA" class="text-cyberMagenta font-bold">+ AÑADIR NUEVA MARCA...</option>';
+    }
+
+    const retailerSelect = document.getElementById('carga-retailer');
+    if (retailerSelect && typeof RETAILERS !== 'undefined') {
+        retailerSelect.innerHTML = '<option value="" disabled selected>-- Seleccione Tienda --</option>';
+        
+        // Lee única y exclusivamente de tu base de datos maestra RETAILERS
+        RETAILERS.forEach(r => {
+            retailerSelect.innerHTML += `<option value="${r.name}">${r.name}</option>`;
+        });
+    }
+}
+
+function cargarReferenciasBase() {
+    const brandSelect = document.getElementById('carga-brand');
+    const modelSelect = document.getElementById('carga-model');
+    const newBrandInput = document.getElementById('carga-new-brand');
+    const newModelInput = document.getElementById('carga-new-model');
+    const panelSpecs = document.getElementById('panel-especificaciones');
+    
+    const selectedBrand = brandSelect.value.toLowerCase();
+    modelSelect.innerHTML = '<option value="" disabled selected>Seleccione Referencia...</option>';
+    
+    if (selectedBrand === 'nueva_marca') {
+        newBrandInput.classList.remove('hidden');
+        newBrandInput.required = true;
+        modelSelect.disabled = true;
+        newModelInput.classList.remove('hidden');
+        newModelInput.required = true;
+        panelSpecs.classList.remove('hidden');
+    } else {
+        newBrandInput.classList.add('hidden');
+        newBrandInput.required = false;
+        modelSelect.disabled = false;
+        
+        let modelos = {};
+        if (selectedBrand === 'infinix') {
+            modelos = infinixDatabase;
+        } else if (competitorsDatabase[selectedBrand]) {
+            modelos = competitorsDatabase[selectedBrand].models;
         }
 
-        function closePriceAlertModal() {
-            const modal = document.getElementById('cyber-alert-modal');
-            if (modal) modal.classList.add('hidden');
+        for (let key in modelos) {
+            modelSelect.innerHTML += `<option value="${key}">${modelos[key].name.toUpperCase()}</option>`;
         }
-
-        function abrirModalVenta(tipo) {
-            const modal = document.getElementById('cyber-venta-modal');
-            if (modal) modal.classList.remove('hidden');
-        }
-
-        function closeModalVenta() {
-            const modal = document.getElementById('cyber-venta-modal');
-            if (modal) modal.classList.add('hidden');
-        }
+        modelSelect.innerHTML += '<option value="NUEVO_MODELO" class="text-cyberMagenta font-bold">+ AÑADIR NUEVA REFERENCIA...</option>';
+        
+        if (typeof evaluarNuevoEquipo === 'function') evaluarNuevoEquipo();
+    }
+}
 
         function filterAlertModels(brandKey) {
             const modelSelect = document.getElementById('alert-model-select');
@@ -6222,6 +6301,7 @@ function ejecutarCaptura(idLienzo, nombreArchivo) {
         });
     }, 400);
 }
+
     </script>
 
     <!-- MÓDULO INTEGRACIÓN HARDWARE CON IA -->
@@ -7298,38 +7378,76 @@ function renderInventarioAsesorForm() {
             const asesorCode = document.getElementById('login-code') ? document.getElementById('login-code').value.trim().toUpperCase() : 'INVITADO';
             
             // Consultamos los datos del usuario autenticado actual para asegurar trazabilidad perfecta
-            db.collection("usuarios_auth").doc(asesorCode).get().then((docUser) => {
+            const btnSubmit = event.currentTarget; // Capturamos el botón para deshabilitarlo mientras sube
+            const originalBtnText = btnSubmit.innerHTML;
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '⏳ PREPARANDO DATOS...';
+
+            db.collection("usuarios_auth").doc(asesorCode).get().then(async (docUser) => {
                 const dataUser = docUser.exists ? docUser.data() : {};
                 
+                // LÓGICA DE SUBIDA DE PDF
+                let pdfUrl = null;
+                const fileInput = document.getElementById('inv-pdf-upload');
+                const file = fileInput ? fileInput.files[0] : null;
+
+                if (file) {
+                    if (file.type !== 'application/pdf') {
+                        showCustomAlert("Error de Archivo", "Por favor, selecciona un archivo en formato PDF.");
+                        btnSubmit.disabled = false;
+                        btnSubmit.innerHTML = originalBtnText;
+                        return; // Bloquea si no es PDF
+                    }
+                    
+                    btnSubmit.innerHTML = '📄 SUBIENDO PLANILLA PDF...';
+                    try {
+                        const storageRef = firebase.storage().ref();
+                        // Nombramos el archivo con la tienda y el timestamp para que no se sobreescriban accidentalmente
+                        const fileRef = storageRef.child(`planillas_inventario/${idTiendaUnico}_${Date.now()}.pdf`);
+                        await fileRef.put(file);
+                        pdfUrl = await fileRef.getDownloadURL();
+                    } catch (err) {
+                        console.error("Error subiendo PDF:", err);
+                        showCustomAlert("Advertencia", "Se guardará el inventario, pero falló la subida del PDF.");
+                    }
+                }
+
+                btnSubmit.innerHTML = '📦 REGISTRANDO STOCK...';
+
                 const payload = {
                     asesorCode: asesorCode,
                     nombre: dataUser.nombre || currentUserName,
-                    cadena: cadenaInput, // Tienda exacta vinculada
+                    cadena: cadenaInput,
                     zona: dataUser.zona || "Zona Nacional",
                     totalUnits: totalUnits,
                     desglose: desglose,
+                    planillaUrl: pdfUrl, // <-- AQUÍ SE GUARDA LA URL DEL PDF (puede ser null si no subió)
                     timestampRaw: Date.now(),
                     fechaStr: new Date().toLocaleString()
                 };
 
-                // Enviamos directamente a Firestore
-                // 👇 CAMBIO 2: Reemplazamos .doc(asesorCode) por .doc(idTiendaUnico) para que la tienda sobrescriba al asesor anterior
                 db.collection("inventario_nacional").doc(idTiendaUnico).set(payload)
                     .then(() => {
-                        // Alerta visual obligatoria para que sepas que SÍ se subió con éxito
                         showCustomAlert("¡Reporte Exitoso!", `Se han subido ${totalUnits} unidades de inventario para la tienda: ${cadenaInput}.`);
                         
-                        // Limpiar campos del formulario de stock
+                        // Limpiar campos del formulario
                         Object.keys(infinixDatabase).forEach(key => {
                             const input = document.getElementById(`inv-unit-${key}`);
                             if(input) input.value = '';
                         });
+                        if (fileInput) fileInput.value = ''; // Limpiar el input de archivo
                     })
                     .catch((error) => {
                         showCustomAlert("Error de Red", "No se pudo sincronizar el inventario con Firebase: " + error.message);
+                    })
+                    .finally(() => {
+                        btnSubmit.disabled = false;
+                        btnSubmit.innerHTML = originalBtnText;
                     });
             }).catch((error) => {
                 showCustomAlert("Error de Sesión", "No se pudo verificar el perfil del usuario.");
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = originalBtnText;
             });
         }
 
@@ -7467,6 +7585,12 @@ function renderInventarioAsesorForm() {
             });
         }
 
+        // --- NUEVA LÓGICA DEL BOTÓN PDF ---
+        let btnPdfHtml = inv.planillaUrl 
+            ? `<a href="${inv.planillaUrl}" target="_blank" class="inline-flex items-center px-3 py-1.5 bg-red-900/40 text-red-400 border border-red-500/50 rounded-lg text-[9px] font-bold uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all shadow-md cursor-pointer"><svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Ver PDF</a>`
+            : `<span class="text-[9px] text-gray-600 font-mono italic">Sin Planilla</span>`;
+
+        // --- DIBUJO DE LA FILA CON LA NUEVA COLUMNA INYECTADA ---
         tbody.innerHTML += `
             <tr class="hover:bg-darkBorder/20 transition-all border-b border-darkBorder/50">
                 <td class="p-3 pl-4">
@@ -7477,6 +7601,7 @@ function renderInventarioAsesorForm() {
                 <td class="p-3 text-center font-black text-blue-500 text-sm bg-blue-500/5">${inv.totalUnits}</td>
                 <td class="p-3 text-center text-gray-400 text-[9px]">${inv.fechaStr}</td>
                 <td class="p-3 max-w-[200px] whitespace-normal leading-tight">${detalleHtml}</td>
+                <td class="p-3 text-center">${btnPdfHtml}</td> <!-- CELDA DEL PDF -->
             </tr>
         `;
     });
@@ -10431,6 +10556,64 @@ function openCargaPrecios() {
 </div>
 
  </script>
+<!-- MÓDULO 2: MODAL DE ALERTA DE VENTA (CYBERPUNK CYAN) -->
+<div id="cyber-venta-modal" style="position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 2147483647 !important; margin: 0 !important; padding: 0 !important;" class="bg-black/90 backdrop-blur-md flex items-center justify-center hidden">
+    <div class="bg-[#0d0d11] border-2 border-[#00f0ff] rounded-3xl p-6 w-full max-w-lg shadow-[0_0_50px_rgba(0,240,255,0.3)] relative overflow-hidden cyber-panel-cyan-shadow cyber-grid-cyan-overlay">
+        
+        <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-[#00f0ff]"></div>
+        <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-[#00f0ff]"></div>
+        <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-[#00f0ff]"></div>
+        <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-[#00f0ff]"></div>
+        
+        <div class="flex justify-between items-start mb-6 border-b border-[#00f0ff]/30 pb-4 relative z-10">
+            <div>
+                <h3 class="text-xl font-black text-white orbitron tracking-widest flex items-center gap-2">
+                    <span class="text-[#00f0ff] animate-pulse">🛒</span> ALERTA DE VENTA
+                </h3>
+                <p class="text-[10px] text-[#00f0ff] font-bold tracking-widest uppercase mt-0.5">Reporte de Dispositivos Comercializados</p>
+            </div>
+            <button type="button" onclick="cerrarModalVentaDefinitivo()" class="text-gray-400 hover:text-[#00f0ff] text-xl font-black orbitron transition-colors cursor-pointer">&times; CERRAR</button>
+        </div>
+
+        <form id="venta-alert-form" class="space-y-4 relative z-10" onsubmit="submitVentaAlert(event)">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron">1. Marca</label>
+                    <select id="venta-brand-select" required onchange="cargarReferenciasVenta(this.value)" class="w-full bg-[#13131a] text-white border border-[#00f0ff]/50 rounded-xl px-4 py-3 text-xs font-black focus:border-[#00f0ff] focus:ring-1 focus:ring-[#00f0ff] transition-all cursor-pointer">
+                        <!-- Llenado por JS -->
+                    </select>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron">2. Referencia</label>
+                    <select id="venta-model-select" required disabled class="w-full bg-[#13131a] text-white border border-[#00f0ff]/50 rounded-xl px-4 py-3 text-xs font-black focus:border-[#00f0ff] focus:ring-1 focus:ring-[#00f0ff] transition-all cursor-pointer">
+                        <!-- Llenado por JS -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4">
+                <div class="space-y-1.5">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron">3. Cantidad Vendida</label>
+                    <div class="relative">
+                        <span class="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-[#00f0ff] font-black text-sm">#</span>
+                        <input type="number" id="venta-cantidad" required min="1" max="100" placeholder="Ej: 1" class="w-full bg-[#13131a] border border-[#00f0ff]/50 rounded-xl pl-8 pr-4 py-3 text-white text-xs font-mono focus:border-[#00f0ff] transition-all outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron">4. Canal Retail</label>
+                <select id="venta-retailer-select" required class="w-full bg-[#13131a] text-white border border-[#00f0ff]/50 rounded-xl px-4 py-3 text-xs font-black focus:border-[#00f0ff] focus:ring-1 focus:ring-[#00f0ff] transition-all cursor-pointer">
+                    <!-- Llenado por JS -->
+                </select>
+            </div>
+
+            <button type="submit" class="w-full py-4 bg-[#00f0ff] text-black font-black rounded-xl transition-all duration-300 transform active:scale-95 shadow-[0_0_15px_#00f0ff] hover:shadow-[0_0_25px_#00f0ff] uppercase tracking-widest orbitron mt-4 cursor-pointer">
+                🚀 REGISTRAR VENTA
+            </button>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>
