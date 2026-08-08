@@ -6880,13 +6880,29 @@ function ejecutarCaptura(idLienzo, nombreArchivo) {
             document.getElementById('admin-t-kpi').value = chainConfig.thresholds?.kpi || 400000;
 
             container.innerHTML = '';
-            Object.keys(infinixDatabase).forEach(key => {
-                const model = infinixDatabase[key];
+
+            // 🔥 SOLUCIÓN: Reemplazamos la dependencia de infinixDatabase por la lista maestra blindada
+            const listaModelos = typeof obtenerModelosCierre === 'function' ? obtenerModelosCierre() : [
+                { key: "gt-5-pro", name: "GT 5 PRO" },
+                { key: "infinix-smart-20", name: "Infinix Smart 20" },
+                { key: "infinix-hot-60i", name: "Infinix Hot 60i" },
+                { key: "infinix-hot-70", name: "Infinix HOT 70" },
+                { key: "infinix-hot-60-pro+", name: "Infinix Hot 60 Pro+" },
+                { key: "infinix-note-edge", name: "Infinix Note Edge" },
+                { key: "infinix-note-60", name: "Infinix Note 60" },
+                { key: "infinix-note-60-pro", name: "Infinix Note 60 PRO" },
+                { key: "infinix-note-60-ultra", name: "Infinix Note 60 Ultra" },
+                { key: "xpad-30e", name: "Xpad 30E" }
+            ];
+
+            listaModelos.forEach(modelo => {
+                const key = modelo.key || modelo.dbKey;
+                const modelName = modelo.name || modelo.nombreUI;
                 const data = (chainConfig.models && chainConfig.models[key]) ? chainConfig.models[key] : {roi1: '', roi2: ''};
                 
                 container.innerHTML += `
                     <div class="grid grid-cols-12 gap-2 items-center bg-black/40 p-2.5 rounded-xl border border-darkBorder/50 hover:border-cyberMagenta/30 transition-colors">
-                        <div class="col-span-4 text-[10px] sm:text-xs font-bold text-gray-300 pl-1 truncate">${model.name}</div>
+                        <div class="col-span-4 text-[10px] sm:text-xs font-bold text-gray-300 pl-1 truncate">${modelName}</div>
                         <div class="col-span-4 relative">
                             <span class="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-cyberMagenta font-bold text-xs">$</span>
                             <input type="number" id="admin-c-${key}-roi1" value="${data.roi1}" class="w-full bg-[#0d0d11] border border-cyberMagenta/30 rounded-lg pl-6 pr-2 py-2 text-cyberMagenta font-mono text-[10px] sm:text-xs focus:border-cyberMagenta outline-none" placeholder="0">
@@ -8130,32 +8146,34 @@ function cargarVentasCalculadoraLocal() {
     return `W${wak}`; // Esto arrojará W32 correctamente para agosto
 }
 
-// Motor maestro Asíncrono para guardar en Firebase (Solo 1 vez en todo tu archivo)
-// Motor maestro Asíncrono para guardar en Firebase (Versión Definitiva)
+// Motor maestro Asíncrono para guardar en Firebase (Versión Definitiva con Cajas por Semana ISO)
 async function generarYGuardarCierreVentas() {
     
-// Extraemos la fecha del nuevo calendario visual
-const inputFecha = document.getElementById('fecha-cierre-asesor');
-        let diaHoy = "";
-        
-        if (inputFecha && inputFecha.value) {
-            // Convertimos la fecha seleccionada a día de la semana (con ajuste de zona horaria)
-            const fechaSeleccionada = new Date(inputFecha.value + 'T00:00:00');
-            const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-            diaHoy = diasSemana[fechaSeleccionada.getDay()];
-        } else {
-            // Plan B de seguridad: Si no hay calendario, usa el día de hoy (como lo tenías antes)
-            const fecha = new Date();
-            const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-            diaHoy = diasSemana[fecha.getDay()];
-        }
+    // Extraemos la fecha del nuevo calendario visual
+    const inputFecha = document.getElementById('fecha-cierre-asesor');
+    let fechaSeleccionada;
+    if (inputFecha && inputFecha.value) {
+        fechaSeleccionada = new Date(inputFecha.value + 'T00:00:00');
+    } else {
+        fechaSeleccionada = new Date();
+    }
+    
+    // Calcular Semana ISO real de manera matemática para determinar la "caja" de Firebase
+    const t = new Date(fechaSeleccionada.getTime());
+    t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
+    const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+    const weekNum = Math.ceil((((t - yearStart) / 86400000) + 1) / 7);
+    const semanaCaja = `W${weekNum}`; // Ej: "W31", "W32", etc., basado estrictamente en la fecha del reporte
+    
+    const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    let diaHoy = diasSemana[fechaSeleccionada.getDay()];
     let totalUnidadesDia = 0;
     let totalDineroDia = 0;
     let desgloseInfinixDia = {};
     let desgloseCompetenciaDia = {};
 
-  // 1. Recolectar Lo de INFINIX de la pantalla dinámicamente
-  obtenerModelosCierre().forEach(modelo => {
+    // 1. Recolectar Lo de INFINIX de la pantalla dinámicamente
+    obtenerModelosCierre().forEach(modelo => {
         const key = modelo.key;
         const inputVenta = document.getElementById(`cierre-${key}-hoy`);
         const inputTarget = document.getElementById(`cierre-target-inf-${key}`);
@@ -8192,8 +8210,8 @@ const inputFecha = document.getElementById('fecha-cierre-asesor');
     const asesorLocal = typeof currentUserName !== 'undefined' ? currentUserName : (window.nombreAsesorLogueado || document.getElementById('admin-user-name')?.textContent || "Asesor_Desconocido");
     const payloadHoy = {
         asesor: asesorLocal,
-        fechaStr: new Date().toLocaleDateString(),
-        timestamp: Date.now(),
+        fechaStr: fechaSeleccionada.toLocaleDateString(),
+        timestamp: fechaSeleccionada.getTime(),
         totalUnidadesDia,
         totalDineroDia,
         ticketPromedio,
@@ -8202,10 +8220,9 @@ const inputFecha = document.getElementById('fecha-cierre-asesor');
     };
 
     try {
-       // ==============================================================
+        // ==============================================================
         // 4. LÓGICA DE CAPTURA DE DATOS (CADENA Y TIENDA MANUALES)
         // ==============================================================
-        
         const selectCadena = document.getElementById('select-cadena-cierre');
         const selectTienda = document.getElementById('select-tienda-cierre');
 
@@ -8214,44 +8231,66 @@ const inputFecha = document.getElementById('fecha-cierre-asesor');
             return; 
         }
         if (!selectTienda || selectTienda.value === "") {
-            alert("⚠️ ALERTA: Por favor seleccione la TIENDA en la que laboró hoy.");
+            alert("⚠️ ALERTA: Por favor seleccione la TIENDA en la que laboró.");
             return; 
         }
 
         const nombreCadenaReal = selectCadena.value;
-        const nombreTiendaReal = selectTienda.value; // ¡Ya no leemos "Tienda_No_Asignada"!
+        const nombreTiendaReal = selectTienda.value; 
         const zonaReal = window.miZona || document.getElementById('zona-asesor')?.textContent || "Zona_No_Asignada";
-        
-        // El salvavidas para Excel
-        const semanaActualKey = obtenerSemanaActualKey();
         const nombreTienda = nombreTiendaReal;
 
-        // 5. CONSTRUIR ID ÚNICO BLINDADO EN FIREBASE
-        const idDocumentoUnico = `${semanaActualKey}_${nombreCadenaReal}_${nombreTiendaReal}`
-            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita tildes
+        // 5. CONSTRUIR ID ÚNICO BLINDADO USANDO LA CAJA DE SEMANA REAL (`semanaCaja`)
+        const idDocumentoUnico = `${semanaCaja}_${nombreCadenaReal}_${nombreTiendaReal}`
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") 
             .toUpperCase()
-            .replace(/[^A-Z0-9]/g, '_') // Quita slashes, espacios y símbolos raros
-            .replace(/_+/g, '_');       // Limpia guiones múltiples
+            .replace(/[^A-Z0-9]/g, '_') 
+            .replace(/_+/g, '_');      
 
-        console.log("🚀 Guardando reporte en Firebase con ID Único:", idDocumentoUnico);
+        console.log("🚀 Guardando reporte en Firebase con ID de Caja Único:", idDocumentoUnico);
 
-        // 6. GUARDAR EN FIREBASE (Datos limpios)
+        // 6. GUARDAR EN FIREBASE USANDO LA CAJA DINÁMICA
         await db.collection("cierre_ventas_nacional").doc(idDocumentoUnico).set({
             asesorResponsable: asesorLocal,
             tienda: nombreTiendaReal,
             zona: zonaReal,
-            cadena: nombreCadenaReal, // Inyectamos la cadena que el asesor escogió manualmente
-            semana: semanaActualKey,
+            cadena: nombreCadenaReal, 
+            semana: semanaCaja, 
             [diaHoy]: payloadHoy 
         }, { merge: true });
 
-        console.log("✅ Datos de HOY guardados con éxito en Firebase.");
+        console.log(`✅ Datos guardados con éxito en la caja de Firebase: ${semanaCaja}`);
 
         // ==============================================================
-        // 7. DESCARGA DEL INVENTARIO Y EXCEL (Variables corregidas para que no crashee)
+        // 7. DESCARGA MAESTRA DE TODAS LAS CAJAS DEL MES DESDE FIREBASE
         // ==============================================================
-        const docSemana = await db.collection("cierre_ventas_nacional").doc(idDocumentoUnico).get();
-        const dataSemana = docSemana.data() || {};
+        try {
+            const tiendaFormat = nombreTiendaReal.toUpperCase().normalize("NFD").replace(/[^A-Z0-9Ñ]/g, '_');
+            const snapshotGlobal = await db.collection("cierre_ventas_nacional").get();
+            
+            // Refrescamos la memoria global para que el Excel tenga W31, W32 y toda la tienda completa sin fallas
+            window.reportesGlobales = {}; 
+            snapshotGlobal.forEach(doc => {
+                if (doc.id.includes(tiendaFormat)) {
+                    window.reportesGlobales[doc.id] = doc.data();
+                }
+            });
+            
+            // Seguro contra latencia de red: inyectar el dato de hoy directamente en el objeto global si Firebase tarda
+            if (!window.reportesGlobales[idDocumentoUnico]) {
+                window.reportesGlobales[idDocumentoUnico] = {
+                    asesorResponsable: asesorLocal,
+                    tienda: nombreTiendaReal,
+                    zona: zonaReal,
+                    cadena: nombreCadenaReal, 
+                    semana: semanaCaja
+                };
+            }
+            window.reportesGlobales[idDocumentoUnico][diaHoy] = payloadHoy;
+
+        } catch (err) {
+            console.error("Error al sincronizar el histórico global para el Excel:", err);
+        }
 
         let dataInventario = {};
         try {
@@ -8268,22 +8307,20 @@ const inputFecha = document.getElementById('fecha-cierre-asesor');
                     }
                 }
             });
-            console.log("🔥 STOCK ENCONTRADO:", dataInventario);
         } catch (error) {
             console.error("Aviso: Error cruzando inventario.", error);
         }
 
-        // 8. DIBUJAR LA MEGA TARJETA ESTILO EXCEL (Aquí descarga la imagen)
+        // 8. DIBUJAR LA MEGA TARJETA ESTILO EXCEL (Pasamos el objeto vacío porque el Excel leerá directo de la variable global blindada)
         if (typeof dibujarMegaExcel === 'function') {
-            dibujarMegaExcel(dataSemana, nombreTiendaReal, typeof semanaKey !== 'undefined' ? semanaKey : 'W31', dataInventario);
+            dibujarMegaExcel({}, nombreTiendaReal, semanaCaja, dataInventario);
         } else {
-            console.warn("La función dibujarMegaExcel aún no está programada, pero los datos se guardaron.");
-            alert("Ventas de hoy guardadas en la nube. Preparando motor de Excel...");
+            alert("¡Ventas guardadas con éxito en la nube!");
         }
 
     } catch (error) {
         console.error("Error crítico con Firebase:", error);
-        alert("Hubo un error al sincronizar con la base de datos.");
+        showCustomAlert("Error de Sincronización", "No se pudo conectar con Firebase. Revisa tu red.");
     }
 }
 // =================================================================
@@ -8568,151 +8605,388 @@ function renderizarFormularioCierre() {
     });
 }
 function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = {}) {
-    const numSemanaActual = parseInt(semanaStr.replace(/\D/g, '')) || 31;
-    
-    // 1. MES DINÁMICO Y ENCABEZADOS
+    // 1. CONFIGURACIÓN DE FECHAS Y MES
     const meses = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
-    const mesActual = meses[new Date().getMonth()];
+    const fechaActualSistema = new Date(); 
+    const mesActualNombre = meses[fechaActualSistema.getMonth()];
+    
     const elMes = document.getElementById('excel-mes-actual');
-    if(elMes) elMes.textContent = mesActual;
+    if(elMes) elMes.textContent = mesActualNombre;
 
     document.getElementById('excel-tienda').textContent = nombreTienda;
-    document.getElementById('excel-cadena').textContent = document.getElementById('select-cadena-cierre').value.toUpperCase();
-    document.getElementById('excel-w-actual').textContent = numSemanaActual;
+    document.getElementById('excel-cadena').textContent = (document.getElementById('select-cadena-cierre')?.value || 'INFINIX').toUpperCase();
     document.getElementById('excel-zona').textContent = typeof currentUserZone !== 'undefined' ? currentUserZone.toUpperCase() : 'SANTANDER';
+
+    // 🔥 PARCHE DINÁMICO: Arreglar los IDs faltantes en el HTML original sin tocar tu HTML principal 🔥
+    const infW1 = document.getElementById('excel-inf-tot-w1');
+    if (infW1 && !document.getElementById('excel-inf-tot-w2')) {
+        let next = infW1.nextElementSibling;
+        if(next) { next.id = 'excel-inf-tot-w2'; next = next.nextElementSibling; }
+        if(next) { next.id = 'excel-inf-tot-w3'; next = next.nextElementSibling; }
+        if(next) { next.id = 'excel-inf-tot-w4'; next = next.nextElementSibling; }
+        if(next) { next.id = 'excel-inf-tot-w5'; }
+    }
+    const marW1 = document.getElementById('excel-mercado-tot-w1');
+    if (marW1 && !document.getElementById('excel-mercado-tot-w2')) {
+        let next = marW1.nextElementSibling;
+        if(next) { next.id = 'excel-mercado-tot-w2'; next = next.nextElementSibling; }
+        if(next) { next.id = 'excel-mercado-tot-w3'; next = next.nextElementSibling; }
+        if(next) { next.id = 'excel-mercado-tot-w4'; next = next.nextElementSibling; }
+        if(next) { next.id = 'excel-mercado-tot-w5'; }
+    }
+
+    // 🧠 CEREBRO DE SEMANAS ISO REALES PARA EL MES
+    function getIsoWeek(dateObj) {
+        const t = new Date(dateObj.getTime());
+        t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
+        const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+        return Math.ceil((((t - yearStart) / 86400000) + 1) / 7);
+    }
+
+    const currentYear = fechaActualSistema.getFullYear();
+    const currentMonth = fechaActualSistema.getMonth();
     
+    let setSemanasMes = new Set();
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    for (let d = 1; d <= lastDayOfMonth; d++) {
+        setSemanasMes.add(getIsoWeek(new Date(currentYear, currentMonth, d, 12, 0, 0)));
+    }
+    let semanasMesArr = Array.from(setSemanasMes).sort((a,b)=>a-b).map(w => `W${w}`).slice(0, 5);
+    while (semanasMesArr.length < 5) semanasMesArr.push("");
+
+    const currentWeekNum = getIsoWeek(fechaActualSistema);
+    const semanaActualStr = `W${currentWeekNum}`; // W32
+    
+    document.getElementById('excel-w-actual').textContent = semanaActualStr;
+
     for(let i=1; i<=5; i++) {
-        let textSem = `W${numSemanaActual + i - 1}`;
+        let textSem = semanasMesArr[i-1] || "";
         if(document.getElementById(`th-w${i}-inf`)) document.getElementById(`th-w${i}-inf`).textContent = textSem;
         if(document.getElementById(`th-w${i}-mar`)) document.getElementById(`th-w${i}-mar`).textContent = textSem;
     }
 
+    const currentWeekDates = {};
+    const dayOfWeek = fechaActualSistema.getDay() || 7; 
+    const monday = new Date(fechaActualSistema.getTime());
+    monday.setDate(monday.getDate() - dayOfWeek + 1);
+    
+    const diasNombres = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    for(let i=0; i<7; i++) {
+        const t = new Date(monday.getTime());
+        t.setDate(t.getDate() + i);
+        const k = `${t.getDate()}/${t.getMonth()+1}/${t.getFullYear()}`;
+        currentWeekDates[k] = diasNombres[i];
+    }
+
     let ultimoAsesor = "ASESOR";
-    const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-    diasSemana.forEach(dia => {
-        if (dataSemana[dia] && dataSemana[dia].asesor) ultimoAsesor = dataSemana[dia].asesor;
-    });
-    document.getElementById('excel-asesor').textContent = ultimoAsesor.toUpperCase();
-
-    // ---- PRE-CÁLCULOS INFINIX ----
-    let totInfDia = { 'Lunes':0, 'Martes':0, 'Miércoles':0, 'Jueves':0, 'Viernes':0, 'Sábado':0, 'Domingo':0 };
-    let totInfWeek = 0; let totInfTarget = 0; let totInfInv = 0;
-    let datosInfinixArray = [];
-
-    obtenerModelosCierre().forEach(modelo => { const key = modelo.key; const nombre = modelo.name;
-        let sumaSemanaModelo = 0; let targetModelo = 0; let invModelo = 0;
-        let ventasPorDia = {};
-        
-// Coincidencia Exacta de Stock (Anti-duplicados)
-        // Quitamos la palabra "INFINIX" y caracteres especiales para comparar manzanas con manzanas
-        const nomLimpio = nombre.toUpperCase().replace(/INFINIX/g, '').replace(/[^A-Z0-9]/g, '');
-        
-        Object.keys(dataInventario).forEach(k => {
-            const kLimpio = k.toUpperCase().replace(/INFINIX/g, '').replace(/[^A-Z0-9]/g, '');
-            
-            // EL SECRETO: Usamos === (igualdad estricta) para que Note 60 no se robe lo de Note 60 PRO
-            if (kLimpio !== "" && nomLimpio === kLimpio) {
-                invModelo = parseInt(dataInventario[k]) || 0;
-            }
-        });
-        // ---------------------------------------------------------
-        // MAGIA ANTI-OBJECT (AQUÍ ESTÁ LA CORRECCIÓN)
-        diasSemana.forEach(dia => {
-            let ventaDia = 0;
-            if (dataSemana[dia] && dataSemana[dia].infinix && dataSemana[dia].infinix[key] !== undefined) {
-                let val = dataSemana[dia].infinix[key];
-                
-                // Detecta si es el formato nuevo {venta, target} o el viejo (solo número)
-                if (typeof val === 'object' && val !== null) {
-                    ventaDia = parseInt(val.venta) || 0;
-                    if (val.target) targetModelo = parseInt(val.target) || 0;
-                } else {
-                    ventaDia = parseInt(val) || 0;
+    if (typeof window.reportesGlobales !== 'undefined') {
+        const tiendaFormat = nombreTienda.toUpperCase().normalize("NFD").replace(/[^A-Z0-9Ñ]/g, '_');
+        for (const [docId, docData] of Object.entries(window.reportesGlobales)) {
+            if (docId.includes(tiendaFormat)) {
+                if (docData.asesorResponsable || docData.asesor) {
+                    ultimoAsesor = docData.asesorResponsable || docData.asesor;
                 }
             }
-            ventasPorDia[dia] = ventaDia;
-            sumaSemanaModelo += ventaDia;
-            totInfDia[dia] += ventaDia;
-        });
-        // ---------------------------------------------------------
+        }
+    }
+    document.getElementById('excel-asesor').textContent = ultimoAsesor.toUpperCase();
 
-        totInfWeek += sumaSemanaModelo; 
-        totInfTarget += targetModelo; 
-        totInfInv += invModelo;
+    // 2. LECTURA DIRECTA DE LAS CAJAS INDEPENDIENTES EN FIREBASE
+    let storeWeeksDataInfinix = {}; 
+    let storeWeeksDataCompetencia = {}; 
+    let ventasDiaActualInfinix = {};
+    let ventasDiaActualCompetencia = {};
+    const hoyDayIndex = (fechaActualSistema.getDay() + 6) % 7;
+
+    const listaModelos = typeof obtenerModelosCierre === 'function' ? obtenerModelosCierre() : [
+        { key: "gt-5-pro", name: "GT 5 PRO" },
+        { key: "infinix-smart-20", name: "Infinix Smart 20" },
+        { key: "infinix-hot-60i", name: "Infinix Hot 60i" },
+        { key: "infinix-hot-70", name: "Infinix HOT 70" },
+        { key: "infinix-hot-60-pro+", name: "Infinix Hot 60 Pro+" },
+        { key: "infinix-note-edge", name: "Infinix Note Edge" },
+        { key: "infinix-note-60", name: "Infinix Note 60" },
+        { key: "infinix-note-60-pro", name: "Infinix Note 60 PRO" },
+        { key: "infinix-note-60-ultra", name: "Infinix Note 60 Ultra" },
+        { key: "xpad-30e", name: "Xpad 30E" }
+    ];
+    const marcasCompetencia = typeof configCierreMarcas !== 'undefined' ? configCierreMarcas : ["INFINIX", "XIAOMI", "SAMSUNG", "MOTOROLA", "OPPO", "HONOR", "REALME", "TECNO", "VIVO", "ZTE"];
+
+    semanasMesArr.forEach(w => {
+        if(w) {
+            storeWeeksDataInfinix[w] = {};
+            storeWeeksDataCompetencia[w] = {};
+            listaModelos.forEach(m => storeWeeksDataInfinix[w][m.key] = 0);
+            marcasCompetencia.forEach(mar => storeWeeksDataCompetencia[w][mar.toUpperCase()] = 0);
+        }
+    });
+
+    listaModelos.forEach(m => ventasDiaActualInfinix[m.key] = {});
+    marcasCompetencia.forEach(mar => ventasDiaActualCompetencia[mar.toUpperCase()] = {});
+
+    window.targetsGlobales = {};
+    window.targetsCompetenciaGlobal = {};
+
+    // 🧠 EL ENRUTAMIENTO ESTRICTO: LA LECTURA MAESTRA
+    if (typeof window.reportesGlobales !== 'undefined') {
+        const tiendaFormat = nombreTienda.toUpperCase().normalize("NFD").replace(/[^A-Z0-9Ñ]/g, '_');
         
-        datosInfinixArray.push({ nombre, targetModelo, invModelo, ventasPorDia, sumaSemanaModelo });
+        for (const [docId, docData] of Object.entries(window.reportesGlobales)) {
+            if (docId.includes(tiendaFormat)) {
+                let docWeekStr = "";
+                const matchW = docId.match(/^(W\d+)_/);
+                if (matchW) {
+                    docWeekStr = matchW[1];
+                }
+
+                if (!docWeekStr || !semanasMesArr.includes(docWeekStr)) continue;
+
+                for (const [nodeKey, nodeVal] of Object.entries(docData)) {
+                    const isDayNode = diasNombres.some(d => d.normalize("NFD").replace(/[\u0300-\u036f]/g, "") === nodeKey.normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+                    const actualDayName = diasNombres.find(d => d.normalize("NFD").replace(/[\u0300-\u036f]/g, "") === nodeKey.normalize("NFD").replace(/[\u0300-\u036f]/g, "")) || nodeKey;
+
+                    if (isDayNode && nodeVal && typeof nodeVal === 'object') {
+                        
+                        // Procesar Infinix
+                        if (nodeVal.infinix) {
+                            for (const [mk, mVal] of Object.entries(nodeVal.infinix)) {
+                                let v = 0;
+                                if (typeof mVal === 'object') {
+                                    v = mVal.venta !== undefined && mVal.venta !== "" ? Number(mVal.venta) : 0;
+                                } else {
+                                    v = Number(mVal) || 0;
+                                }
+
+                                if (storeWeeksDataInfinix[docWeekStr] && storeWeeksDataInfinix[docWeekStr][mk] !== undefined) {
+                                    storeWeeksDataInfinix[docWeekStr][mk] += v;
+                                }
+                                
+                                if (typeof mVal === 'object' && mVal.target !== undefined && mVal.target !== '') {
+                                    window.targetsGlobales[mk] = Number(mVal.target) || 0;
+                                }
+
+                                if (docWeekStr === semanaActualStr) {
+                                    ventasDiaActualInfinix[mk][actualDayName] = v;
+                                }
+                            }
+                        }
+
+                        // Procesar Competencia
+                        if (nodeVal.competencia) {
+                            for (const [mk, mVal] of Object.entries(nodeVal.competencia)) {
+                                const upperMk = mk.toUpperCase().trim();
+                                
+                                let v = 0;
+                                if (typeof mVal === 'object') {
+                                    v = mVal.venta !== undefined && mVal.venta !== "" ? Number(mVal.venta) : 0;
+                                } else {
+                                    v = Number(mVal) || 0;
+                                }
+
+                                if (storeWeeksDataCompetencia[docWeekStr]) {
+                                    storeWeeksDataCompetencia[docWeekStr][upperMk] = (storeWeeksDataCompetencia[docWeekStr][upperMk] || 0) + v;
+                                }
+                                
+                                if (typeof mVal === 'object') {
+                                    if (mVal.target !== undefined && mVal.target !== '') {
+                                        window.targetsCompetenciaGlobal[upperMk + '_target'] = Number(mVal.target) || 0;
+                                    }
+                                    if (mVal.hc !== undefined && mVal.hc !== '') {
+                                        window.targetsCompetenciaGlobal[upperMk + '_hc'] = mVal.hc;
+                                    }
+                                }
+
+                                if (docWeekStr === semanaActualStr) {
+                                    ventasDiaActualCompetencia[upperMk][actualDayName] = v;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // 3. RENDERIZAR TABLA INFINIX
+    let totInfSemanas = {};
+    semanasMesArr.forEach(w => { if(w) totInfSemanas[w] = 0; });
+    let totInfDia = { 'Lunes':0, 'Martes':0, 'Miércoles':0, 'Jueves':0, 'Viernes':0, 'Sábado':0, 'Domingo':0 };
+    let totInfWeek = 0; let totInfTarget = 0; let totInfInv = 0; let totInfMonth = 0;
+    let datosInfinixArray = [];
+
+    listaModelos.forEach(modelo => {
+        const key = modelo.key;
+        const nombre = modelo.name;
+        
+        let sumaSemanaActual = storeWeeksDataInfinix[semanaActualStr]?.[key] || 0;
+        let targetModelo = window.targetsGlobales?.[key] || 0;
+        
+        let totalMesModelo = 0;
+        semanasMesArr.forEach(w => {
+            if (w) {
+                let sVal = storeWeeksDataInfinix[w]?.[key] || 0;
+                totalMesModelo += sVal;
+                totInfSemanas[w] += sVal;
+            }
+        });
+
+        let invModelo = 0;
+        const cleanUIName = nombre.toUpperCase().replace(/INFINIX/g, '').replace(/[^A-Z0-9]/g, '');
+        for (const [invKey, invVal] of Object.entries(dataInventario)) {
+            const invClean = invKey.toUpperCase().replace(/INFINIX/g, '').replace(/[^A-Z0-9]/g, '');
+            if (invClean !== "" && (invClean === cleanUIName || invClean.includes(cleanUIName) || cleanUIName.includes(invClean))) {
+                invModelo = Number(invVal) || 0;
+                break;
+            }
+        }
+
+        let ventasPorDiaFormateadas = {};
+        diasNombres.forEach((dia, idx) => {
+            let v = ventasDiaActualInfinix[key]?.[dia];
+            if (v === undefined) v = 0;
+
+            if (idx > hoyDayIndex) {
+                ventasPorDiaFormateadas[dia] = ""; 
+            } else {
+                ventasPorDiaFormateadas[dia] = v; 
+                totInfDia[dia] += Number(v) || 0;
+            }
+        });
+
+        totInfWeek += sumaSemanaActual;
+        totInfTarget += targetModelo;
+        totInfInv += invModelo;
+        totInfMonth += totalMesModelo;
+
+        let semanasDataModelo = {};
+        semanasMesArr.forEach(w => { if(w) semanasDataModelo[w] = storeWeeksDataInfinix[w]?.[key] || 0; });
+
+        datosInfinixArray.push({ nombre, targetModelo, invModelo, semanasData: semanasDataModelo, ventasPorDia: ventasPorDiaFormateadas, sumaSemanaActual, totalMesModelo });
     });
 
     const tbodyInfinix = document.getElementById('excel-tabla-infinix-body');
     let htmlInfinix = '';
-    
+
     datosInfinixArray.forEach(dato => {
         let filaDiasHtml = '';
-        diasSemana.forEach(dia => {
+        diasNombres.forEach((dia) => {
             let v = dato.ventasPorDia[dia];
-            filaDiasHtml += `<td style="border: 1px solid #30363d; padding: 4px; color: ${v > 0 ? '#00ff66' : 'white'};">${v}</td>`;
+            let displayVal = (v === "") ? "" : v;
+            filaDiasHtml += `<td style="border: 1px solid #30363d; padding: 4px; color: ${displayVal !== "" && displayVal !== 0 ? '#00ff66' : 'white'};">${displayVal}</td>`;
         });
 
-        let cumpModelo = dato.targetModelo > 0 ? Math.round((dato.sumaSemanaModelo / dato.targetModelo) * 100) : 0;
-        let shareInf = totInfWeek > 0 ? Math.round((dato.sumaSemanaModelo / totInfWeek) * 100) : 0;
+        let semanasCeldasHtml = '';
+        semanasMesArr.forEach(w => {
+            if (!w) {
+                semanasCeldasHtml += `<td style="border: 1px solid #30363d; padding: 4px;">-</td>`;
+            } else {
+                let sVal = dato.semanasData[w] || 0;
+                semanasCeldasHtml += `<td style="border: 1px solid #30363d; padding: 4px; color: ${sVal > 0 ? 'white' : '#8b949e'};">${sVal > 0 ? sVal : '-'}</td>`;
+            }
+        });
+
+        let cumpModelo = dato.targetModelo > 0 ? Math.round((dato.sumaSemanaActual / dato.targetModelo) * 100) : 0;
+        let shareInf = totInfWeek > 0 ? Math.round((dato.sumaSemanaActual / totInfWeek) * 100) : 0;
+        let shareMonth = totInfMonth > 0 ? Math.round((dato.totalMesModelo / totInfMonth) * 100) : 0;
 
         htmlInfinix += `
             <tr style="background: transparent; color: #8b949e; border-bottom: 1px solid #30363d;">
                 <td style="border: 1px solid #30363d; padding: 4px; text-align: left; color: white;">${dato.nombre}</td>
-                <td style="border: 1px solid #30363d; padding: 4px;">${dato.targetModelo}</td>
+                <td style="border: 1px solid #30363d; padding: 4px;">${dato.targetModelo || 0}</td>
                 <td style="border: 1px solid #30363d; padding: 4px;">${dato.invModelo}</td>
-                <td style="border: 1px solid #30363d; padding: 4px; color: #00ff66; font-weight: bold;">${dato.sumaSemanaModelo}</td>
-                <td style="border: 1px solid #30363d; padding: 4px;">-</td><td style="border: 1px solid #30363d;">-</td><td style="border: 1px solid #30363d;">-</td><td style="border: 1px solid #30363d;">-</td>
+                ${semanasCeldasHtml}
                 ${filaDiasHtml}
-                <td style="border: 1px solid #30363d; padding: 4px; color: #00ff66; font-weight: bold;">${dato.sumaSemanaModelo}</td>
+                <td style="border: 1px solid #30363d; padding: 4px; color: #00ff66; font-weight: bold;">${dato.sumaSemanaActual}</td>
                 <td style="border: 1px solid #30363d; padding: 4px;">${shareInf}%</td>
-                <td style="border: 1px solid #30363d; padding: 4px; color: #38bdf8;">${dato.sumaSemanaModelo}</td>
+                <td style="border: 1px solid #30363d; padding: 4px; color: #38bdf8;">${dato.totalMesModelo}</td>
                 <td style="border: 1px solid #30363d; padding: 4px; color: #38bdf8;">${cumpModelo}%</td>
-                <td style="border: 1px solid #30363d; padding: 4px;">${shareInf}%</td>
+                <td style="border: 1px solid #30363d; padding: 4px;">${shareMonth}%</td>
             </tr>
         `;
     });
     tbodyInfinix.innerHTML = htmlInfinix;
 
-    // Totales Infinix
+    // 🔥 SOLUCIÓN 1: CÁLCULO ESTRICTO DE COLUMNAS INFINIX (W31, W32, etc.) DESDE LAS FILAS 🔥
+    semanasMesArr.forEach((w, idx) => {
+        let sumCol = 0;
+        if (w === semanaActualStr) {
+            sumCol = totInfWeek; // Espejo absoluto de T. WEEK para la semana en curso
+        } else {
+            datosInfinixArray.forEach(dato => { sumCol += (dato.semanasData[w] || 0); });
+        }
+        const cellId = `excel-inf-tot-w${idx+1}`;
+        const el = document.getElementById(cellId);
+        if(el) el.textContent = sumCol > 0 ? sumCol : '-';
+    });
+
     document.getElementById('excel-inf-tot-target').textContent = totInfTarget;
     document.getElementById('excel-inf-tot-inv').textContent = totInfInv;
-    if(document.getElementById('excel-inf-tot-w1')) document.getElementById('excel-inf-tot-w1').textContent = totInfWeek;
-    document.getElementById('excel-inf-tot-l').textContent = totInfDia['Lunes'];
-    document.getElementById('excel-inf-tot-m1').textContent = totInfDia['Martes'];
-    document.getElementById('excel-inf-tot-m2').textContent = totInfDia['Miércoles'];
-    document.getElementById('excel-inf-tot-j').textContent = totInfDia['Jueves'];
-    document.getElementById('excel-inf-tot-v').textContent = totInfDia['Viernes'];
-    document.getElementById('excel-inf-tot-s').textContent = totInfDia['Sábado'];
-    document.getElementById('excel-inf-tot-d').textContent = totInfDia['Domingo'];
+    const hoyDayIndexTot = (fechaActualSistema.getDay() + 6) % 7; 
+    diasNombres.forEach((dia, idx) => {
+        const mapIds = { 'Lunes':'excel-inf-tot-l', 'Martes':'excel-inf-tot-m1', 'Miércoles':'excel-inf-tot-m2', 'Jueves':'excel-inf-tot-j', 'Viernes':'excel-inf-tot-v', 'Sábado':'excel-inf-tot-s', 'Domingo':'excel-inf-tot-d' };
+        const elId = mapIds[dia];
+        if(elId && document.getElementById(elId)) {
+            let valD = totInfDia[dia];
+            document.getElementById(elId).textContent = idx > hoyDayIndexTot ? "" : valD;
+        }
+    });
     document.getElementById('excel-inf-tot-week').textContent = totInfWeek;
-    document.getElementById('excel-inf-tot-month').textContent = totInfWeek;
+    document.getElementById('excel-inf-tot-month').textContent = totInfMonth;
     document.getElementById('excel-inf-tot-cump').textContent = totInfTarget > 0 ? Math.round((totInfWeek / totInfTarget) * 100) + '%' : '0%';
 
-
-    // ---- PRE-CÁLCULOS COMPETENCIA ----
+    // 4. RENDERIZAR TABLA COMPETENCIA / MERCADO
+    let totMercadoSemanas = {};
+    semanasMesArr.forEach(w => { if(w) totMercadoSemanas[w] = 0; });
     let totMercadoDia = { 'Lunes':0, 'Martes':0, 'Miércoles':0, 'Jueves':0, 'Viernes':0, 'Sábado':0, 'Domingo':0 };
-    let totMercadoWeek = 0; let totMercadoTarget = 0; let totMercadoHC = 0;
+    let totMercadoWeek = 0; let totMercadoTarget = 0; let totMercadoHC = 0; let totMercadoMonth = 0;
     let datosMarcasArray = [];
-    const marcasCompetencia = configCierreMarcas;
 
     marcasCompetencia.forEach(marca => {
-        let sumaSemanaMarca = 0; let hcUltimo = 0; let targetUltimo = 0; let ventasPorDia = {};
-
-        diasSemana.forEach(dia => {
-            let ventaDia = 0;
-            if (dataSemana[dia] && dataSemana[dia].competencia && dataSemana[dia].competencia[marca]) {
-                ventaDia = dataSemana[dia].competencia[marca].venta || 0;
-                if (dataSemana[dia].competencia[marca].hc) hcUltimo = parseInt(dataSemana[dia].competencia[marca].hc) || 0;
-                if (dataSemana[dia].competencia[marca].target) targetUltimo = parseInt(dataSemana[dia].competencia[marca].target) || 0;
-            }
-            ventasPorDia[dia] = ventaDia;
-            sumaSemanaMarca += ventaDia;
-            totMercadoDia[dia] += ventaDia;
-        });
+        const upperMarca = marca.toUpperCase();
         
-        totMercadoWeek += sumaSemanaMarca; totMercadoTarget += targetUltimo; totMercadoHC += hcUltimo;
-        datosMarcasArray.push({ marca, hc: hcUltimo, target: targetUltimo, ventasPorDia, sumaSemanaMarca });
+        let sumaSemanaMarca = upperMarca === 'INFINIX' ? totInfWeek : (storeWeeksDataCompetencia[semanaActualStr]?.[upperMarca] || 0);
+        let hcUltimo = window.targetsCompetenciaGlobal?.[upperMarca + '_hc'] || 0;
+        let targetUltimo = upperMarca === 'INFINIX' ? totInfTarget : (window.targetsCompetenciaGlobal?.[upperMarca + '_target'] || 0);
+
+        let totalMesMarca = 0;
+        semanasMesArr.forEach(w => {
+            if (w) {
+                let sVal = upperMarca === 'INFINIX' ? (totInfSemanas[w] || 0) : (storeWeeksDataCompetencia[w]?.[upperMarca] || 0);
+                if (w === semanaActualStr) sVal = sumaSemanaMarca; // Asegurar consistencia de la semana actual
+                totalMesMarca += sVal;
+                totMercadoSemanas[w] = (totMercadoSemanas[w] || 0) + sVal;
+            }
+        });
+
+        let ventasPorDiaFormateadas = {};
+        diasNombres.forEach((dia, idx) => {
+            let v = upperMarca === 'INFINIX' ? totInfDia[dia] : (ventasDiaActualCompetencia[upperMarca]?.[dia] || 0);
+            if (idx > hoyDayIndex) {
+                ventasPorDiaFormateadas[dia] = "";
+            } else {
+                ventasPorDiaFormateadas[dia] = v;
+                // 🔥 SOLUCIÓN 2: INFINIX AHORA SUMA EN EL TOTAL DEL DÍA (El "if" desapareció) 🔥
+                totMercadoDia[dia] += Number(v) || 0; 
+            }
+        });
+
+        totMercadoWeek += sumaSemanaMarca;
+        totMercadoTarget += targetUltimo;
+        
+        let hcNum = isNaN(Number(hcUltimo)) ? 0 : Number(hcUltimo);
+        totMercadoHC += hcNum;
+        totMercadoMonth += totalMesMarca;
+
+        let semanasDataMarca = {};
+        semanasMesArr.forEach(w => { 
+            if(w) {
+                let sVal = upperMarca === 'INFINIX' ? (totInfSemanas[w] || 0) : (storeWeeksDataCompetencia[w]?.[upperMarca] || 0);
+                if (w === semanaActualStr) sVal = sumaSemanaMarca;
+                semanasDataMarca[w] = sVal;
+            }
+        });
+
+        datosMarcasArray.push({ marca: upperMarca, hc: hcUltimo, target: targetUltimo, semanasData: semanasDataMarca, ventasPorDia: ventasPorDiaFormateadas, sumaSemanaMarca, totalMesMarca });
     });
 
     const tbodyMarcas = document.getElementById('excel-tabla-marcas-body');
@@ -8722,80 +8996,100 @@ function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = 
         let filaDiasHtml = '';
         const isInf = dato.marca === 'INFINIX';
 
-        diasSemana.forEach(dia => {
+        diasNombres.forEach((dia) => {
             let v = dato.ventasPorDia[dia];
-            // Aquí está la magia: Si es Infinix, la letra del día siempre es verde. Si no, blanca o gris.
-            let colorTexto = isInf ? '#00ff66' : (v > 0 ? 'white' : '#8b949e');
-            filaDiasHtml += `<td style="border: 1px solid #30363d; padding: 4px; color: ${colorTexto};">${v}</td>`;
+            let displayVal = (v === "") ? "" : v;
+            let colorTexto = isInf ? '#00ff66' : (displayVal !== "" && displayVal !== 0 ? 'white' : '#8b949e');
+            filaDiasHtml += `<td style="border: 1px solid #30363d; padding: 4px; color: ${colorTexto};">${displayVal}</td>`;
         });
 
-        const share = totMercadoWeek > 0 ? Math.round((dato.sumaSemanaMarca / totMercadoWeek) * 100) : 0;
-        const roi = dato.hc > 0 ? (dato.sumaSemanaMarca / dato.hc).toFixed(1) : 0;
+        let semanasCeldasHtml = '';
+        semanasMesArr.forEach(w => {
+            if (!w) {
+                semanasCeldasHtml += `<td style="border: 1px solid #30363d; padding: 4px;">-</td>`;
+            } else {
+                let sVal = dato.semanasData[w] || 0;
+                semanasCeldasHtml += `<td style="border: 1px solid #30363d; padding: 4px; color: ${sVal > 0 ? 'white' : '#8b949e'};">${sVal > 0 ? sVal : '-'}</td>`;
+            }
+        });
+
+        const shareWeek = totMercadoWeek > 0 ? Math.round((dato.sumaSemanaMarca / totMercadoWeek) * 100) : 0;
+        const shareMonth = totMercadoMonth > 0 ? Math.round((dato.totalMesMarca / totMercadoMonth) * 100) : 0;
+        
+        let hcNum = isNaN(Number(dato.hc)) ? 0 : Number(dato.hc);
+        const roi = hcNum > 0 ? (dato.sumaSemanaMarca / hcNum).toFixed(1) : 0;
 
         htmlMarcas += `
             <tr style="background: ${isInf ? 'rgba(0,255,102,0.1)' : 'transparent'}; color: ${isInf ? '#00ff66' : '#8b949e'}; font-weight: ${isInf ? 'bold' : 'normal'}; border-bottom: 1px solid #30363d;">
                 <td style="border: 1px solid #30363d; padding: 4px; text-align: left;">${dato.marca}</td>
-                <td style="border: 1px solid #30363d; padding: 4px;">${dato.target}</td>
+                <td style="border: 1px solid #30363d; padding: 4px;">${dato.target || 0}</td>
                 <td style="border: 1px solid #30363d; padding: 4px;">${dato.hc}</td>
-                <td style="border: 1px solid #30363d; padding: 4px; color: ${isInf ? '#00ff66' : 'white'}; font-weight: ${isInf ? 'bold' : 'normal'};">${dato.sumaSemanaMarca}</td>
-                <td style="border: 1px solid #30363d; padding: 4px;">-</td><td style="border: 1px solid #30363d;">-</td><td style="border: 1px solid #30363d;">-</td><td style="border: 1px solid #30363d;">-</td>
+                ${semanasCeldasHtml}
                 ${filaDiasHtml}
                 <td style="border: 1px solid #30363d; padding: 4px; color: #00ff66;">${dato.sumaSemanaMarca}</td>
-                <td style="border: 1px solid #30363d; padding: 4px; color: #00ff66;">${share}%</td>
-                <td style="border: 1px solid #30363d; padding: 4px; color: #38bdf8;">${dato.sumaSemanaMarca}</td>
+                <td style="border: 1px solid #30363d; padding: 4px; color: #00ff66;">${shareWeek}%</td>
+                <td style="border: 1px solid #30363d; padding: 4px; color: #38bdf8;">${dato.totalMesMarca}</td>
                 <td style="border: 1px solid #30363d; padding: 4px; color: #38bdf8;">${roi}</td>
-                <td style="border: 1px solid #30363d; padding: 4px; color: #38bdf8;">${share}%</td>
+                <td style="border: 1px solid #30363d; padding: 4px; color: #38bdf8;">${shareMonth}%</td>
             </tr>
         `;
     });
     tbodyMarcas.innerHTML = htmlMarcas;
 
-    // Totales Mercado
+    // 🔥 SOLUCIÓN 1.2: CÁLCULO ESTRICTO DE COLUMNAS MERCADO (W31, W32, etc.) DESDE LAS FILAS 🔥
+    semanasMesArr.forEach((w, idx) => {
+        let sumCol = 0;
+        if (w === semanaActualStr) {
+            sumCol = totMercadoWeek; // Espejo absoluto de T. WEEK para la semana en curso
+        } else {
+            datosMarcasArray.forEach(dato => { sumCol += (dato.semanasData[w] || 0); });
+        }
+        
+        const cellId = `excel-mercado-tot-w${idx+1}`;
+        const el = document.getElementById(cellId);
+        if(el) el.textContent = sumCol > 0 ? sumCol : '-';
+    });
+
     document.getElementById('excel-mercado-tot-target').textContent = totMercadoTarget;
     document.getElementById('excel-mercado-tot-hc').textContent = totMercadoHC;
-    if(document.getElementById('excel-mercado-tot-w1')) document.getElementById('excel-mercado-tot-w1').textContent = totMercadoWeek;
-    document.getElementById('excel-mercado-tot-l').textContent = totMercadoDia['Lunes'];
-    document.getElementById('excel-mercado-tot-m1').textContent = totMercadoDia['Martes'];
-    document.getElementById('excel-mercado-tot-m2').textContent = totMercadoDia['Miércoles'];
-    document.getElementById('excel-mercado-tot-j').textContent = totMercadoDia['Jueves'];
-    document.getElementById('excel-mercado-tot-v').textContent = totMercadoDia['Viernes'];
-    document.getElementById('excel-mercado-tot-s').textContent = totMercadoDia['Sábado'];
-    document.getElementById('excel-mercado-tot-d').textContent = totMercadoDia['Domingo'];
+    diasNombres.forEach((dia, idx) => {
+        const mapIds = { 'Lunes':'excel-mercado-tot-l', 'Martes':'excel-mercado-tot-m1', 'Miércoles':'excel-mercado-tot-m2', 'Jueves':'excel-mercado-tot-j', 'Viernes':'excel-mercado-tot-v', 'Sábado':'excel-mercado-tot-s', 'Domingo':'excel-mercado-tot-d' };
+        const elId = mapIds[dia];
+        if(elId && document.getElementById(elId)) {
+            let valD = totMercadoDia[dia];
+            document.getElementById(elId).textContent = idx > hoyDayIndex ? "" : valD;
+        }
+    });
     document.getElementById('excel-mercado-tot-week').textContent = totMercadoWeek;
-    document.getElementById('excel-mercado-tot-month').textContent = totMercadoWeek;
+    document.getElementById('excel-mercado-tot-month').textContent = totMercadoMonth;
     document.getElementById('excel-mercado-tot-roi').textContent = totMercadoHC > 0 ? (totMercadoWeek / totMercadoHC).toFixed(1) : 0;
 
-    // 4. CAPTURAR Y DESCARGAR
+    // 5. CAPTURAR TARJETA VISUAL Y DESCARGAR IMAGEN PNG
     const tarjetaVisual = document.getElementById('card-cierre-exportable');
-    tarjetaVisual.style.display = 'block'; 
-    
-    setTimeout(() => {
-        html2canvas(tarjetaVisual, { backgroundColor: '#0d1117', scale: 2 }).then(canvas => {
-            tarjetaVisual.style.display = 'none';
-            const nombreArchivo = `Cierre_${nombreTienda.replace(/\s+/g, '_')}_W${numSemanaActual}.png`;
+    if(tarjetaVisual) {
+        tarjetaVisual.style.display = 'block'; 
+        setTimeout(() => {
+            html2canvas(tarjetaVisual, { backgroundColor: '#0d1117', scale: 2 }).then(canvas => {
+                tarjetaVisual.style.display = 'none';
+                const nombreArchivo = `Cierre_${nombreTienda.replace(/\s+/g, '_')}_${semanaActualStr}.png`;
 
-            canvas.toBlob(blob => {
-                const urlBlob = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                
-                link.href = urlBlob;
-                link.download = nombreArchivo;
-                
-                document.body.appendChild(link);
-                link.click();
-                
-                document.body.removeChild(link);
-                setTimeout(() => URL.revokeObjectURL(urlBlob), 1000);
-
-            }, 'image/png');
-
-        }).catch(err => {
-            console.error("Error generando imagen:", err);
-            tarjetaVisual.style.display = 'none';
-        });
-    }, 400);
+                canvas.toBlob(blob => {
+                    const urlBlob = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = urlBlob;
+                    link.download = nombreArchivo;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    setTimeout(() => URL.revokeObjectURL(urlBlob), 1000);
+                }, 'image/png');
+            }).catch(err => {
+                console.error("Error generando imagen PNG de cierre:", err);
+                tarjetaVisual.style.display = 'none';
+            });
+        }, 400);
+    }
 }
-
 // ==========================================
 // MOTOR DE ROLES Y PERMISOS (Actualizado)
 // ==========================================
@@ -9584,28 +9878,56 @@ function dispararDescargaReporte(docId) {
 // =================================================================
 
 async function descargarExcelConsolidadoCierres() {
-   
-    // 🚀 Definimos las variables de la semana de manera segura y estricta para agosto (W32)
-    const currentWeekNum = 32;
-    const semanaActualStr = "W32";
-
-    function parseFechaStr(fechaStr) {
-        const p = fechaStr.split(/[\/\-]/);
-        if(p.length !== 3) return null;
-        return new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0]), 12, 0, 0);
+    
+    // 1. FUNCIONES AUXILIARES PRIMERO (Evita que el botón se "muera" por ReferenceError)
+    function getIsoWeek(dateObjVar) {
+        const t = new Date(dateObjVar.getTime());
+        t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
+        const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+        return Math.ceil((((t - yearStart) / 86400000) + 1) / 7);
     }
 
+    function parseFechaStr(fechaStr) {
+        if (!fechaStr) return null;
+        const p = fechaStr.split(/[\/\-]/);
+        if(p.length !== 3) return null;
+        if (p[0].length === 4) return new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]), 12, 0, 0);
+        return new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0]), 12, 0, 0);
+    }
+    
+    function formatearTiendaParaId(nombre) {
+        return nombre.toUpperCase().normalize("NFD").replace(/[^A-Z0-9Ñ]/g, '_');
+    }
+
+    // 2. CONFIGURACIÓN INICIAL DE FECHAS
+    const fechaInput = document.getElementById('filtro-fecha-cierre');
+    const fechaIso = fechaInput && fechaInput.value ? fechaInput.value : new Date().toISOString().split('T')[0];
+    
     const dateObj = new Date(fechaIso + 'T12:00:00');
     const mesActualNombre = dateObj.toLocaleString('es-ES', { month: 'long' }).toUpperCase();
+    
+    const currentWeekNum = getIsoWeek(dateObj);
+    const semanaActualStr = `W${currentWeekNum}`;
+
+    // 3. CONTROL DEL BOTÓN UI
     const btnDescarga = document.querySelector('button[onclick="descargarExcelConsolidadoCierres()"]');
     const textoOriginal = btnDescarga ? btnDescarga.innerHTML : 'Descargar Excel';
+    
+    if (typeof ExcelJS === 'undefined') {
+        alert("⚠️ La librería de Excel aún se está cargando. Por favor, espera unos segundos e intenta de nuevo.");
+        return;
+    }
+
     if(btnDescarga) {
         btnDescarga.innerHTML = '⏳ Construyendo Consolidado Inteligente...';
         btnDescarga.disabled = true;
     }
 
     try {
-        // 1. Cargar bases de datos
+        const COLECCION_CIERRES = "cierre_ventas_nacional";
+        const ID_SELECTOR_TIENDA = "filtro-tienda-admin";
+
+        // 4. Cargar bases de datos
         if (!window.reportesGlobales || Object.keys(window.reportesGlobales).length === 0) {
             const snap = await db.collection(COLECCION_CIERRES).get();
             window.reportesGlobales = {};
@@ -9624,47 +9946,24 @@ async function descargarExcelConsolidadoCierres() {
 
         const tiendaSelect = document.getElementById(ID_SELECTOR_TIENDA); 
         const tiendaFiltro = tiendaSelect && tiendaSelect.value ? tiendaSelect.value : 'ALL';
-        const fechaInput = document.getElementById('filtro-fecha-cierre');
-        const fechaIso = fechaInput && fechaInput.value ? fechaInput.value : new Date().toISOString().split('T')[0];
         
-        // 🧠 CEREBRO DE TIEMPO (Cálculo de ISO Week)
-        function getIsoWeek(dateObj) {
-            const t = new Date(dateObj.getTime());
-            t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
-            const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
-            return Math.ceil((((t - yearStart) / 86400000) + 1) / 7);
-        }
-
-        function parseFechaStr(fechaStr) {
-            if (!fechaStr) return null;
-            const p = fechaStr.split(/[\/\-]/);
-            if(p.length !== 3) return null;
-            return new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0]), 12, 0, 0);
-        }
-
-        const dateObj = new Date(fechaIso + 'T12:00:00');
-        const mesActualNombre = dateObj.toLocaleString('es-ES', { month: 'long' }).toUpperCase();
-        
-        // Calcular las semanas únicas del mes
+        // Semanas únicas del mes
         const uniqueWeeks = new Set();
         const lastDayOfMonth = new Date(dateObj.getFullYear(), dateObj.getMonth() + 1, 0).getDate();
         for (let d = 1; d <= lastDayOfMonth; d++) {
             uniqueWeeks.add(getIsoWeek(new Date(dateObj.getFullYear(), dateObj.getMonth(), d, 12, 0, 0)));
         }
         
-        let semanasMes = Array.from(uniqueWeeks).map(w => `W${w}`).slice(0, 5);
+        let semanasMes = Array.from(uniqueWeeks).sort((a,b)=>a-b).map(w => `W${w}`).slice(0, 5);
         while (semanasMes.length < 5) semanasMes.push(""); 
 
-        const currentWeekNum = getIsoWeek(dateObj);
-        const semanaActualStr = `W${currentWeekNum}`;
-
-        // Calcular fechas exactas de la semana actual (Lunes a Domingo)
+        // Calcular fechas exactas de la semana actual
         const currentWeekDates = {};
         const dayOfWeek = dateObj.getDay() || 7; 
         const monday = new Date(dateObj.getTime());
         monday.setDate(monday.getDate() - dayOfWeek + 1);
         
-        const diasNombres = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
+        const diasNombres = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
         for(let i=0; i<7; i++) {
             const t = new Date(monday.getTime());
             t.setDate(t.getDate() + i);
@@ -9672,32 +9971,43 @@ async function descargarExcelConsolidadoCierres() {
             currentWeekDates[k] = diasNombres[i];
         }
 
-        const zonaObjetivo = "Nariño & Santander"; 
-        let listaTiendas = (tiendaFiltro === 'ALL' || tiendaFiltro === 'Consolidado General') ? (diccionarioTiendasZonas[zonaObjetivo] || []) : [tiendaFiltro];
+        const zonaObjetivo = typeof currentUserZone !== 'undefined' ? currentUserZone.toUpperCase() : "SANTANDER"; 
+        
+        let listaTiendas = [];
+        if (tiendaFiltro === 'ALL' || tiendaFiltro === 'Consolidado General') {
+            const setTiendas = new Set();
+            for (const docData of Object.values(window.reportesGlobales)) {
+                if (docData.tienda) setTiendas.add(docData.tienda);
+            }
+            listaTiendas = Array.from(setTiendas);
+            if(listaTiendas.length === 0) listaTiendas = ["TIENDA GENERAL"];
+        } else {
+            listaTiendas = [tiendaFiltro];
+        }
 
-        const diasSemanaMap = { 'Lunes': 11, 'Martes': 12, 'Miercoles': 13, 'Jueves': 14, 'Viernes': 15, 'Sabado': 16, 'Domingo': 17 };
+        const diasSemanaMap = { 'Lunes': 11, 'Martes': 12, 'Miércoles': 13, 'Jueves': 14, 'Viernes': 15, 'Sábado': 16, 'Domingo': 17 };
 
-        const modelosInfinix = [
-            { nombreUI: "GT 5 PRO", dbKey: "gt-5-pro" },
-            { nombreUI: "Infinix Smart 20", dbKey: "infinix-smart-20" },
-            { nombreUI: "Infinix Hot 60i", dbKey: "infinix-hot-60i" },
-            { nombreUI: "Infinix Hot 70", dbKey: "infinix-hot-70" },
-            { nombreUI: "Infinix Hot 60 Pro+", dbKey: "infinix-hot-60-pro+" },
-            { nombreUI: "Infinix Note Edge", dbKey: "infinix-note-edge" },
-            { nombreUI: "Infinix Note 60", dbKey: "infinix-note-60" },
-            { nombreUI: "Infinix Note 60 Pro", dbKey: "infinix-note-60-pro" },
-            { nombreUI: "Infinix Note 60 Ultra", dbKey: "infinix-note-60-ultra" },
-            { nombreUI: "Xpad 30 E", dbKey: "xpad-30e" }
+        const modelosInfinix = typeof obtenerModelosCierre === 'function' ? obtenerModelosCierre() : [
+            { key: "gt-5-pro", name: "GT 5 PRO" },
+            { key: "infinix-smart-20", name: "Infinix Smart 20" },
+            { key: "infinix-hot-60i", name: "Infinix Hot 60i" },
+            { key: "infinix-hot-70", name: "Infinix HOT 70" },
+            { key: "infinix-hot-60-pro+", name: "Infinix Hot 60 Pro+" },
+            { key: "infinix-note-edge", name: "Infinix Note Edge" },
+            { key: "infinix-note-60", name: "Infinix Note 60" },
+            { key: "infinix-note-60-pro", name: "Infinix Note 60 PRO" },
+            { key: "infinix-note-60-ultra", name: "Infinix Note 60 Ultra" },
+            { key: "xpad-30e", name: "Xpad 30E" }
         ];
 
-        const marcasCompetencia = ["INFINIX", "XIAOMI", "HONOR", "TECNO", "OPPO", "REALME", "VIVO", "MOTOROLA", "SAMSUNG", "ZTE"]; 
+        const marcasCompetencia = typeof configCierreMarcas !== 'undefined' ? configCierreMarcas : ["INFINIX", "XIAOMI", "SAMSUNG", "MOTOROLA", "OPPO", "HONOR", "REALME", "TECNO", "VIVO", "ZTE"];
 
         for (const nombreTienda of listaTiendas) {
             const nombrePestana = nombreTienda.substring(0, 31).replace(/[\\\/*\?:\[\]]/g, '');
             const ws = wb.addWorksheet(nombrePestana);
             
             ws.columns = [
-                { width: 3 },  { width: 12 }, { width: 22 }, { width: 8 },  { width: 8 }, 
+                { width: 3 },  { width: 14 }, { width: 22 }, { width: 8 },  { width: 8 }, 
                 { width: 6 }, { width: 6 }, { width: 6 }, { width: 6 }, { width: 6 }, 
                 { width: 8 }, { width: 8 }, { width: 8 }, { width: 8 }, { width: 8 }, { width: 8 }, { width: 8 }, 
                 { width: 10 }, { width: 10 }, { width: 10 }, { width: 10 }, { width: 10 }
@@ -9711,8 +10021,11 @@ async function descargarExcelConsolidadoCierres() {
 
             const tiendaFormat = formatearTiendaParaId(nombreTienda);
             
-            // 🧠 MOTOR DE AGREGACIÓN PURA (Ignora los nombres de documentos, se basa en la fecha real)
+            // 🧠 MOTOR DE AGREGACIÓN PURIFICADO
             const storeData = { modelos: {}, marcas: {}, asesor: '---', cadena: 'INFINIX' };
+            
+            modelosInfinix.forEach(m => storeData.modelos[m.key || m.dbKey] = {});
+            marcasCompetencia.forEach(m => storeData.marcas[m.toUpperCase()] = {});
 
             for (const [docId, docData] of Object.entries(window.reportesGlobales)) {
                 if (docId.includes(tiendaFormat)) {
@@ -9732,11 +10045,19 @@ async function descargarExcelConsolidadoCierres() {
                             if (nodeVal.infinix) {
                                 for (const [mk, mVal] of Object.entries(nodeVal.infinix)) {
                                     if (!storeData.modelos[mk]) storeData.modelos[mk] = {};
-                                    const v = Number(mVal.venta) || 0;
+                                    
+                                    // 🔥 CORRECCIÓN 1: Venta extraída estrictamente sin cruzarse con HC
+                                    let v = 0;
+                                    if (typeof mVal === 'object') {
+                                        v = mVal.venta !== undefined && mVal.venta !== "" ? Number(mVal.venta) : 0;
+                                    } else {
+                                        v = Number(mVal) || 0;
+                                    }
+                                    
                                     if (isCurrentWeek) {
                                         const dayName = currentWeekDates[fStrKey];
                                         storeData.modelos[mk][dayName] = (storeData.modelos[mk][dayName] || 0) + v;
-                                        if (mVal.target) storeData.modelos[mk].target = Number(mVal.target);
+                                        if (typeof mVal === 'object' && mVal.target !== undefined && mVal.target !== "") storeData.modelos[mk].target = Number(mVal.target);
                                     }
                                     if (isMonthWeek && !isCurrentWeek) {
                                         storeData.modelos[mk][nodeWeekStr] = (storeData.modelos[mk][nodeWeekStr] || 0) + v;
@@ -9748,12 +10069,22 @@ async function descargarExcelConsolidadoCierres() {
                                 for (const [mk, mVal] of Object.entries(nodeVal.competencia)) {
                                     const upperMk = mk.toUpperCase();
                                     if (!storeData.marcas[upperMk]) storeData.marcas[upperMk] = {};
-                                    const v = Number(mVal.venta) || 0;
+                                    
+                                    // 🔥 CORRECCIÓN 2: Venta extraída estrictamente sin cruzarse con HC
+                                    let v = 0;
+                                    if (typeof mVal === 'object') {
+                                        v = mVal.venta !== undefined && mVal.venta !== "" ? Number(mVal.venta) : 0;
+                                    } else {
+                                        v = Number(mVal) || 0;
+                                    }
+                                    
                                     if (isCurrentWeek) {
                                         const dayName = currentWeekDates[fStrKey];
                                         storeData.marcas[upperMk][dayName] = (storeData.marcas[upperMk][dayName] || 0) + v;
-                                        if (mVal.target) storeData.marcas[upperMk].target = Number(mVal.target);
-                                        if (mVal.hc) storeData.marcas[upperMk].hc = Number(mVal.hc);
+                                        if (typeof mVal === 'object') {
+                                            if (mVal.target !== undefined && mVal.target !== "") storeData.marcas[upperMk].target = Number(mVal.target);
+                                            if (mVal.hc !== undefined && mVal.hc !== "") storeData.marcas[upperMk].hc = mVal.hc;
+                                        }
                                     }
                                     if (isMonthWeek && !isCurrentWeek) {
                                         storeData.marcas[upperMk][nodeWeekStr] = (storeData.marcas[upperMk][nodeWeekStr] || 0) + v;
@@ -9793,7 +10124,7 @@ async function descargarExcelConsolidadoCierres() {
             ws.mergeCells('C4:C5'); ws.getCell('C4').value = 'MODELO';
             ws.mergeCells('D4:D5'); ws.getCell('D4').value = 'Target';
             ws.mergeCells('E4:E5'); ws.getCell('E4').value = 'INV';
-            ws.mergeCells('F4:J4'); ws.getCell('F4').value = 'SEMANAS DEL MES'; ws.getCell('F4').fill = fillOrange;
+            ws.mergeCells('F4:J4'); ws.getCell('F4').value = 'SEMANAS ANTERIORES'; ws.getCell('F4').fill = fillOrange;
             ws.mergeCells('K4:Q4'); ws.getCell('K4').value = `SEMANA ACTUAL (${semanaActualStr})`; ws.getCell('K4').fill = fillGreen;
             ws.mergeCells('R4:V4'); ws.getCell('R4').value = 'RESULTADO GENERAL'; ws.getCell('R4').fill = fillGreen;
 
@@ -9812,19 +10143,19 @@ async function descargarExcelConsolidadoCierres() {
             let startRow = 6;
             ws.mergeCells(`B${startRow}:B${startRow + modelosInfinix.length - 1}`);
             const cellMes = ws.getCell(`B${startRow}`);
-            cellMes.value = 'INFINIX'; cellMes.font = fontBold; cellMes.alignment = alignCenter; cellMes.border = borderAll;
+            cellMes.value = 'INFINIX'; cellMes.font = fontBold; cellMes.alignment = { vertical: 'middle', horizontal: 'center', textRotation: 90 }; cellMes.border = borderAll;
 
             modelosInfinix.forEach((modObj, index) => {
                 const r = startRow + index;
-                ws.getCell(`C${r}`).value = modObj.nombreUI;
+                const dbKey = modObj.key || modObj.dbKey;
+                ws.getCell(`C${r}`).value = modObj.name || modObj.nombreUI;
                 ws.getCell(`C${r}`).border = borderAll; ws.getCell(`C${r}`).alignment = alignCenter;
-                if(modObj.nombreUI.includes("Note")) ws.getCell(`C${r}`).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFF00' } };
+                if((modObj.name || modObj.nombreUI).includes("Note")) ws.getCell(`C${r}`).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFF00' } };
 
-                const mData = storeData.modelos[modObj.dbKey] || {};
+                const mData = storeData.modelos[dbKey] || {};
                 
-                // Inventario
                 let invModelo = 0;
-                const cleanUIName = modObj.nombreUI.toLowerCase().replace(/[^a-z0-9]/g, '');
+                const cleanUIName = (modObj.name || modObj.nombreUI).toLowerCase().replace(/[^a-z0-9]/g, '');
                 for (const [invKey, invVal] of Object.entries(desgloseInv)) {
                     const invClean = invKey.toLowerCase().replace(/[^a-z0-9]/g, '');
                     if (invClean === cleanUIName || invClean.includes(cleanUIName) || cleanUIName.includes(invClean)) {
@@ -9833,28 +10164,26 @@ async function descargarExcelConsolidadoCierres() {
                 }
                 ws.getCell(`E${r}`).value = invModelo; ws.getCell(`E${r}`).border = borderAll; ws.getCell(`E${r}`).alignment = alignCenter;
 
-                // 🧠 Lógica de Semanas y Espejo
                 for(let i=0; i<5; i++) {
                     const col = 6 + i; 
                     const wStr = semanasMes[i];
                     if (!wStr || parseInt(wStr.replace('W','')) > currentWeekNum) {
-                        ws.getCell(r, col).value = ""; // Futuro en blanco
+                        ws.getCell(r, col).value = ""; 
                     } else if (wStr === semanaActualStr) {
-                        ws.getCell(r, col).value = { formula: `R${r}` }; // Espejo semana actual
+                        ws.getCell(r, col).value = { formula: `R${r}` }; 
                     } else {
-                        ws.getCell(r, col).value = mData[wStr] !== undefined ? mData[wStr] : 0; // Pasado congelado
+                        ws.getCell(r, col).value = mData[wStr] !== undefined ? mData[wStr] : 0; 
                     }
                     ws.getCell(r, col).border = borderAll; ws.getCell(r, col).alignment = alignCenter;
                 }
 
-                // 🧠 Lógica de Días Actuales (En Blanco si no hay nada)
                 for (const [diaNombre, colIndex] of Object.entries(diasSemanaMap)) {
                     const c = ws.getCell(r, colIndex);
                     c.value = mData[diaNombre] !== undefined ? mData[diaNombre] : ""; 
                     c.border = borderAll; c.alignment = alignCenter;
                 }
 
-                ws.getCell(`D${r}`).value = mData.target || 0; ws.getCell(`D${r}`).border = borderAll; ws.getCell(`D${r}`).alignment = alignCenter;
+                ws.getCell(`D${r}`).value = Number(mData.target) || 0; ws.getCell(`D${r}`).border = borderAll; ws.getCell(`D${r}`).alignment = alignCenter;
 
                 ws.getCell(`R${r}`).value = { formula: `SUM(K${r}:Q${r})` }; ws.getCell(`R${r}`).border = borderAll; ws.getCell(`R${r}`).alignment = alignCenter; ws.getCell(`R${r}`).font = fontBold;
                 ws.getCell(`S${r}`).value = 0; ws.getCell(`S${r}`).border = borderAll; ws.getCell(`S${r}`).alignment = alignCenter;
@@ -9881,13 +10210,13 @@ async function descargarExcelConsolidadoCierres() {
             // ==========================================
             // TABLA GENERAL MARCAS COMPETENCIA
             // ==========================================
-            let startRowMarcas = filaTotalModelos + 2;
+            let startRowMarcas = filaTotalModelos + 2; // 🔥 ELIMINADA LA VENTA EN MILLONES 🔥
             
             ws.mergeCells(`B${startRowMarcas}:B${startRowMarcas+1}`); ws.getCell(`B${startRowMarcas}`).value = mesActualNombre;
             ws.mergeCells(`C${startRowMarcas}:C${startRowMarcas+1}`); ws.getCell(`C${startRowMarcas}`).value = 'MARCA';
             ws.mergeCells(`D${startRowMarcas}:D${startRowMarcas+1}`); ws.getCell(`D${startRowMarcas}`).value = 'Target';
             ws.mergeCells(`E${startRowMarcas}:E${startRowMarcas+1}`); ws.getCell(`E${startRowMarcas}`).value = 'HC';
-            ws.mergeCells(`F${startRowMarcas}:J${startRowMarcas}`); ws.getCell(`F${startRowMarcas}`).value = 'SEMANAS DEL MES'; ws.getCell(`F${startRowMarcas}`).fill = fillOrange;
+            ws.mergeCells(`F${startRowMarcas}:J${startRowMarcas}`); ws.getCell(`F${startRowMarcas}`).value = 'SEMANAS ANTERIORES'; ws.getCell(`F${startRowMarcas}`).fill = fillOrange;
             ws.mergeCells(`K${startRowMarcas}:Q${startRowMarcas}`); ws.getCell(`K${startRowMarcas}`).value = `SEMANA ACTUAL (${semanaActualStr})`; ws.getCell(`K${startRowMarcas}`).fill = fillGreen;
             ws.mergeCells(`R${startRowMarcas}:V${startRowMarcas}`); ws.getCell(`R${startRowMarcas}`).value = 'ZONA SANTANDER'; ws.getCell(`R${startRowMarcas}`).fill = fillGreen;
             
@@ -9903,7 +10232,7 @@ async function descargarExcelConsolidadoCierres() {
             let rowM = startRowMarcas + 2;
             ws.mergeCells(`B${rowM}:B${rowM + marcasCompetencia.length - 1}`);
             const cellM = ws.getCell(`B${rowM}`);
-            cellM.value = 'VENTA GENERAL TIENDA'; cellM.font = fontBold; cellM.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true }; cellM.border = borderAll;
+            cellM.value = 'VENTA GENERAL TIENDA'; cellM.font = fontBold; cellM.alignment = { vertical: 'middle', horizontal: 'center', textRotation: 90 }; cellM.border = borderAll;
 
             marcasCompetencia.forEach((marca, idx) => {
                 const r = rowM + idx;
@@ -9928,19 +10257,24 @@ async function descargarExcelConsolidadoCierres() {
 
                 for (const [diaNombre, colIndex] of Object.entries(diasSemanaMap)) {
                      const c = ws.getCell(r, colIndex);
-                     let valDia = mData[diaNombre]; // <--- ¡Esta línea faltaba!
-                      c.value = (valDia !== undefined && valDia !== null && valDia > 0) ? valDia : "";
-                      c.border = borderAll; 
-                      c.alignment = alignCenter;
-}
+                     let valDia = mData[diaNombre]; 
+                     c.value = (valDia !== undefined && valDia !== null && valDia > 0) ? valDia : "";
+                     c.border = borderAll; 
+                     c.alignment = alignCenter;
+                }
 
-                ws.getCell(`D${r}`).value = mData.target || 0; ws.getCell(`D${r}`).border = borderAll; ws.getCell(`D${r}`).alignment = alignCenter;
-                ws.getCell(`E${r}`).value = mData.hc || 0; ws.getCell(`E${r}`).border = borderAll; ws.getCell(`E${r}`).alignment = alignCenter;
+                ws.getCell(`D${r}`).value = Number(mData.target) || 0; ws.getCell(`D${r}`).border = borderAll; ws.getCell(`D${r}`).alignment = alignCenter;
+                
+                // 🔥 CORRECCIÓN 3: HC SEGURO Y NUMÉRICO 🔥
+                let hcStr = String(mData.hc || "0").trim();
+                let hcNum = (hcStr === '-' || hcStr === '') ? 0 : Number(hcStr);
+                ws.getCell(`E${r}`).value = isNaN(hcNum) ? 0 : hcNum; 
+                ws.getCell(`E${r}`).border = borderAll; ws.getCell(`E${r}`).alignment = alignCenter;
 
                 ws.getCell(`R${r}`).value = { formula: `SUM(K${r}:Q${r})` }; ws.getCell(`R${r}`).border = borderAll; ws.getCell(`R${r}`).alignment = alignCenter; ws.getCell(`R${r}`).font = fontBold;
                 ws.getCell(`S${r}`).value = { formula: `IF(R$${rowM + marcasCompetencia.length}>0, R${r}/R$${rowM + marcasCompetencia.length}, 0)` }; ws.getCell(`S${r}`).numFmt = '0%'; ws.getCell(`S${r}`).border = borderAll; ws.getCell(`S${r}`).alignment = alignCenter;
                 ws.getCell(`T${r}`).value = { formula: `SUM(F${r}:J${r})` }; ws.getCell(`T${r}`).border = borderAll; ws.getCell(`T${r}`).alignment = alignCenter; 
-                ws.getCell(`U${r}`).value = 0; ws.getCell(`U${r}`).border = borderAll; ws.getCell(`U${r}`).alignment = alignCenter;
+                ws.getCell(`U${r}`).value = { formula: `IF(E${r}>0, R${r}/E${r}, 0)` }; ws.getCell(`U${r}`).border = borderAll; ws.getCell(`U${r}`).alignment = alignCenter;
                 ws.getCell(`V${r}`).value = { formula: `IF(T$${rowM + marcasCompetencia.length}>0, T${r}/T$${rowM + marcasCompetencia.length}, 0)` }; ws.getCell(`V${r}`).numFmt = '0%'; ws.getCell(`V${r}`).border = borderAll; ws.getCell(`V${r}`).alignment = alignCenter;
             });
 
