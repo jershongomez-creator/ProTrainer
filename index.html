@@ -1139,7 +1139,7 @@
 
             <form id="form-carga-precios" class="space-y-6" onsubmit="submitCargaPrecios(event)">
                 
-                <!-- SELECCIÓN BASE -->
+                <!-- 1. SELECCIÓN BASE -->
                 <div class="bg-darkBg p-5 rounded-2xl border border-darkBorder">
                     <h3 class="text-blue-500 font-bold text-xs orbitron uppercase mb-4 tracking-widest">1. Selección de Equipo</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
@@ -1170,7 +1170,7 @@
                     </div>
                 </div>
 
-                <!-- ESPECIFICACIONES (OCULTO POR DEFECTO) -->
+                <!-- 2. ESPECIFICACIONES (OCULTO POR DEFECTO) -->
                 <div id="panel-especificaciones" class="hidden bg-darkBg p-5 rounded-2xl border border-darkBorder transition-all duration-300">
                     <h3 class="text-blue-500 font-bold text-xs orbitron uppercase mb-4 tracking-widest">2. Creación de Ficha Técnica</h3>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-5 mb-5">
@@ -1186,12 +1186,24 @@
                     </div>
                 </div>
 
-                <!-- PRECIO -->
+                <!-- 3. PRECIOS (NORMAL Y TARJETA) -->
                 <div class="bg-darkBg p-5 rounded-2xl border border-darkBorder">
-                    <label class="text-xs font-black text-white uppercase tracking-widest orbitron block mb-3">3. Precio Detectado ($) *</label>
-                    <div class="relative max-w-md">
-                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500 font-black text-xl">$</span>
-                        <input type="number" id="carga-precio-valor" required min="1" placeholder="Ej: 899900" class="w-full bg-darkCard border-2 border-darkBorder focus:border-blue-500 rounded-xl pl-12 pr-4 py-4 text-white text-xl font-mono outline-none transition-colors">
+                    <h3 class="text-blue-500 font-bold text-xs orbitron uppercase mb-4 tracking-widest">3. Precios Detectados ($)</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Precio Normal / Oferta *</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500 font-black text-xl">$</span>
+                                <input type="number" id="carga-precio-valor" required min="1" placeholder="Ej: 899900" class="w-full bg-darkCard border-2 border-darkBorder focus:border-blue-500 rounded-xl pl-12 pr-4 py-4 text-white text-xl font-mono outline-none transition-colors">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Precio con Tarjeta (Opcional)</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-cyberMagenta font-black text-xl">💳</span>
+                                <input type="number" id="carga-precio-tarjeta" placeholder="Ej: 859900" class="w-full bg-darkCard border-2 border-darkBorder focus:border-cyberMagenta rounded-xl pl-12 pr-4 py-4 text-white text-xl font-mono outline-none transition-colors">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1203,6 +1215,7 @@
             </form>
         </div>
     </section>
+
 <!-- ========================================================= -->
     <!-- PESTAÑA: FORJA DE EQUIPOS (EXPANDIDA NIVEL INGENIERÍA)    -->
     <!-- ========================================================= -->
@@ -4841,10 +4854,9 @@ function updateSpecsRadar(inf) {
 let shoppingSnapshotUnsubscribe = null; 
 
 // =======================================================================
-        // 🚀 RADAR EN TIEMPO REAL: SHOPPING DE PRECIOS
-        // =======================================================================
+// 🚀 RADAR EN TIEMPO REAL: SHOPPING DE PRECIOS
+// =======================================================================
         
- 
         function updateShoppingPrices(inf, riv) {
             const tbody = document.getElementById('shopping-tbody');
             if(!tbody) return;
@@ -4872,25 +4884,53 @@ let shoppingSnapshotUnsubscribe = null;
                     RETAILERS.forEach(retailer => {
                         // Forzamos minúsculas para asegurar coincidencia perfecta
                         const rid = retailer.id.toLowerCase();
-                        const pInf = infPrices[rid] || infPrices[retailer.id] || 0;
-                        const pRiv = rivPrices[rid] || rivPrices[retailer.id] || 0;
                         
+                        // Extraemos Precios Normales y de Tarjeta
+                        const pInf = infPrices[rid] || infPrices[retailer.id] || 0;
+                        const pInfTarjeta = infPrices[rid + "_tarjeta"] || infPrices[retailer.id + "_tarjeta"] || 0;
+                        
+                        const pRiv = rivPrices[rid] || rivPrices[retailer.id] || 0;
+                        const pRivTarjeta = rivPrices[rid + "_tarjeta"] || rivPrices[retailer.id + "_tarjeta"] || 0;
+                        
+                        // Para la ventaja comercial, evaluamos cuál es el mejor precio final del cliente
+                        const bestInf = pInfTarjeta > 0 ? Math.min(pInf, pInfTarjeta) : pInf;
+                        const bestRiv = pRivTarjeta > 0 ? Math.min(pRiv, pRivTarjeta) : pRiv;
+
                         let advHtml = '';
                         
-                        if(pInf === 0 || pRiv === 0) {
+                        if(bestInf === 0 || bestRiv === 0) {
                             advHtml = `<span class="text-gray-500 text-[10px]">Sin Datos</span>`;
-                        } else if (pInf < pRiv) {
-                            const diff = pRiv - pInf;
+                        } else if (bestInf < bestRiv) {
+                            const diff = bestRiv - bestInf;
                             advHtml = `<span class="inline-flex items-center justify-center p-1 bg-infinix/20 text-infinix rounded-full mr-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg></span><span class="text-infinix font-black text-xs">Ahorro: ${formatPrice(diff)}</span>`;
-                        } else if (pInf === pRiv) {
+                        } else if (bestInf === bestRiv) {
                             advHtml = `<span class="text-yellow-500 font-bold text-xs">Precio Igualado</span>`;
                         } else {
-                            const diff = pInf - pRiv;
+                            const diff = bestInf - bestRiv;
                             advHtml = `<span class="text-red-500 font-bold text-xs">Más Costoso (+${formatPrice(diff)})</span>`;
                         }
 
-                        const printInf = pInf === 0 ? '<span class="text-infinix">N/A</span>' : formatPrice(pInf);
-                        const printRiv = pRiv === 0 ? '<span class="text-gray-600">N/A</span>' : formatPrice(pRiv);
+                        // Formateo UI Infinix (Normal + Tarjeta)
+                        let printInf = '';
+                        if (pInf === 0 && pInfTarjeta === 0) {
+                            printInf = '<span class="text-infinix opacity-50">N/A</span>';
+                        } else {
+                            printInf = `<div class="flex flex-col gap-1">`;
+                            if (pInf > 0) printInf += `<span>${formatPrice(pInf)}</span>`;
+                            if (pInfTarjeta > 0) printInf += `<span class="text-[10px] text-cyberMagenta drop-shadow-[0_0_2px_rgba(255,0,127,0.8)]">💳 ${formatPrice(pInfTarjeta)}</span>`;
+                            printInf += `</div>`;
+                        }
+
+                        // Formateo UI Competencia (Normal + Tarjeta)
+                        let printRiv = '';
+                        if (pRiv === 0 && pRivTarjeta === 0) {
+                            printRiv = '<span class="text-gray-600">N/A</span>';
+                        } else {
+                            printRiv = `<div class="flex flex-col gap-1">`;
+                            if (pRiv > 0) printRiv += `<span>${formatPrice(pRiv)}</span>`;
+                            if (pRivTarjeta > 0) printRiv += `<span class="text-[10px] text-cyberMagenta drop-shadow-[0_0_2px_rgba(255,0,127,0.8)]">💳 ${formatPrice(pRivTarjeta)}</span>`;
+                            printRiv += `</div>`;
+                        }
 
                         tbody.innerHTML += `
                             <tr class="hover:bg-darkBorder/20 transition-all">
@@ -6652,12 +6692,26 @@ function ejecutarCaptura(idLienzo, nombreArchivo) {
                 // Construir la mini-lista de precios por cadena
                 let pricesHtml = '';
                 RETAILERS.forEach(r => {
-                    const p = comp.prices[r.id];
-                    const displayPrice = (p && p > 0) ? formatPrice(p) : '<span class="text-gray-600">N/A</span>';
+                    const rid = r.id.toLowerCase(); // <-- Esto arregla el error de los N/A
+                    
+                    // Extraemos precio normal y de tarjeta
+                    const p = comp.prices[rid] || comp.prices[r.id] || 0;
+                    const pTarjeta = comp.prices[rid + "_tarjeta"] || comp.prices[r.id + "_tarjeta"] || 0;
+                    
+                    let displayPrice = '';
+                    if (p === 0 && pTarjeta === 0) {
+                        displayPrice = '<span class="text-gray-600">N/A</span>';
+                    } else {
+                        displayPrice = `<div class="flex flex-col items-end leading-tight gap-0.5">`;
+                        if (p > 0) displayPrice += `<span class="font-mono font-bold text-gray-200">${formatPrice(p)}</span>`;
+                        if (pTarjeta > 0) displayPrice += `<span class="text-[9px] font-mono font-bold text-cyberMagenta drop-shadow-[0_0_2px_rgba(255,0,127,0.5)]">💳 ${formatPrice(pTarjeta)}</span>`;
+                        displayPrice += `</div>`;
+                    }
+
                     pricesHtml += `
                         <div class="flex justify-between items-center text-[10px] border-b border-darkBorder/50 py-1.5 last:border-0">
                             <span class="text-gray-400">${r.name}</span>
-                            <span class="font-mono font-bold ${p > 0 ? 'text-gray-200' : ''}">${displayPrice}</span>
+                            ${displayPrice}
                         </div>
                     `;
                 });
@@ -7832,10 +7886,19 @@ function renderizarCelularesShopping() {
     telefonosInfinix.forEach((telefono, index) => {
         const cajon = document.createElement('div');
         cajon.className = "p-4 bg-[#0B1120] border border-darkBorder rounded-xl";
-        // Le di un estilo más oscuro y elegante a los inputs para que combinen con tu app
-        cajon.innerHTML = `
+     // Le di un estilo más oscuro y elegante a los inputs para que combinen con tu app
+     cajon.innerHTML = `
             <h4 class="font-bold text-white mb-3 text-lg">${telefono}</h4>
-            <input type="number" id="precio_${index}" placeholder="Ej: 899900" class="w-full p-3 mb-4 rounded-xl bg-[#1E293B] text-white border border-gray-700 focus:border-infinix focus:ring-1 focus:ring-infinix outline-none transition-all" required>
+            <div class="grid grid-cols-2 gap-2 mb-4">
+                <div>
+                    <label class="text-[10px] text-gray-400 block mb-1 uppercase font-bold">Precio Normal *</label>
+                    <input type="number" id="precio_${index}" placeholder="Ej: 899900" class="w-full p-2.5 rounded-xl bg-[#1E293B] text-white border border-gray-700 focus:border-infinix focus:ring-1 focus:ring-infinix outline-none transition-all text-sm" required>
+                </div>
+                <div>
+                    <label class="text-[10px] text-gray-400 block mb-1 uppercase font-bold">Con Tarjeta (Opc)</label>
+                    <input type="number" id="precio_tarjeta_${index}" placeholder="Ej: 859900" class="w-full p-2.5 rounded-xl bg-[#1E293B] text-white border border-gray-700 focus:border-cyberMagenta focus:ring-1 focus:ring-cyberMagenta outline-none transition-all text-sm">
+                </div>
+            </div>
             <label class="text-xs text-gray-400 block mb-2 uppercase tracking-wider font-bold">Fotografía del Precio:</label>
             <input type="file" id="foto_${index}" accept="image/*" capture="environment" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-infinix file:text-black hover:file:bg-opacity-80 transition-all cursor-pointer" required>
         `;
@@ -7875,38 +7938,41 @@ if(btnGuardarShopping) {
 
             for (let i = 0; i < telefonosInfinix.length; i++) {
                 const precioInput = document.getElementById(`precio_${i}`);
-                const fotoInput = document.getElementById(`foto_${i}`);
-                
-                if (!precioInput || !fotoInput) continue; 
-                
-                const precio = precioInput.value;
-                const archivoFoto = fotoInput.files[0];
+        const precioTarjetaInput = document.getElementById(`precio_tarjeta_${i}`);
+        const fotoInput = document.getElementById(`foto_${i}`);
+        
+        if (!precioInput || !fotoInput) continue; 
+        
+        const precio = precioInput.value;
+        const precioTarjeta = precioTarjetaInput ? precioTarjetaInput.value : 0;
+        const archivoFoto = fotoInput.files[0];
 
-                // FILTRO INTELIGENTE: Si está en 0 (o vacío) y NO hay foto, lo ignoramos por completo
-                if ((!precio || precio === "0") && !archivoFoto) {
-                    continue; 
-                }
+        // FILTRO INTELIGENTE: Si está en 0 (o vacío) y NO hay foto, lo ignoramos por completo
+        if ((!precio || precio === "0") && !archivoFoto) {
+            continue; 
+        }
 
-                // ANTITRAMPAS: Si puso precio pero no foto, o viceversa, lo bloqueamos
-                if ((precio > 0 && !archivoFoto) || (archivoFoto && (!precio || precio === "0"))) {
-                    alert(`⚠️ Registro incompleto en el equipo: ${telefonosInfinix[i]}.\nSi hay precio, debe haber foto (y viceversa).`);
-                    btnGuardarShopping.disabled = false;
-                    btnGuardarShopping.innerText = "📸 Subir Fotos y Guardar Shopping";
-                    return; // Aborta todo el guardado
-                }
+        // ANTITRAMPAS: Si puso precio pero no foto, o viceversa, lo bloqueamos
+        if ((precio > 0 && !archivoFoto) || (archivoFoto && (!precio || precio === "0"))) {
+            alert(`⚠️ Registro incompleto en el equipo: ${telefonosInfinix[i]}.\nSi hay precio, debe haber foto (y viceversa).`);
+            btnGuardarShopping.disabled = false;
+            btnGuardarShopping.innerText = "📸 Subir Fotos y Guardar Shopping";
+            return; // Aborta todo el guardado
+        }
 
-                // Subir la foto a Firebase Storage
-                const storageRef = firebase.storage().ref();
-                const ruta = storageRef.child(`shopping_diario/${cadena}/${uidUsuario}_${i}_${Date.now()}.jpg`);
-                await ruta.put(archivoFoto);
-                const linkFoto = await ruta.getDownloadURL(); 
+        // Subir la foto a Firebase Storage
+        const storageRef = firebase.storage().ref();
+        const ruta = storageRef.child(`shopping_diario/${cadena}/${uidUsuario}_${i}_${Date.now()}.jpg`);
+        await ruta.put(archivoFoto);
+        const linkFoto = await ruta.getDownloadURL(); 
 
-                // Agregar a la lista maestra para Firestore
-                datosAGuardar.push({
-                    modelo: telefonosInfinix[i],
-                    precio: Number(precio),
-                    fotoURL: linkFoto
-                });
+        // Agregar a la lista maestra para Firestore
+        datosAGuardar.push({
+            modelo: telefonosInfinix[i],
+            precio: Number(precio),
+            precioTarjeta: Number(precioTarjeta), // <--- Aquí capturamos el precio con tarjeta
+            fotoURL: linkFoto
+        });
                 
                 equiposRegistrados++;
             }
@@ -7989,7 +8055,8 @@ async function descargarExcelShopping(cadena) {
                         "Cadena Retail": data.cadena,
                         "Entrenador (Email)": data.emailEntrenador,
                         "Equipo Infinix": prod.modelo,
-                        "Precio en Tienda": prod.precio,
+                        "Precio Normal": prod.precio,
+                        "Precio Tarjeta": prod.precioTarjeta || 0, // <--- Nueva columna en el Excel
                         "Enlace a la Foto": prod.fotoURL
                     });
                 });
@@ -8048,19 +8115,28 @@ async function verReportePantalla(cadena) {
             
             if (data.productos && data.productos.length > 0) {
                 data.productos.forEach(prod => {
-                    // Le damos formato de moneda a tu precio (Ej: 899900 -> 899.900)
-                    const precioFormateado = Number(prod.precio).toLocaleString('es-CO');
+                   // Le damos formato de moneda a tu precio (Ej: 899900 -> 899.900)
+            const precioFormateado = Number(prod.precio).toLocaleString('es-CO');
+            
+            // Evaluamos y formateamos el precio con tarjeta (si existe)
+            const precioTarjetaFormateado = (prod.precioTarjeta && prod.precioTarjeta > 0) ? Number(prod.precioTarjeta).toLocaleString('es-CO') : null;
+            
+            // Creamos la etiqueta visual dependiendo de si hay precio con tarjeta o no
+            let htmlTarjetaPrecio = precioTarjetaFormateado 
+                ? `<span class="text-cyberMagenta font-bold text-xs mb-3 drop-shadow-[0_0_5px_rgba(255,0,127,0.5)]">💳 Tarjeta: $ ${precioTarjetaFormateado}</span>`
+                : `<span class="text-gray-600 font-bold text-xs mb-3 italic">💳 Sin Tarjeta</span>`;
 
-                    // Armamos el "cajón" HTML para cada foto
-                    htmlTarjetas += `
-                    <div class="bg-dark border border-gray-700 rounded-xl p-3 flex flex-col shadow-lg relative group">
-                        <div class="text-[10px] text-gray-400 mb-2 flex justify-between border-b border-gray-700 pb-1">
-                            <span>📅 ${data.fecha}</span>
-                            <span class="truncate ml-2" title="${data.emailEntrenador}">👤 ${data.emailEntrenador.split('@')[0]}</span>
-                        </div>
-                        
-                        <h4 class="text-white font-bold text-md leading-tight mb-1">${prod.modelo}</h4>
-                        <span class="text-infinix font-black text-lg mb-3">$ ${precioFormateado}</span>
+            // Armamos el "cajón" HTML para cada foto
+            htmlTarjetas += `
+            <div class="bg-dark border border-gray-700 rounded-xl p-3 flex flex-col shadow-lg relative group">
+                <div class="text-[10px] text-gray-400 mb-2 flex justify-between border-b border-gray-700 pb-1">
+                    <span>📅 ${data.fecha}</span>
+                    <span class="truncate ml-2" title="${data.emailEntrenador}">👤 ${data.emailEntrenador.split('@')[0]}</span>
+                </div>
+                
+                <h4 class="text-white font-bold text-md leading-tight mb-1">${prod.modelo}</h4>
+                <span class="text-infinix font-black text-lg ${precioTarjetaFormateado ? '' : 'mb-3'}">$ ${precioFormateado}</span>
+                ${htmlTarjetaPrecio}
                         
                         <!-- Contenedor de la imagen con efecto al pasar el mouse -->
                         <div class="w-full h-40 bg-gray-900 rounded-lg overflow-hidden cursor-pointer" onclick="window.open('${prod.fotoURL}', '_blank')" title="Clic para ver en tamaño original">
@@ -10430,9 +10506,13 @@ function openCargaPrecios() {
                 else modelName = competitorsDatabase[brand].models[modelKey].name;
             }
 
-            // Limpiamos el texto del precio por si alguien escribe el signo "$" o puntos
+       // Limpiamos el texto del precio normal
             const priceInput = document.getElementById('carga-precio-valor').value;
             const newPrice = parseInt(priceInput.replace(/\D/g, ''), 10);
+            
+            // Capturamos el precio con tarjeta (si lo dejaron vacío, mandamos 0)
+            const cardInput = document.getElementById('carga-precio-tarjeta').value;
+            const newCardPrice = cardInput ? parseInt(cardInput.replace(/\D/g, ''), 10) : 0;
 
             let batch = db.batch();
 
@@ -10440,7 +10520,9 @@ function openCargaPrecios() {
             let refPrecios = db.collection("global").doc("precios");
             batch.set(refPrecios, {
                 [modelKey]: {
-                    [retailer]: newPrice
+                    [retailer]: newPrice,
+                    // Guardamos el precio de tarjeta añadiendo "_tarjeta" al nombre del canal
+                    [retailer + "_tarjeta"]: newCardPrice 
                 }
             }, { merge: true });
 
