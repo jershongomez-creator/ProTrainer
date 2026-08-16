@@ -8136,14 +8136,12 @@ function cargarVentasCalculadoraLocal() {
     });
     // Función para calcular semana actual (Ej: W31)
     function obtenerSemanaActualKey() {
-    const now = new Date();
-    // Forzamos el cálculo de la semana actual basada en la fecha del sistema o del input
-    const targetDate = new Date(now.valueOf());
-    const dayNr = (now.getDay() + 6) % 7;
-    targetDate.setDate(targetDate.getDate() - dayNr + 3);
-    const firstThursday = new Date(targetDate.getFullYear(), 0, 4);
-    const wak = Math.round(((targetDate - firstThursday) / 86400000 - 3 + (firstThursday.getDay() + 6) % 7) / 7) + 1;
-    return `W${wak}`; // Esto arrojará W32 correctamente para agosto
+    const d = new Date();
+    d.setHours(0, 0, 0, 0); // Forzamos hora local al inicio del día
+    d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+    const yearStart = new Date(d.getFullYear(), 0, 1);
+    const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    return `W${weekNo}`;
 }
 
 // Motor maestro Asíncrono para guardar en Firebase (Versión Definitiva con Cajas por Semana ISO)
@@ -8159,9 +8157,9 @@ async function generarYGuardarCierreVentas() {
     }
     
     // Calcular Semana ISO real de manera matemática para determinar la "caja" de Firebase
-    const t = new Date(fechaSeleccionada.getTime());
-    t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
-    const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+    const t = new Date(fechaSeleccionada.getFullYear(), fechaSeleccionada.getMonth(), fechaSeleccionada.getDate());
+    t.setDate(t.getDate() + 4 - (t.getDay() || 7));
+    const yearStart = new Date(t.getFullYear(), 0, 1);
     const weekNum = Math.ceil((((t - yearStart) / 86400000) + 1) / 7);
     const semanaCaja = `W${weekNum}`; // Ej: "W31", "W32", etc., basado estrictamente en la fecha del reporte
     
@@ -8637,10 +8635,10 @@ function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = 
 
     // 🧠 CEREBRO DE SEMANAS ISO REALES PARA EL MES
     function getIsoWeek(dateObj) {
-        const t = new Date(dateObj.getTime());
-        t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
-        const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
-        return Math.ceil((((t - yearStart) / 86400000) + 1) / 7);
+        const d = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+        d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+        const yearStart = new Date(d.getFullYear(), 0, 1);
+        return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
     }
 
     const currentYear = fechaActualSistema.getFullYear();
@@ -9878,13 +9876,13 @@ function dispararDescargaReporte(docId) {
 // =================================================================
 
 async function descargarExcelConsolidadoCierres() {
-    
-    // 1. FUNCIONES AUXILIARES PRIMERO (Evita que el botón se "muera" por ReferenceError)
-    function getIsoWeek(dateObjVar) {
-        const t = new Date(dateObjVar.getTime());
-        t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
-        const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
-        return Math.ceil((((t - yearStart) / 86400000) + 1) / 7);
+
+  // 1. FUNCIONES AUXILIARES PRIMERO (Evita saltos UTC)
+  function getIsoWeek(dateObjVar) {
+        const d = new Date(dateObjVar.getFullYear(), dateObjVar.getMonth(), dateObjVar.getDate());
+        d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+        const yearStart = new Date(d.getFullYear(), 0, 1);
+        return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
     }
 
     function parseFechaStr(fechaStr) {
