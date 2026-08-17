@@ -8729,7 +8729,7 @@ function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = 
     while (semanasMesArr.length < 5) semanasMesArr.push("");
 
     const currentWeekNum = getIsoWeek(fechaActualSistema);
-    const semanaActualStr = `W${currentWeekNum}`; // W32
+    const semanaActualStr = `W${currentWeekNum}`; 
     
     document.getElementById('excel-w-actual').textContent = semanaActualStr;
 
@@ -8882,8 +8882,7 @@ function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = 
     }
 
     // 3. RENDERIZAR TABLA INFINIX
-    let totInfSemanas = {};
-    semanasMesArr.forEach(w => { if(w) totInfSemanas[w] = 0; });
+    let totInfSemanas = {}; semanasMesArr.forEach(w => { if(w) totInfSemanas[w] = 0; });
     let totInfDia = { 'Lunes':0, 'Martes':0, 'Miércoles':0, 'Jueves':0, 'Viernes':0, 'Sábado':0, 'Domingo':0 };
     let totInfWeek = 0; let totInfTarget = 0; let totInfInv = 0; let totInfMonth = 0;
     let datosInfinixArray = [];
@@ -8954,7 +8953,7 @@ function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = 
             if (!w) {
                 semanasCeldasHtml += `<td style="border: 1px solid #30363d; padding: 4px;">-</td>`;
             } else {
-                let sVal = dato.semanasData[w] || 0;
+                let sVal = (w === semanaActualStr) ? dato.sumaSemanaActual : (dato.semanasData[w] || 0);
                 semanasCeldasHtml += `<td style="border: 1px solid #30363d; padding: 4px; color: ${sVal > 0 ? 'white' : '#8b949e'};">${sVal > 0 ? sVal : '-'}</td>`;
             }
         });
@@ -8980,11 +8979,11 @@ function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = 
     });
     tbodyInfinix.innerHTML = htmlInfinix;
 
-    // 🔥 SOLUCIÓN 1: CÁLCULO ESTRICTO DE COLUMNAS INFINIX (W31, W32, etc.) DESDE LAS FILAS 🔥
+    // 🔥 CÁLCULO ESTRICTO DE COLUMNAS INFINIX (W31, W32, etc.)
     semanasMesArr.forEach((w, idx) => {
         let sumCol = 0;
         if (w === semanaActualStr) {
-            sumCol = totInfWeek; // Espejo absoluto de T. WEEK para la semana en curso
+            sumCol = totInfWeek; 
         } else {
             datosInfinixArray.forEach(dato => { sumCol += (dato.semanasData[w] || 0); });
         }
@@ -9009,8 +9008,7 @@ function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = 
     document.getElementById('excel-inf-tot-cump').textContent = totInfTarget > 0 ? Math.round((totInfWeek / totInfTarget) * 100) + '%' : '0%';
 
     // 4. RENDERIZAR TABLA COMPETENCIA / MERCADO
-    let totMercadoSemanas = {};
-    semanasMesArr.forEach(w => { if(w) totMercadoSemanas[w] = 0; });
+    let totMercadoSemanas = {}; semanasMesArr.forEach(w => { if(w) totMercadoSemanas[w] = 0; });
     let totMercadoDia = { 'Lunes':0, 'Martes':0, 'Miércoles':0, 'Jueves':0, 'Viernes':0, 'Sábado':0, 'Domingo':0 };
     let totMercadoWeek = 0; let totMercadoTarget = 0; let totMercadoHC = 0; let totMercadoMonth = 0;
     let datosMarcasArray = [];
@@ -9026,7 +9024,7 @@ function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = 
         semanasMesArr.forEach(w => {
             if (w) {
                 let sVal = upperMarca === 'INFINIX' ? (totInfSemanas[w] || 0) : (storeWeeksDataCompetencia[w]?.[upperMarca] || 0);
-                if (w === semanaActualStr) sVal = sumaSemanaMarca; // Asegurar consistencia de la semana actual
+                if (w === semanaActualStr) sVal = sumaSemanaMarca; 
                 totalMesMarca += sVal;
                 totMercadoSemanas[w] = (totMercadoSemanas[w] || 0) + sVal;
             }
@@ -9039,7 +9037,6 @@ function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = 
                 ventasPorDiaFormateadas[dia] = "";
             } else {
                 ventasPorDiaFormateadas[dia] = v;
-                // 🔥 SOLUCIÓN 2: INFINIX AHORA SUMA EN EL TOTAL DEL DÍA (El "if" desapareció) 🔥
                 totMercadoDia[dia] += Number(v) || 0; 
             }
         });
@@ -9074,6 +9071,7 @@ function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = 
             let v = dato.ventasPorDia[dia];
             let displayVal = (v === "") ? "" : v;
             let colorTexto = isInf ? '#00ff66' : (displayVal !== "" && displayVal !== 0 ? 'white' : '#8b949e');
+            // 🔥 AQUÍ SE APLICAN LOS ESTILOS DE BORDES (REJILLA) A CADA CELDA DE DÍAS 🔥
             filaDiasHtml += `<td style="border: 1px solid #30363d; padding: 4px; color: ${colorTexto};">${displayVal}</td>`;
         });
 
@@ -9083,24 +9081,27 @@ function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = 
                 semanasCeldasHtml += `<td style="border: 1px solid #30363d; padding: 4px;">-</td>`;
             } else {
                 let sVal = dato.semanasData[w] || 0;
+                // 🔥 AQUÍ SE APLICAN LOS ESTILOS DE BORDES A LAS SEMANAS 🔥
                 semanasCeldasHtml += `<td style="border: 1px solid #30363d; padding: 4px; color: ${sVal > 0 ? 'white' : '#8b949e'};">${sVal > 0 ? sVal : '-'}</td>`;
             }
         });
 
+        // 🔥 CÁLCULO MATEMÁTICO RESTAURADO: SHARE Y ROI 🔥
         const shareWeek = totMercadoWeek > 0 ? Math.round((dato.sumaSemanaMarca / totMercadoWeek) * 100) : 0;
         const shareMonth = totMercadoMonth > 0 ? Math.round((dato.totalMesMarca / totMercadoMonth) * 100) : 0;
         
         let hcNum = isNaN(Number(dato.hc)) ? 0 : Number(dato.hc);
         const roi = hcNum > 0 ? (dato.sumaSemanaMarca / hcNum).toFixed(1) : 0;
 
+        // 🔥 RENDERIZADO CON BORDES ESTRICTOS (BORDER: 1PX SOLID #30363D) EN CADA COLUMNA 🔥
         htmlMarcas += `
             <tr style="background: ${isInf ? 'rgba(0,255,102,0.1)' : 'transparent'}; color: ${isInf ? '#00ff66' : '#8b949e'}; font-weight: ${isInf ? 'bold' : 'normal'}; border-bottom: 1px solid #30363d;">
-                <td style="border: 1px solid #30363d; padding: 4px; text-align: left;">${dato.marca}</td>
+                <td style="border: 1px solid #30363d; padding: 4px; text-align: left; color: ${isInf ? '#00ff66' : 'white'};">${dato.marca}</td>
                 <td style="border: 1px solid #30363d; padding: 4px;">${dato.target || 0}</td>
                 <td style="border: 1px solid #30363d; padding: 4px;">${dato.hc}</td>
                 ${semanasCeldasHtml}
                 ${filaDiasHtml}
-                <td style="border: 1px solid #30363d; padding: 4px; color: #00ff66;">${dato.sumaSemanaMarca}</td>
+                <td style="border: 1px solid #30363d; padding: 4px; color: ${isInf ? '#00ff66' : 'white'};">${dato.sumaSemanaMarca}</td>
                 <td style="border: 1px solid #30363d; padding: 4px; color: #00ff66;">${shareWeek}%</td>
                 <td style="border: 1px solid #30363d; padding: 4px; color: #38bdf8;">${dato.totalMesMarca}</td>
                 <td style="border: 1px solid #30363d; padding: 4px; color: #38bdf8;">${roi}</td>
@@ -9110,11 +9111,11 @@ function dibujarMegaExcel(dataSemana, nombreTienda, semanaStr, dataInventario = 
     });
     tbodyMarcas.innerHTML = htmlMarcas;
 
-    // 🔥 SOLUCIÓN 1.2: CÁLCULO ESTRICTO DE COLUMNAS MERCADO (W31, W32, etc.) DESDE LAS FILAS 🔥
+    // 🔥 CÁLCULO ESTRICTO DE COLUMNAS MERCADO (W31, W32, etc.)
     semanasMesArr.forEach((w, idx) => {
         let sumCol = 0;
         if (w === semanaActualStr) {
-            sumCol = totMercadoWeek; // Espejo absoluto de T. WEEK para la semana en curso
+            sumCol = totMercadoWeek; 
         } else {
             datosMarcasArray.forEach(dato => { sumCol += (dato.semanasData[w] || 0); });
         }
