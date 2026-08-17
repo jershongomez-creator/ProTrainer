@@ -8223,14 +8223,15 @@ function cargarVentasCalculadoraLocal() {
 // Motor maestro Asíncrono para guardar en Firebase (Versión Definitiva con Cajas por Semana ISO)
 async function generarYGuardarCierreVentas() {
     
-    // Extraemos la fecha del nuevo calendario visual
-    const inputFecha = document.getElementById('fecha-cierre-asesor');
-    let fechaSeleccionada;
-    if (inputFecha && inputFecha.value) {
-        fechaSeleccionada = new Date(inputFecha.value + 'T00:00:00');
-    } else {
-        fechaSeleccionada = new Date();
-    }
+
+const inputFecha = document.getElementById('fecha-cierre-asesor');
+let fechaSeleccionada;
+if (inputFecha && inputFecha.value) {
+    // T12:00:00 asegura que la fecha caiga en el mediodía local, evitando que el -5 horas de Colombia te devuelva al día anterior.
+    fechaSeleccionada = new Date(inputFecha.value + 'T12:00:00');
+} else {
+    fechaSeleccionada = new Date();
+}
     
     // Calcular Semana ISO real de manera matemática para determinar la "caja" de Firebase
     const t = new Date(fechaSeleccionada.getFullYear(), fechaSeleccionada.getMonth(), fechaSeleccionada.getDate());
