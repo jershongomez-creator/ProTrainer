@@ -303,7 +303,11 @@
                 <span class="text-lg">🎯</span>
                 <span>Infinix Xschool</span>
             </button>
-        
+            <button onclick="switchTab('tab-tendencias-nacionales')" id="btn-tab-tendencias-nacionales" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
+                <span class="text-blue-400 text-sm">📈</span>
+                <span class="text-blue-400">Tendencias Nacionales</span>
+            </button>
+            
             <button onclick="switchTab('tab-shopping')" id="btn-tab-shopping" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
                 <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                 <span>Shopping Precios</span>
@@ -325,14 +329,21 @@
                 <span class="text-cyberMagenta animate-pulse text-sm">👁️</span>
                 <span class="text-cyberMagenta">Alertas (Master)</span>
             </button>
-            <button onclick="switchTab('tab-tendencias-nacionales')" id="btn-tab-tendencias-nacionales" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
-                <span class="text-blue-400 text-sm">📈</span>
-                <span class="text-blue-400">Tendencias Nacionales</span>
-            </button>
+           
             <!-- Pestaña Calculadora Asesor -->
             <button onclick="switchTab('tab-calculadora'); renderCalculadoraAsesor();" id="btn-tab-calculadora" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
                 <span class="text-infinix text-lg drop-shadow-[0_0_5px_rgba(57,255,20,0.5)]">💰</span>
                 <span>Calculadora</span>
+            </button>
+            <!-- BOTÓN SIMULADOR FINANCIERO (ASESOR Y LÍDERES) -->
+            <button onclick="switchTab('tab-simulador-credito'); inicializarSimuladorAsesor();" id="btn-tab-simulador-credito" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
+                <span class="text-green-400 text-lg drop-shadow-[0_0_5px_rgba(74,222,128,0.5)]">💳</span>
+                <span>Simulador Cuotas</span>
+            </button>
+            <!-- BOTÓN ADMIN TARJETAS (SOLO ADMIN) -->
+            <button onclick="switchTab('tab-admin-credito'); inicializarAdminTarjetas();" id="btn-tab-admin-credito" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
+                <span class="text-cyberMagenta text-lg drop-shadow-[0_0_5px_rgba(255,0,127,0.5)]">🏦</span>
+                <span>Gestor Tarjetas</span>
             </button>
             <!-- Pestaña Calculadora Admin -->
             <button onclick="switchTab('tab-admin-calculadora'); renderAdminCalcModels();" id="btn-tab-admin-calculadora" class="hidden py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap">
@@ -1943,9 +1954,95 @@
             💾 GUARDAR Y ACTUALIZAR LISTAS NACIONALES
         </button>
     </div>
-    
-
 </div>
+
+<!-- ========================================== -->
+        <!-- PESTAÑA NUEVA: SIMULADOR DE CUOTAS (ASESOR)-->
+        <!-- ========================================== -->
+        <section id="tab-simulador-credito" class="hidden space-y-6 pb-24 max-w-4xl mx-auto px-4 mt-6">
+            <div class="text-center space-y-3 mb-6">
+                <div class="flex justify-center items-center space-x-2">
+                    <span class="text-xs font-black text-green-400 uppercase tracking-widest orbitron block animate-pulse">HERRAMIENTA DE CIERRE FINANCIERO</span>
+                </div>
+                <h3 class="text-3xl font-black text-white orbitron tracking-wider">Simulador de Cuotas</h3>
+                <p class="text-sm text-gray-400">Proyecta pagos mensuales con las tarjetas retail (Éxito, Falabella, Cencosud, Alkosto).</p>
+            </div>
+
+            <div class="bg-darkCard border-2 border-green-500/30 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Configuración del Simulador -->
+                    <div class="space-y-4 border-b md:border-b-0 md:border-r border-darkBorder pb-6 md:pb-0 md:pr-6">
+                        <div>
+                            <label class="text-[10px] font-black text-green-400 uppercase tracking-widest orbitron mb-1.5 block">1. Tarjeta / Retail</label>
+                            <select id="sim-tarjeta" onchange="calcularCuotasSimulador()" class="w-full bg-[#13131a] text-white border border-green-500/50 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-green-400 transition-all cursor-pointer">
+                                <option value="" disabled selected>Seleccione Tarjeta...</option>
+                                <option value="exito">Tarjeta Éxito / Tuya</option>
+                                <option value="falabella">CMR Falabella</option>
+                                <option value="cencosud">Tarjeta Cencosud</option>
+                                <option value="alkosto">Tarjeta Alkosto</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-green-400 uppercase tracking-widest orbitron mb-1.5 block">2. Equipo a Financiar</label>
+                            <select id="sim-equipo" onchange="cargarPrecioAlSimulador()" class="w-full bg-[#13131a] text-white border border-darkBorder rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-green-400 transition-all cursor-pointer">
+                                <option value="" disabled selected>Seleccione Modelo Infinix...</option>
+                                <!-- JS inyectará los modelos de Infinix -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-green-400 uppercase tracking-widest orbitron mb-1.5 block">3. Precio del Equipo ($)</label>
+                            <input type="number" id="sim-precio" oninput="calcularCuotasSimulador()" class="w-full bg-black text-white border border-darkBorder rounded-xl px-4 py-3 text-sm font-mono outline-none focus:border-green-400" placeholder="Precio (Auto-cargado si hay shopping)">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-green-400 uppercase tracking-widest orbitron mb-1.5 block">4. Número de Cuotas (Meses)</label>
+                            <div class="flex items-center gap-4">
+                                <input type="range" id="sim-meses-rango" min="1" max="36" value="12" oninput="document.getElementById('sim-meses-num').value = this.value; calcularCuotasSimulador();" class="w-full accent-green-500">
+                                <input type="number" id="sim-meses-num" min="1" max="48" value="12" oninput="document.getElementById('sim-meses-rango').value = this.value; calcularCuotasSimulador();" class="w-16 bg-black border border-darkBorder text-white text-center rounded-lg py-2 font-mono outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resultados del Simulador -->
+                    <div class="flex flex-col justify-center">
+                        <div class="bg-black/50 p-5 rounded-2xl border border-darkBorder/50 text-center relative shadow-inner">
+                            <div class="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-2">Cuota Mensual Estimada</div>
+                            <div class="text-4xl font-black text-green-400 orbitron drop-shadow-[0_0_8px_rgba(74,222,128,0.5)]" id="sim-res-cuota">$0</div>
+                            <div class="mt-4 pt-4 border-t border-darkBorder text-left space-y-2">
+                                <div class="flex justify-between text-xs"><span class="text-gray-400">Tasa de Interés M.V.:</span> <span class="text-white font-mono" id="sim-res-tasa">0%</span></div>
+                                <div class="flex justify-between text-xs"><span class="text-gray-400">Cuota de Manejo:</span> <span class="text-white font-mono" id="sim-res-manejo">$0</span></div>
+                                <div class="flex justify-between text-xs"><span class="text-gray-400">Total Financiamiento:</span> <span class="text-yellow-500 font-mono font-bold" id="sim-res-total">$0</span></div>
+                            </div>
+                        </div>
+                        <div class="mt-4 bg-blue-500/10 border border-blue-500/30 p-3 rounded-xl">
+                            <p class="text-[10px] text-blue-400 font-bold flex items-start gap-2">
+                                <span class="text-sm">💡</span>
+                                <span id="sim-res-condicion">Selecciona una tarjeta para ver sus beneficios o condiciones de cuota de manejo.</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- PESTAÑA NUEVA: GESTOR DE TARJETAS (ADMIN)  -->
+        <!-- ========================================== -->
+        <section id="tab-admin-credito" class="hidden space-y-6 pb-24 max-w-6xl mx-auto px-4 mt-6">
+            <div class="bg-darkCard border-2 border-cyberMagenta/50 rounded-3xl p-6 shadow-[0_0_40px_rgba(255,0,127,0.15)] relative overflow-hidden">
+                <h3 class="text-lg font-black text-white orbitron tracking-wider mb-2 border-b border-darkBorder pb-3 flex items-center gap-2">
+                    <span class="text-cyberMagenta animate-pulse">🏦</span> Panel Admin: Tasas de Tarjetas Retail
+                </h3>
+                <p class="text-xs text-gray-400 mb-6">Ajusta las tasas de interés (Mes Vencido) y las cuotas de manejo. Esta info alimentará el simulador de los asesores a nivel nacional.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="admin-tarjetas-container">
+                    <!-- JS inyectará las tarjetas aquí -->
+                </div>
+
+                <button onclick="guardarTasasTarjetas()" class="w-full mt-6 py-4 bg-cyberMagenta text-white font-black rounded-xl uppercase tracking-widest orbitron hover:shadow-[0_0_25px_#ff007f] transition-all transform active:scale-95 animate-cyber-flicker">
+                    🚀 SINCRONIZAR TASAS A NIVEL NACIONAL
+                </button>
+            </div>
+        </section>
     </main>
 
     <footer class="bg-black/80 border-t-2 border-darkBorder py-6 mt-auto">
@@ -2617,7 +2714,9 @@ function applyRolePermissions(role) {
         btnArena, btnRadar, btnQuiz, btnShopping, btnCortex, btnAlertasMaster, 
         btnTendenciasNacionales, btnCalculadora, btnAdminCalculadora, btnSalonFama, 
         btnInventario, btnShoppingTrainer, btnShoppingAdmin, btnCierreVentas, 
-        btnCentralReportes, btnAdminListas, btnReporteVisitas, btnCargaPrecios, btnForjaEquipos
+        btnCentralReportes, btnAdminListas, btnReporteVisitas, btnCargaPrecios, btnForjaEquipos,
+        document.getElementById('btn-tab-simulador-credito'),
+        document.getElementById('btn-tab-admin-credito')
     ];
     allButtons.forEach(b => { 
         if (b) {
@@ -2664,6 +2763,8 @@ function applyRolePermissions(role) {
 
         showBtn(btnCargaPrecios);
         showBtn(btnForjaEquipos); // Único rol autorizado para Forja de Equipos
+        showBtn(document.getElementById('btn-tab-simulador-credito'));
+        showBtn(document.getElementById('btn-tab-admin-credito'));
 
         if (btnObjEditor) btnObjEditor.classList.remove('hidden');
         if (btnQuizEditor) btnQuizEditor.classList.remove('hidden');
@@ -2694,7 +2795,8 @@ function applyRolePermissions(role) {
         showBtn(btnQuiz);
         showBtn(btnCalculadora);
         showBtn(btnCierreVentas);
-        showBtn(btnCargaPrecios); // Carga de Precios activo
+        showBtn(btnCargaPrecios);
+        showBtn(document.getElementById('btn-tab-simulador-credito')); // <-- ESTA ES LA NUEVA
     }
 
     if (tabsContainer) {
@@ -2758,14 +2860,16 @@ function switchTab(tabId) {
         }
     }
 
-    // 1. OCULTAR TODAS LAS SECCIONES HTML (Faltaba incluir Cierre de Ventas aquí)
+    // 1. OCULTAR TODAS LAS SECCIONES HTML (¡Aquí agregamos los simuladores!)
     const tabs = [
         'tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping', 
         'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-calculadora', 
         'tab-admin-calculadora', 'tab-salon-fama', 'tab-inventario', 'tab-simulador', 
         'tab-shopping-trainer', 'tab-shopping-admin', 'tab-admin-listas', 'panel-admin-gerencia', 
         'tab-reporte-visita', 'panel-carga-precios', 'panel-forja-equipos',
-        'tab-cierre-ventas' // <-- ¡SOLUCIÓN! Ahora sí se ocultará correctamente al cambiar de pestaña
+        'tab-cierre-ventas',
+        // --- LOS DOS NUEVOS PANELES FINANCIEROS ---
+        'tab-simulador-credito', 'tab-admin-credito'
     ];
     
     tabs.forEach(t => {
@@ -2820,8 +2924,8 @@ function switchTab(tabId) {
         }
     }
 
-    // 3. APAGAR ESTILOS DE TODOS LOS DEMÁS BOTONES Y MANEJAR VISIBILIDAD
-    const esAdmin = (currentUserRole === 'ADMIN');
+ // 3. APAGAR ESTILOS DE TODOS LOS DEMÁS BOTONES Y MANEJAR VISIBILIDAD
+ const esAdmin = (currentUserRole === 'ADMIN');
     const esTrainer = (currentUserRole === 'TRAINER');
     const esJonathanFerro = (currentUserCode === 'CO1000429' || (currentUserName && currentUserName.toUpperCase().includes('FERRO')));
 
@@ -2830,17 +2934,19 @@ function switchTab(tabId) {
         'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales', 'btn-tab-calculadora', 
         'btn-tab-admin-calculadora', 'btn-tab-salon-fama', 'btn-tab-inventario', 'btn-tab-simulador', 
         'btn-tab-shopping-trainer', 'btn-tab-shopping-admin', 'btn-tab-admin-listas', 'btn-tab-reportes-admin', 
-        'btn-tab-reporte-visita', 'btn-tab-carga-precios', 'btn-tab-forja-equipos'
+        'btn-tab-reporte-visita', 'btn-tab-carga-precios', 'btn-tab-forja-equipos',
+        // --- LOS DOS NUEVOS BOTONES FINANCIEROS ---
+        'btn-tab-simulador-credito', 'btn-tab-admin-credito'
     ];
-    
+
     const baseInactiveClass = "py-3 px-2 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-300 flex flex-col md:flex-row items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-darkBorder/50 whitespace-nowrap";
 
-    buttons.forEach(btnId => {
-        const element = document.getElementById(btnId);
-        if (element) {
-            element.className = baseInactiveClass;
-            
-            // --- CANDADOS EXPLÍCITOS ---
+buttons.forEach(btnId => {
+    const element = document.getElementById(btnId);
+    if (element) {
+        element.className = baseInactiveClass;
+        
+        // --- CANDADOS EXPLÍCITOS ---
             if (btnId === 'btn-tab-shopping' && !['GERENTE', 'SUPERVISOR', 'COORDINADOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
             if (btnId === 'btn-tab-cortex' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
             if (btnId === 'btn-tab-alertas-master' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
@@ -2864,6 +2970,7 @@ function switchTab(tabId) {
             
             // Candado Forja de Equipos
             if (btnId === 'btn-tab-forja-equipos' && !esAdmin) element.classList.add('hidden');
+            if (btnId === 'btn-tab-admin-credito' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
         }
     });
 
@@ -6335,7 +6442,170 @@ function ejecutarCaptura(idLienzo, nombreArchivo) {
         });
     }, 400);
 }
+// =================================================================
+// MÓDULO: SIMULADOR DE CUOTAS Y GESTOR DE TARJETAS RETAIL
+// =================================================================
 
+// Base de datos local para las tasas (se actualiza de Firebase)
+let tasasTarjetasDB = {
+    "exito": { nombre: "Tarjeta Éxito / Tuya", tasaMV: 2.15, cuotaManejo: 24000, condicion: "Cuota de manejo en $0 si realiza 3 compras en el mes." },
+    "falabella": { nombre: "CMR Falabella", tasaMV: 2.20, cuotaManejo: 22000, condicion: "Acumula CMR Puntos. Cuota de manejo puede variar según la categoría." },
+    "cencosud": { nombre: "Tarjeta Cencosud", tasaMV: 2.10, cuotaManejo: 21000, condicion: "20% de descuento en la primera compra de tecnología." },
+    "alkosto": { nombre: "Tarjeta Alkosto", tasaMV: 2.18, cuotaManejo: 25000, condicion: "Mitad de precio en cuota de manejo el primer año." }
+};
+
+// 1. Escuchar a Firebase para mantener las tasas actualizadas a nivel nacional
+function iniciarSyncTarjetas() {
+    db.collection("global").doc("tasas_tarjetas").onSnapshot((doc) => {
+        if (doc && doc.exists) {
+            tasasTarjetasDB = { ...tasasTarjetasDB, ...doc.data() };
+        }
+    });
+}
+setTimeout(iniciarSyncTarjetas, 3000); // Inicia después de que cargue la app
+
+// 2. Inicializar el panel del Asesor
+function inicializarSimuladorAsesor() {
+    const selectEquipo = document.getElementById('sim-equipo');
+    if(selectEquipo) {
+        selectEquipo.innerHTML = '<option value="" disabled selected>Seleccione Modelo Infinix...</option>';
+        Object.keys(infinixDatabase).forEach(key => {
+            selectEquipo.innerHTML += `<option value="${key}">${infinixDatabase[key].name}</option>`;
+        });
+    }
+    
+    // Auto-seleccionar la tarjeta si el asesor está en una cadena específica
+    const selectTarjeta = document.getElementById('sim-tarjeta');
+    const miTiendaStr = (window.currentUserStore || "").toLowerCase();
+    
+    if (miTiendaStr.includes("exito")) selectTarjeta.value = "exito";
+    else if (miTiendaStr.includes("falabella")) selectTarjeta.value = "falabella";
+    else if (miTiendaStr.includes("jumbo") || miTiendaStr.includes("metro")) selectTarjeta.value = "cencosud";
+    else if (miTiendaStr.includes("alkosto") || miTiendaStr.includes("ktronix")) selectTarjeta.value = "alkosto";
+    
+    calcularCuotasSimulador();
+}
+
+// 3. Auto-cargar el precio del Shopping si existe
+function cargarPrecioAlSimulador() {
+    const modelKey = document.getElementById('sim-equipo').value;
+    const tarjetaKey = document.getElementById('sim-tarjeta').value;
+    const inputPrecio = document.getElementById('sim-precio');
+    
+    if(!modelKey || !tarjetaKey) return;
+
+    // Buscar precios en la memoria de Shopping
+    const precios = getPricesForModel(modelKey, true); // True porque solo listamos Infinix
+    
+    // Asignar el retail buscando coincidencia
+    let precioEncontrado = 0;
+    if (tarjetaKey === 'exito' && precios.exito) precioEncontrado = precios.exito;
+    if (tarjetaKey === 'falabella' && precios.falabella) precioEncontrado = precios.falabella;
+    if (tarjetaKey === 'cencosud' && precios.cencosud) precioEncontrado = precios.cencosud;
+    if (tarjetaKey === 'alkosto' && precios.alkosto) precioEncontrado = precios.alkosto;
+
+    // Si tiene un precio de tarjeta especial guardado en el shopping, usamos ese, sino el normal
+    const precioTarjeta = precios[tarjetaKey + "_tarjeta"] || 0;
+    inputPrecio.value = precioTarjeta > 0 ? precioTarjeta : (precioEncontrado > 0 ? precioEncontrado : '');
+    
+    calcularCuotasSimulador();
+}
+
+// 4. Matemáticas de Amortización (Cálculo Financiero de la Cuota)
+function calcularCuotasSimulador() {
+    const tarjetaKey = document.getElementById('sim-tarjeta').value;
+    const precio = parseFloat(document.getElementById('sim-precio').value) || 0;
+    const meses = parseInt(document.getElementById('sim-meses-num').value) || 12;
+    
+    const resCuota = document.getElementById('sim-res-cuota');
+    const resTasa = document.getElementById('sim-res-tasa');
+    const resManejo = document.getElementById('sim-res-manejo');
+    const resTotal = document.getElementById('sim-res-total');
+    const resCondicion = document.getElementById('sim-res-condicion');
+
+    if (!tarjetaKey) {
+        resCuota.textContent = "$0";
+        resCondicion.textContent = "Selecciona una tarjeta para ver sus beneficios o condiciones.";
+        return;
+    }
+
+    const tarjetaInfo = tasasTarjetasDB[tarjetaKey];
+    const tasaDecimal = tarjetaInfo.tasaMV / 100;
+    const cuotaManejo = tarjetaInfo.cuotaManejo;
+
+    resTasa.textContent = `${tarjetaInfo.tasaMV}% M.V.`;
+    resManejo.textContent = formatPrice(cuotaManejo);
+    resCondicion.textContent = tarjetaInfo.condicion;
+
+    if (precio <= 0) {
+        resCuota.textContent = "$0";
+        resTotal.textContent = "$0";
+        return;
+    }
+
+    let cuotaMensualPura = 0;
+    
+    // Si es a 1 cuota, por ley usualmente no cobra intereses (depende del banco, pero lo estándar es 0%)
+    if (meses === 1) {
+        cuotaMensualPura = precio;
+    } else {
+        // Fórmula de amortización de cuota fija: P * (i(1+i)^n) / ((1+i)^n - 1)
+        cuotaMensualPura = precio * ( (tasaDecimal * Math.pow(1 + tasaDecimal, meses)) / (Math.pow(1 + tasaDecimal, meses) - 1) );
+    }
+
+    const cuotaTotalMensual = cuotaMensualPura + cuotaManejo;
+    const pagoTotalFinal = cuotaTotalMensual * meses;
+
+    resCuota.textContent = formatPrice(Math.round(cuotaTotalMensual));
+    resTotal.textContent = formatPrice(Math.round(pagoTotalFinal));
+}
+
+// 5. Inicializar el panel de Administrador (Jershon)
+function inicializarAdminTarjetas() {
+    const container = document.getElementById('admin-tarjetas-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    Object.keys(tasasTarjetasDB).forEach(key => {
+        const t = tasasTarjetasDB[key];
+        container.innerHTML += `
+            <div class="bg-black/40 border border-darkBorder rounded-2xl p-4 space-y-3">
+                <h4 class="text-white font-bold orbitron uppercase tracking-widest border-b border-darkBorder pb-2 text-sm">${t.nombre}</h4>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[9px] font-black text-cyberMagenta uppercase block mb-1">Tasa Interés M.V. (%)</label>
+                        <input type="number" step="0.01" id="adm-tasa-${key}" value="${t.tasaMV}" class="w-full bg-[#0d0d11] text-white border border-cyberMagenta/30 rounded-lg p-2.5 text-xs font-mono outline-none focus:border-cyberMagenta">
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-black text-cyberMagenta uppercase block mb-1">Cuota Manejo ($)</label>
+                        <input type="number" id="adm-manejo-${key}" value="${t.cuotaManejo}" class="w-full bg-[#0d0d11] text-white border border-cyberMagenta/30 rounded-lg p-2.5 text-xs font-mono outline-none focus:border-cyberMagenta">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[9px] font-black text-cyberMagenta uppercase block mb-1">Condición Comercial / Tips</label>
+                    <textarea id="adm-condicion-${key}" rows="2" class="w-full bg-[#0d0d11] text-white border border-cyberMagenta/30 rounded-lg p-2 text-xs outline-none focus:border-cyberMagenta">${t.condicion}</textarea>
+                </div>
+            </div>
+        `;
+    });
+}
+
+// 6. Guardar tasas editadas en Firebase (Solo Admin)
+function guardarTasasTarjetas() {
+    Object.keys(tasasTarjetasDB).forEach(key => {
+        tasasTarjetasDB[key].tasaMV = parseFloat(document.getElementById(`adm-tasa-${key}`).value) || 0;
+        tasasTarjetasDB[key].cuotaManejo = parseInt(document.getElementById(`adm-manejo-${key}`).value) || 0;
+        tasasTarjetasDB[key].condicion = document.getElementById(`adm-condicion-${key}`).value || "";
+    });
+
+    db.collection("global").doc("tasas_tarjetas").set(tasasTarjetasDB, { merge: true })
+        .then(() => {
+            triggerCyberToast('TASAS ACTUALIZADAS', 'El simulador financiero a nivel nacional fue actualizado.', true);
+        })
+        .catch(err => {
+            showCustomAlert('Error de Red', 'No se pudieron guardar las tasas en la nube.');
+        });
+}
     </script>
 
     <!-- MÓDULO INTEGRACIÓN HARDWARE CON IA -->
@@ -9850,7 +10120,7 @@ async function cargarVisorCierres() {
         const zonaFiltroSelect = document.getElementById('filtro-zona-admin');
         const zonaObjetivo = (zonaFiltroSelect && zonaFiltroSelect.value !== 'ALL' && zonaFiltroSelect.value !== '') ? zonaFiltroSelect.value : (window.miZona || currentUserZone || "Santander");
         let listaTiendas = diccionarioTiendasZonas[zonaObjetivo] || [];
-           
+
         const snap = await db.collection(COLECCION_CIERRES).get();
         window.reportesGlobales = {}; 
         snap.forEach(doc => window.reportesGlobales[doc.id] = doc.data());
