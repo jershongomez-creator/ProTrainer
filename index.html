@@ -7066,8 +7066,8 @@ function toggleSidebar() {
             });
         };
 
-        // RENDERIZADO UI ASESOR
-        function renderCalculadoraAsesor() {
+  // RENDERIZADO UI ASESOR
+  function renderCalculadoraAsesor() {
             const container = document.getElementById('calc-models-container');
             const cadenaSelect = document.getElementById('calc-cadena');
             if(!container) return;
@@ -7082,11 +7082,28 @@ function toggleSidebar() {
             }
 
             container.innerHTML = '';
-            Object.keys(infinixDatabase).forEach(key => {
-                const model = infinixDatabase[key];
+            
+            // 🔥 SOLUCIÓN: Ahora la calculadora lee la lista maestra dinámica del administrador
+            const listaModelos = typeof obtenerModelosCierre === 'function' ? obtenerModelosCierre() : [
+                { key: "gt-5-pro", name: "GT 5 PRO" },
+                { key: "infinix-smart-20", name: "Infinix Smart 20" },
+                { key: "infinix-hot-60i", name: "Infinix Hot 60i" },
+                { key: "infinix-hot-70", name: "Infinix HOT 70" },
+                { key: "infinix-hot-60-pro+", name: "Infinix Hot 60 Pro+" },
+                { key: "infinix-note-edge", name: "Infinix Note Edge" },
+                { key: "infinix-note-60", name: "Infinix Note 60" },
+                { key: "infinix-note-60-pro", name: "Infinix Note 60 PRO" },
+                { key: "infinix-note-60-ultra", name: "Infinix Note 60 Ultra" },
+                { key: "xpad-30e", name: "Xpad 30E" }
+            ];
+
+            listaModelos.forEach(modelo => {
+                const key = modelo.key || modelo.dbKey;
+                const modelName = modelo.name || modelo.nombreUI;
+                
                 container.innerHTML += `
                     <div class="flex justify-between items-center py-2.5 border-b border-darkBorder/50 group hover:bg-white/5 transition-colors px-2 rounded-lg">
-                        <div class="text-[11px] sm:text-xs font-bold text-white uppercase w-5/12 truncate flex items-center gap-1.5"><span class="text-infinix/60">▪</span> ${model.name}</div>
+                        <div class="text-[11px] sm:text-xs font-bold text-white uppercase w-5/12 truncate flex items-center gap-1.5"><span class="text-infinix/60">▪</span> ${modelName}</div>
                         <div class="w-3/12 px-1 sm:px-2">
                             <input type="number" id="calc-unit-${key}" oninput="calcularComisiones()" min="0" class="w-full bg-black border border-darkBorder rounded-lg text-center text-infinix font-mono font-black py-1.5 focus:border-infinix outline-none" placeholder="0">
                         </div>
@@ -7113,8 +7130,10 @@ function toggleSidebar() {
             const tRoi2 = parseInt(chainConfig.thresholds?.roi2) || 50;
             const kpiVal = parseInt(chainConfig.thresholds?.kpi) || 400000;
 
-            // 1. Sumar unidades
-            Object.keys(infinixDatabase).forEach(key => {
+         // 1. Sumar unidades
+         const listaModelos = typeof obtenerModelosCierre === 'function' ? obtenerModelosCierre() : Object.keys(infinixDatabase).map(k => ({key: k}));
+            listaModelos.forEach(modelo => {
+                const key = modelo.key;
                 const input = document.getElementById(`calc-unit-${key}`);
                 if(input) totalUnits += parseInt(input.value) || 0;
             });
@@ -7141,8 +7160,9 @@ function toggleSidebar() {
             statusEl.textContent = roiStatusText;
             statusEl.className = `text-[11px] font-black tracking-wider ${roiStatusClass}`;
 
-            // 3. Calcular ganancias por modelo
-            Object.keys(infinixDatabase).forEach(key => {
+         // 3. Calcular ganancias por modelo
+         listaModelos.forEach(modelo => {
+                const key = modelo.key;
                 const input = document.getElementById(`calc-unit-${key}`);
                 const subtotalEl = document.getElementById(`calc-subtotal-${key}`);
                 if(input && subtotalEl) {
@@ -7259,43 +7279,52 @@ function toggleSidebar() {
             });
         }
 
-        function saveComisionesData() {
-            const cadena = document.getElementById('admin-calc-cadena').value;
-            if(!cadena) return;
+      function saveComisionesData() {
+    const cadena = document.getElementById('admin-calc-cadena').value;
+    if(!cadena) return;
 
-            if(!comisionesData.cadenas[cadena]) comisionesData.cadenas[cadena] = {};
-            
-            // Guardar umbrales específicos en la cadena
-            comisionesData.cadenas[cadena].thresholds = {
-                roi1: parseInt(document.getElementById('admin-t-roi1').value) || 25,
-                roi2: parseInt(document.getElementById('admin-t-roi2').value) || 50,
-                kpi: parseInt(document.getElementById('admin-t-kpi').value) || 400000
+    if(!comisionesData.cadenas[cadena]) comisionesData.cadenas[cadena] = {};
+    
+    // Guardar umbrales específicos en la cadena
+    comisionesData.cadenas[cadena].thresholds = {
+        roi1: parseInt(document.getElementById('admin-t-roi1').value) || 25,
+        roi2: parseInt(document.getElementById('admin-t-roi2').value) || 50,
+        kpi: parseInt(document.getElementById('admin-t-kpi').value) || 400000
+    };
+
+    // Guardar modelos en la cadena
+    if(!comisionesData.cadenas[cadena].models) comisionesData.cadenas[cadena].models = {};
+    
+    // 🔥 SOLUCIÓN: Leemos los campos usando tu nueva lista maestra dinámica
+    const listaModelos = typeof obtenerModelosCierre === 'function' ? obtenerModelosCierre() : [
+        { key: "gt-5-pro" }, { key: "infinix-smart-20" }, { key: "infinix-hot-60i" },
+        { key: "infinix-hot-70" }, { key: "infinix-hot-60-pro+" }, { key: "infinix-note-edge" },
+        { key: "infinix-note-60" }, { key: "infinix-note-60-pro" }, { key: "infinix-note-60-ultra" },
+        { key: "xpad-30e" }
+    ];
+
+    listaModelos.forEach(modelo => {
+        const key = modelo.key || modelo.dbKey;
+        const inputR1 = document.getElementById(`admin-c-${key}-roi1`);
+        const inputR2 = document.getElementById(`admin-c-${key}-roi2`);
+        if(inputR1 && inputR2) {
+            comisionesData.cadenas[cadena].models[key] = {
+                roi1: parseInt(inputR1.value) || 0,
+                roi2: parseInt(inputR2.value) || 0
             };
-
-            // Guardar modelos en la cadena
-            if(!comisionesData.cadenas[cadena].models) comisionesData.cadenas[cadena].models = {};
-            
-            Object.keys(infinixDatabase).forEach(key => {
-                const inputR1 = document.getElementById(`admin-c-${key}-roi1`);
-                const inputR2 = document.getElementById(`admin-c-${key}-roi2`);
-                if(inputR1 && inputR2) {
-                    comisionesData.cadenas[cadena].models[key] = {
-                        roi1: parseInt(inputR1.value) || 0,
-                        roi2: parseInt(inputR2.value) || 0
-                    };
-                }
-            });
-
-            localStorage.setItem('infinix_comisiones', JSON.stringify(comisionesData));
-            
-            db.collection("global").doc("comisiones").set(comisionesData, { merge: true })
-            .then(() => {
-                triggerCyberToast('CADENA SINCRONIZADA', `Los pagos de ${cadena.toUpperCase()} están actualizados a nivel nacional.`, true);
-            })
-            .catch(() => {
-                showCustomAlert('Guardado Local', 'Datos guardados localmente. Error de conexión con Firebase.');
-            });
         }
+    });
+
+    localStorage.setItem('infinix_comisiones', JSON.stringify(comisionesData));
+    
+    db.collection("global").doc("comisiones").set(comisionesData, { merge: true })
+    .then(() => {
+        triggerCyberToast('CADENA SINCRONIZADA', `Los pagos de ${cadena.toUpperCase()} están actualizados a nivel nacional.`, true);
+    })
+    .catch(() => {
+        showCustomAlert('Guardado Local', 'Datos guardados localmente. Error de conexión con Firebase.');
+    });
+}
         // ==========================================
         // MÓDULO SALÓN DE LA FAMA (RANKING)
         // ==========================================
