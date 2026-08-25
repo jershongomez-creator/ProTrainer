@@ -981,10 +981,9 @@
 </div>
             </div>
 
-         <!-- Podio de los 3 Mejores -->
-         <div class="flex flex-row items-end justify-center gap-1.5 sm:gap-4 mb-8 sm:mb-10 mt-8 sm:mt-12 min-h-[180px] sm:min-h-[250px] w-full px-2" id="podio-container">
-                <!-- Inyectado por JS -->
-            </div>
+       <!-- Podio de los 3 Mejores -->
+       <div class="flex flex-row items-end justify-center gap-1.5 sm:gap-4 mb-8 sm:mb-10 mt-8 sm:mt-12 min-h-[180px] sm:min-h-[250px] w-full px-2" id="podio-container">
+    </div>
 
             <!-- Lista del Top 4 al 10 -->
             <div class="bg-darkCard border-2 border-darkBorder rounded-3xl p-6 shadow-2xl relative overflow-hidden max-w-4xl mx-auto">
@@ -7394,7 +7393,7 @@ function toggleSidebar() {
             });
     }
         // Dibuja el Podio y la Lista del Ranking
-        function renderSalonFama() {
+function renderSalonFama() {
     const podioContainer = document.getElementById('podio-container');
     const listContainer = document.getElementById('ranking-list-container');
     if (!podioContainer || !listContainer) return;
@@ -7417,7 +7416,7 @@ function toggleSidebar() {
         "ANTIOQUIA": ["Antioquia Norte", "Antioquia Sur", "Eje Cafetero", "Antioquia Norte Trainer", "Antioquia Sur Trainer"]
     };
 
-    const esGerenteOAdmin = (rolUpper === 'ADMIN' || rolUpper === 'GERENTE' || currentUserCode === 'CO1000429' || currentUserName.includes('FERRO'));
+    const esGerenteOAdmin = (rolUpper === 'ADMIN' || rolUpper === 'GERENTE' || currentUserCode === 'CO1000429' || (typeof currentUserName !== 'undefined' && currentUserName.toUpperCase().includes('FERRO')));
 
     let zonasPermitidas = [];
     if (rolUpper === 'COORDINADOR') {
@@ -7435,7 +7434,10 @@ function toggleSidebar() {
                     options[i].style.display = "block"; // Ranking Nacional siempre visible
                     continue;
                 }
-                const coincide = zonasPermitidas.some(z => z.trim().toLowerCase() === optVal.trim().toLowerCase());
+                const coincide = zonasPermitidas.some(z => 
+                    z.trim().toLowerCase() === optVal.trim().toLowerCase() || 
+                    z.trim().toLowerCase().includes(optVal.trim().toLowerCase())
+                );
                 options[i].style.display = coincide ? "block" : "none";
             }
         }
@@ -7448,7 +7450,8 @@ function toggleSidebar() {
     if (zonaFiltro !== "TODAS") {
         rankingFiltrado = rankingNacional.filter(asesor => {
             const zonaAsesor = (asesor.zona || '').trim().toLowerCase();
-            return zonaAsesor === zonaFiltro.trim().toLowerCase();
+            const filtroClean = zonaFiltro.trim().toLowerCase();
+            return zonaAsesor === filtroClean || zonaAsesor.includes(filtroClean);
         });
     }
 
@@ -7457,7 +7460,9 @@ function toggleSidebar() {
         return;
     }
 
-   // Generar Podio (Top 3) - Orden: 2, 1, 3 para diseño visual
+    // Generar Podio (Top 3) - Orden: 2, 1, 3 para diseño visual
+    const top3 = [rankingFiltrado[1], rankingFiltrado[0], rankingFiltrado[2]];
+    
     // Alturas adaptables: Más cortas en celular, altas en PC
     const alturas = ['h-[110px] sm:h-[160px]', 'h-[150px] sm:h-[220px]', 'h-[80px] sm:h-[130px]'];
     const medallas = ['🥈', '🥇', '🥉'];
@@ -7496,8 +7501,8 @@ function toggleSidebar() {
                         </div>
                     </div>
                     <div class="text-right">
-                        <div class="text-sm font-black text-infinix font-mono">${asesor.totalUnits} UD</div>
-                        <div class="text-[9px] text-gray-400">Meta: ${asesor.target}</div>
+                        <div class="text-sm font-black text-infinix font-mono">${asesor.totalUnits || asesor.totalUnidades || 0} UD</div>
+                        <div class="text-[9px] text-gray-400">Meta: ${asesor.target || 0}</div>
                     </div>
                 </div>
             `;
