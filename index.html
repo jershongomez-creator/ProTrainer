@@ -950,7 +950,8 @@
 <div class="text-center mt-4 mb-4">
     <select id="filtro-zona-ranking" class="bg-black text-yellow-500 border border-yellow-600 rounded p-2 text-sm font-bold" onchange="renderSalonFama()">
         <option value="TODAS">Ranking Nacional (Todas las Zonas)</option>
-        <option value="Nariño & Santander">Nariño & Santander</option>
+        <option value="Santander">Santander</option>
+        <option value="Nariño">Nariño</option>
         <option value="Antioquia Norte">Antioquia Norte</option>
         <option value="Antioquia Sur">Antioquia Sur</option>
         <option value="Valle">Valle</option>
@@ -1020,7 +1021,8 @@
        <!-- FILTRO DE ZONA PARA STOCK -->
        <select id="filtro-zona-stock" class="bg-black text-gray-300 border border-gray-600 rounded p-2 text-sm font-bold ml-2" onchange="renderInventarioAdminTable()">
     <option value="TODAS">Nacional (Todas las Zonas)</option>
-    <option value="Nariño & Santander">Nariño & Santander</option>
+    <option value="Santander">Santander</option>
+    <option value="Nariño">Nariño</option>
     <option value="Antioquia Norte">Antioquia Norte</option>
     <option value="Antioquia Sur">Antioquia Sur</option>
     <option value="Valle">Valle</option>
@@ -7121,7 +7123,7 @@ function ejecutarCaptura(idLienzo, nombreArchivo) {
     const miRegional = window.regional ? window.regional.toUpperCase().trim() : '';
 
     const regionalesMap = {
-        "SUROCCIDENTE": ["Valle", "Nariño & Santander", "Nariño & Santander Trainer", "Valle Trainer"],
+        "SUROCCIDENTE": ["Valle", "Nariño", "Santander", "Santander Trainer", "Valle Trainer"],
         "ZONA CENTRO": ["Exito Centro Sur", "Exito Centro Norte", "Falabella / Cencosud & Olimpica Centro", "Alkosto Centro Sur", "Alkosto Centro Norte", "Alcosto Centro Trainer", "Exito Centro Sur Trainer", "FALABELLA & CENCOSUD CENTRO TRAINER"],
         "COSTA": ["Costa Sur", "Costa Norte", "Costa Sur Trainer", "Costa Norte Trainer"],
         "ANTIOQUIA": ["Antioquia Norte", "Antioquia Sur", "Eje Cafetero", "Antioquia Norte Trainer", "Antioquia Sur Trainer"]
@@ -7545,7 +7547,7 @@ function renderInventarioAsesorForm() {
     let miRegional = window.regional ? window.regional.toUpperCase().trim() : '';
 
     const regionalesMap = {
-        "SUROCCIDENTE": ["Valle", "Nariño & Santander", "Nariño & Santander Trainer", "Valle Trainer"],
+        "SUROCCIDENTE": ["Valle", "Nariño", "Santander", "Santander Trainer", "Valle Trainer"],
         "ZONA CENTRO": ["Exito Centro Sur", "Exito Centro Norte", "Falabella / Cencosud & Olimpica Centro", "Alkosto Centro Sur", "Alkosto Centro Norte", "Alcosto Centro Trainer", "Exito Centro Sur Trainer", "FALABELLA & CENCOSUD CENTRO TRAINER"],
         "COSTA": ["Costa Sur", "Costa Norte", "Costa Sur Trainer", "Costa Norte Trainer"],
         "ANTIOQUIA": ["Antioquia Norte", "Antioquia Sur", "Eje Cafetero", "Antioquia Norte Trainer", "Antioquia Sur Trainer"]
@@ -9231,11 +9233,15 @@ function configurarPanelPorRol(datosUsuario) {
 // 1. DICCIONARIO MAESTRO DE TIENDAS POR ZONA (QUEMADO EN EL CÓDIGO)
 // ============================================================================
 const diccionarioTiendasZonas = {
-    "Nariño & Santander": [
+    "Nariño": [
         "ALKOSTO 20 DE JULIO", "ALKOSTO BOLIVAR", "ALKOSTO CENTRO", "ALKOSTO FLORIDA", "ALKOSTO GRAN PLAZA", 
-        "ALKOSTO TUQUERRES", "Caracoli", "EXITO BARRANCABERMEJA", "EXITO BUCARAMANGA", "EXITO CANAVERAL FLORIDA B", 
-        "EXITO ORIENTAL BUCARAMANGA CV", "EXITO PASTO", "EXITO SAN MATEO CUCUTA (CV)", "JUMBO MEGA MALL", 
-        "KTRONIX BUCARAMANGA", "METRO VENTURA", "TIENDA IBIS CUCUTA", "TIENDA PASEO DEL COMERCIO", "TIENDA POBLADO DE GIRON","TIENDA PARQUE SANTANDER"
+        "ALKOSTO TUQUERRES", "EXITO PASTO", "EXITO IPIALES"
+    ],
+    "Santander": [
+        "Caracoli", "EXITO BARRANCABERMEJA", "EXITO BUCARAMANGA", "EXITO CANAVERAL FLORIDA B", 
+        "EXITO ORIENTAL BUCARAMANGA CV", "EXITO SAN MATEO CUCUTA (CV)", "JUMBO MEGA MALL", 
+        "KTRONIX BUCARAMANGA", "METRO VENTURA", "TIENDA IBIS CUCUTA", "TIENDA PASEO DEL COMERCIO", 
+        "TIENDA POBLADO DE GIRON", "TIENDA PARQUE SANTANDER"
     ],
     "Falabella / Cencosud & Olimpica Centro": [
         "Acqua", "C.mayor", "Colina", "Diver", "Feliz", "Galerias", "Hayuelos", "JUMBO SANTAFE BOG", "JUMBO SUBA", 
@@ -9308,7 +9314,7 @@ function cargarTiendasFormador() {
     if (!selectFormador) return;
 
     // Zona fija requerida para ti
-    const zonaObjetivo = "Nariño & Santander";
+    const zonaObjetivo = window.miZona || currentUserZone || "Santander";
     
     if (typeof diccionarioTiendasZonas !== 'undefined' && diccionarioTiendasZonas[zonaObjetivo]) {
         const tiendas = diccionarioTiendasZonas[zonaObjetivo];
@@ -9327,7 +9333,7 @@ function cargarTiendasSupervisor() {
     const selectSup = document.getElementById('sup-tienda');
     if (!selectSup) return;
 
-    const zonaObjetivo = "Nariño & Santander";
+    const zonaObjetivo = window.miZona || currentUserZone || "Santander";
     if (typeof diccionarioTiendasZonas !== 'undefined' && diccionarioTiendasZonas[zonaObjetivo]) {
         const tiendas = diccionarioTiendasZonas[zonaObjetivo];
         selectSup.innerHTML = '<option value="">-- Seleccione Tienda / PDV --</option>';
@@ -9470,7 +9476,7 @@ function cargarTiendasDeMiZona() {
 // =================================================================
 
 const mapaOperativo = {
-    "SUROCCIDENTE": ["Valle", "Nariño & Santander"],
+    "SUROCCIDENTE": ["Valle", "Nariño", "Santander"],
     "ZONA CENTRO": ["Exito Centro Sur", "Exito Centro Norte", "Falabella / Cencosud & Olimpica Centro", "Alkosto Centro Sur", "Alkosto Centro Norte"],
     "COSTA": ["Costa Sur", "Costa Norte"],
     "ANTIOQUIA": ["Antioquia Norte", "Antioquia Sur", "Eje Cafetero"]
@@ -9841,9 +9847,10 @@ async function cargarVisorCierres() {
     lblEstado.textContent = 'Consultando Fireboss...';
 
     try {
-        const zonaObjetivo = "Nariño & Santander"; 
+        const zonaFiltroSelect = document.getElementById('filtro-zona-admin');
+        const zonaObjetivo = (zonaFiltroSelect && zonaFiltroSelect.value !== 'ALL' && zonaFiltroSelect.value !== '') ? zonaFiltroSelect.value : (window.miZona || currentUserZone || "Santander");
         let listaTiendas = diccionarioTiendasZonas[zonaObjetivo] || [];
-        
+           
         const snap = await db.collection(COLECCION_CIERRES).get();
         window.reportesGlobales = {}; 
         snap.forEach(doc => window.reportesGlobales[doc.id] = doc.data());
