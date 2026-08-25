@@ -981,8 +981,8 @@
 </div>
             </div>
 
-            <!-- Podio de los 3 Mejores -->
-            <div class="flex flex-col md:flex-row items-end justify-center gap-4 mb-10 mt-12 min-h-[250px]" id="podio-container">
+         <!-- Podio de los 3 Mejores -->
+         <div class="flex flex-row items-end justify-center gap-1.5 sm:gap-4 mb-8 sm:mb-10 mt-8 sm:mt-12 min-h-[180px] sm:min-h-[250px] w-full px-2" id="podio-container">
                 <!-- Inyectado por JS -->
             </div>
 
@@ -7457,23 +7457,23 @@ function toggleSidebar() {
         return;
     }
 
-    // Generar Podio (Top 3) - Orden: 2, 1, 3 para diseño visual
-    const top3 = [rankingFiltrado[1], rankingFiltrado[0], rankingFiltrado[2]];
-    const alturas = ['h-[160px]', 'h-[220px]', 'h-[130px]'];
+   // Generar Podio (Top 3) - Orden: 2, 1, 3 para diseño visual
+    // Alturas adaptables: Más cortas en celular, altas en PC
+    const alturas = ['h-[110px] sm:h-[160px]', 'h-[150px] sm:h-[220px]', 'h-[80px] sm:h-[130px]'];
     const medallas = ['🥈', '🥇', '🥉'];
 
     top3.forEach((asesor, index) => {
         if (!asesor) return;
         podioContainer.innerHTML += `
-            <div class="flex flex-col items-center justify-end w-28 sm:w-36 transition-all transform hover:scale-105">
-                <div class="text-center mb-3">
-                    <div class="text-3xl drop-shadow-lg mb-1">${medallas[index]}</div>
-                    <div class="font-black text-white text-xs sm:text-sm truncate w-full px-1">${asesor.nombre}</div>
-                    <div class="text-[9px] text-gray-400 uppercase tracking-widest">${asesor.cadena}</div>
-                    <div class="font-mono text-infinix font-black text-lg mt-1">${asesor.totalUnits} <span class="text-[10px] text-white">UD</span></div>
+            <div class="flex flex-col items-center justify-end w-[32%] sm:w-36 transition-all transform hover:scale-105">
+                <div class="text-center mb-2 sm:mb-3 w-full px-0.5">
+                    <div class="text-2xl sm:text-3xl drop-shadow-lg mb-1">${medallas[index]}</div>
+                    <div class="font-black text-white text-[9px] sm:text-sm truncate w-full">${asesor.nombre}</div>
+                    <div class="text-[7px] sm:text-[9px] text-gray-400 uppercase tracking-widest truncate w-full">${asesor.cadena}</div>
+                    <div class="font-mono text-infinix font-black text-xs sm:text-lg mt-0.5 sm:mt-1">${asesor.totalUnits || asesor.totalUnidades || 0} <span class="text-[7px] sm:text-[10px] text-white">UD</span></div>
                 </div>
-                <div class="w-full ${alturas[index]} rounded-t-xl bg-gradient-to-t from-darkCard to-[#131b2f] border-t-4 border-l border-r border-darkBorder relative flex items-center justify-center overflow-hidden shadow-2xl" style="border-top-color: ${index === 1 ? '#eab308' : (index === 0 ? '#9ca3af' : '#c2410c')}">
-                    <span class="text-6xl font-black opacity-10 absolute bottom-4">${index === 1 ? '1' : (index === 0 ? '2' : '3')}</span>
+                <div class="w-full ${alturas[index]} rounded-t-xl sm:rounded-t-2xl bg-gradient-to-t from-darkCard to-[#131b2f] border-t-2 sm:border-t-4 border-l border-r border-darkBorder relative flex items-center justify-center overflow-hidden shadow-2xl" style="border-top-color: ${index === 1 ? '#eab308' : (index === 0 ? '#9ca3af' : '#c2410c')}">
+                    <span class="text-4xl sm:text-6xl font-black opacity-10 absolute bottom-2 sm:bottom-4">${index === 1 ? '1' : (index === 0 ? '2' : '3')}</span>
                 </div>
             </div>
         `;
