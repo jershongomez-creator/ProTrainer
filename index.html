@@ -56,6 +56,15 @@
     </script>
     
     <style>
+        /* --- INDICADOR VISUAL DE SCROLL HORIZONTAL --- */
+.custom-scrollbar {
+    overflow-x: auto !important;
+    background: linear-gradient(90deg, #0E1322 30%, rgba(14,19,34,0) 100%), 
+                linear-gradient(270deg, #0E1322 30%, rgba(14,19,34,0) 100%) 100% 0;
+    background-repeat: no-repeat;
+    background-size: 20px 100%, 20px 100%;
+    background-attachment: local, local;
+}
   /* --- OPTIMIZACIÓN VISUAL Y ERGONOMÍA TÁCTICA (SÍNDROME DEL DEDO GORDO) --- */
 input, select, textarea {
     background-color: #1E293B !important; /* Gris Pizarra antirreflejo */
@@ -334,58 +343,118 @@ input:focus, select:focus, textarea:focus {
         
         <div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-6">
             
-            <!-- GRUPO 1: COMBATE E INTELIGENCIA RETAIL -->
-            <div class="border-b border-darkBorder pb-2">
-                <button onclick="toggleSubMenu('menu-combate')" class="w-full flex justify-between items-center text-[10px] text-infinix font-black uppercase tracking-widest mb-2 orbitron focus:outline-none">
-                    <span>⚔️ Inteligencia y Combate</span>
-                    <span id="icon-menu-combate" class="transition-transform duration-300 transform rotate-180">▼</span>
+           <!-- GRUPO 1: COMBATE E INTELIGENCIA RETAIL -->
+           <div class="border-b border-darkBorder pb-2">
+            <button onclick="toggleSubMenu('menu-combate')" class="w-full flex justify-between items-center text-[10px] text-infinix font-black uppercase tracking-widest mb-2 orbitron focus:outline-none cursor-pointer">
+                <span>⚔️ Inteligencia y Combate</span>
+                <span id="icon-menu-combate" class="transition-transform duration-300 transform rotate-180">▼</span>
+            </button>
+            <div id="menu-combate" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
+                <button onclick="switchTab('tab-comparativa')" id="btn-tab-comparativa" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-gray-300 text-base">⚔️</span> Arena Cara a Cara
                 </button>
-                <div id="menu-combate" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
-                    <button onclick="switchTab('tab-comparativa')" id="btn-tab-comparativa" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
-                        <span class="text-gray-300 text-base">⚔️</span> Arena Cara a Cara
-                    </button>
-                    <button onclick="switchTab('tab-radar-caracteristicas')" id="btn-tab-radar-caracteristicas" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
-                        <span class="text-purple-400 text-base">🎯</span> Radar Specs
-                    </button>
-                    <button onclick="switchTab('tab-tendencias-nacionales')" id="btn-tab-tendencias-nacionales" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
-                        <span class="text-blue-400 text-base">📈</span> Tendencias Retail
-                    </button>
-                </div>
+                <button onclick="switchTab('tab-radar-caracteristicas')" id="btn-tab-radar-caracteristicas" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-purple-400 text-base">🎯</span> Radar Specs
+                </button>
+                <button onclick="switchTab('tab-tendencias-nacionales')" id="btn-tab-tendencias-nacionales" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-blue-400 text-base">📈</span> Tendencias Retail
+                </button>
             </div>
+        </div>
 
-            <!-- GRUPO 2: OPERACIÓN DIARIA EN TIENDA -->
-            <div class="border-b border-darkBorder pb-2">
-                <button onclick="toggleSubMenu('menu-operacion')" class="w-full flex justify-between items-center text-[10px] text-blue-400 font-black uppercase tracking-widest mb-2 orbitron focus:outline-none">
-                    <span>📦 Operación Diaria</span>
-                    <span id="icon-menu-operacion" class="transition-transform duration-300 transform rotate-180">▼</span>
+        <!-- GRUPO 2: OPERACIÓN DIARIA EN TIENDA -->
+        <div class="border-b border-darkBorder pb-2">
+            <button onclick="toggleSubMenu('menu-operacion')" class="w-full flex justify-between items-center text-[10px] text-blue-400 font-black uppercase tracking-widest mb-2 orbitron focus:outline-none cursor-pointer">
+                <span>📦 Operación Diaria</span>
+                <span id="icon-menu-operacion" class="transition-transform duration-300 transform rotate-180">▼</span>
+            </button>
+            <div id="menu-operacion" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
+                <button onclick="switchTab('tab-inventario'); initInventarioView();" id="btn-tab-inventario" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-blue-500 text-base">📦</span> Stock y Reportes
                 </button>
-                <div id="menu-operacion" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
-                    <button onclick="switchTab('tab-inventario'); initInventarioView();" id="btn-tab-inventario" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
-                        <span class="text-blue-500 text-base">📦</span> Stock y Reportes
-                    </button>
-                    <button onclick="switchTab('tab-calculadora'); renderCalculadoraAsesor();" id="btn-tab-calculadora" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
-                        <span class="text-infinix text-base">🧮</span> Calculadora Comisiones
-                    </button>
-                    <button onclick="switchTab('tab-salon-fama'); renderSalonFama();" id="btn-tab-salon-fama" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
-                        <span class="text-yellow-500 text-base">🏆</span> Ranking Nacional
-                    </button>
-                    <button onclick="switchTab('tab-cierre-ventas'); renderizarFormularioCierre();" id="btn-tab-cierre-ventas" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
-                        <span class="text-green-500 text-base">📊</span> Cierre de Ventas
-                    </button>
-                    <button onclick="switchTab('tab-shopping')" id="btn-tab-shopping" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
-                        <span class="text-yellow-500 text-base">🔍</span> Shopping Precios
-                    </button>
-                    <button onclick="switchTab('tab-shopping-trainer')" id="btn-tab-shopping-trainer" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
-                        <span class="text-orange-400 text-base">📸</span> Cargar Shopping
-                    </button>
-                    <button onclick="switchTab('panel-carga-precios'); cargarMarcasCargaPrecios();" id="btn-tab-carga-precios" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
-                        <span class="text-blue-500 text-base">📝</span> Inyectar Precios
-                    </button>
-                    <button onclick="switchTab('tab-reporte-visita')" id="btn-tab-reporte-visita" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
-                        <span class="text-gray-300 text-base">📸</span> Reporte de Visita
-                    </button>
-                </div>
+                <button onclick="switchTab('tab-calculadora'); renderCalculadoraAsesor();" id="btn-tab-calculadora" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-infinix text-base">🧮</span> Calculadora Comisiones
+                </button>
+                <button onclick="switchTab('tab-salon-fama'); renderSalonFama();" id="btn-tab-salon-fama" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-yellow-500 text-base">🏆</span> Ranking Nacional
+                </button>
+                <button onclick="switchTab('tab-cierre-ventas'); renderizarFormularioCierre();" id="btn-tab-cierre-ventas" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-green-500 text-base">📊</span> Cierre de Ventas
+                </button>
+                <button onclick="switchTab('tab-shopping')" id="btn-tab-shopping" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-yellow-500 text-base">🔍</span> Shopping Precios
+                </button>
+                <button onclick="switchTab('tab-shopping-trainer')" id="btn-tab-shopping-trainer" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-orange-400 text-base">📸</span> Cargar Shopping
+                </button>
+                <button onclick="switchTab('panel-carga-precios'); cargarMarcasCargaPrecios();" id="btn-tab-carga-precios" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-blue-500 text-base">📝</span> Inyectar Precios
+                </button>
+                <button onclick="switchTab('tab-reporte-visita')" id="btn-tab-reporte-visita" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-gray-300 text-base">📸</span> Reporte de Visita
+                </button>
             </div>
+        </div>
+
+        <!-- GRUPO 3: ACADEMIA -->
+        <div class="border-b border-darkBorder pb-2">
+            <button onclick="toggleSubMenu('menu-entrenamiento')" class="w-full flex justify-between items-center text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2 orbitron focus:outline-none cursor-pointer">
+                <span>🎓 Entrenamiento</span>
+                <span id="icon-menu-entrenamiento" class="transition-transform duration-300 transform rotate-180">▼</span>
+            </button>
+            <div id="menu-entrenamiento" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
+                <button onclick="switchTab('tab-quiz')" id="btn-tab-quiz" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-infinix text-base">📝</span> Infinix Xschool
+                </button>
+            </div>
+        </div>
+
+        <!-- GRUPO 4: HERRAMIENTAS DE CIERRE FINANCIERO -->
+        <div class="border-b border-darkBorder pb-2">
+            <button onclick="toggleSubMenu('menu-financiero')" class="w-full flex justify-between items-center text-[10px] text-yellow-500 font-black uppercase tracking-widest mb-2 orbitron focus:outline-none cursor-pointer">
+                <span>💰 Herramientas de Cierre</span>
+                <span id="icon-menu-financiero" class="transition-transform duration-300 transform rotate-180">▼</span>
+            </button>
+            <div id="menu-financiero" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
+                <button onclick="switchTab('tab-simulador-credito'); inicializarSimuladorAsesor();" id="btn-tab-simulador-credito" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-emerald-400 text-base">💳</span> Simulador de Cuotas
+                </button>
+            </div>
+        </div>
+
+        <!-- GRUPO 5: ADMINISTRACIÓN MAESTRA -->
+        <div id="sidebar-admin-group" class="hidden border-b border-darkBorder pb-2 mt-2">
+            <button onclick="toggleSubMenu('menu-admin')" class="w-full flex justify-between items-center text-[10px] text-cyberMagenta font-black uppercase tracking-widest mb-2 orbitron focus:outline-none cursor-pointer">
+                <span>⚙️ Modo Administrador</span>
+                <span id="icon-menu-admin" class="transition-transform duration-300 transform rotate-180">▼</span>
+            </button>
+            <div id="menu-admin" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
+                <button onclick="switchTab('panel-admin-gerencia')" id="btn-tab-reportes-admin" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-green-500 text-base">📊</span> Central Reportes
+                </button>
+                <button onclick="switchTab('tab-shopping-admin')" id="btn-tab-shopping-admin" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-yellow-500 text-base">📥</span> Auditoría Shopping
+                </button>
+                <button onclick="switchTab('tab-admin-calculadora'); renderAdminCalcModels();" id="btn-tab-admin-calculadora" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-cyberMagenta text-base">💸</span> Admin Pay
+                </button>
+                <button onclick="switchTab('tab-admin-credito'); inicializarAdminTarjetas();" id="btn-tab-admin-credito" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-cyberMagenta text-base">🏦</span> Gestor Tarjetas
+                </button>
+                <button onclick="switchTab('tab-cortex')" id="btn-tab-cortex" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-cyberMagenta text-base">🧠</span> Cortex AI (Global)
+                </button>
+                <button onclick="switchTab('panel-forja-equipos'); cargarMarcasForja();" id="btn-tab-forja-equipos" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-yellow-500 text-base">🛠️</span> Forja de Equipos
+                </button>
+                <button onclick="switchTab('tab-admin-listas')" id="btn-tab-admin-listas" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-green-400 text-base">⚙️</span> Gestor Listas Cierre
+                </button>
+                <button onclick="switchTab('tab-alertas-master')" id="btn-tab-alertas-master" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-cyberMagenta text-base">👁️</span> Log Master
+                </button>
+            </div>
+        </div>
 
             <!-- GRUPO 3: ACADEMIA -->
             <div class="border-b border-darkBorder pb-2">
@@ -11383,7 +11452,28 @@ function openCargaPrecios() {
         </div>
     </div>
 </div>
+<script>
+// --- SEMÁFORO DE CONECTIVIDAD EN TIEMPO REAL ---
+window.addEventListener('load', () => {
+    actualizarEstadoRed();
+    window.addEventListener('online', actualizarEstadoRed);
+    window.addEventListener('offline', actualizarEstadoRed);
+});
 
+function actualizarEstadoRed() {
+    const badgesOnline = document.querySelectorAll('span');
+    badgesOnline.forEach(badge => {
+        if (badge.textContent.includes('ONLINE') || badge.textContent.includes('OFFLINE')) {
+            const isOnline = navigator.onLine;
+            badge.innerHTML = isOnline 
+                ? '<span class="w-2 h-2 mr-2 rounded-full bg-infinix animate-ping"></span> ONLINE' 
+                : '<span class="w-2 h-2 mr-2 rounded-full bg-red-500 animate-ping"></span> OFFLINE';
+            badge.className = isOnline 
+                ? "hidden sm:inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-black bg-infinix/10 text-infinix border border-infinix/30 uppercase tracking-widest orbitron shadow-[0_0_8px_rgba(57,255,20,0.2)]"
+                : "hidden sm:inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-black bg-red-500/10 text-red-500 border border-red-500/30 uppercase tracking-widest orbitron shadow-[0_0_8px_rgba(239,68,68,0.2)]";
+        }
+    });
+}
  </script>
 <!-- MÓDULO 2: MODAL DE ALERTA DE VENTA (CYBERPUNK CYAN) -->
 <div id="cyber-venta-modal" style="position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 2147483647 !important; margin: 0 !important; padding: 0 !important;" class="bg-black/90 backdrop-blur-md flex items-center justify-center hidden">
