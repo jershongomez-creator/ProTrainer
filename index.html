@@ -7366,11 +7366,10 @@ function toggleSidebar() {
             const input = document.getElementById(`calc-unit-${key}`);
             if (input) {
                 const units = parseInt(input.value) || 0;
-                if (units > 0) {
-                    totalUnits += units;
-                    desglose[key] = units;
-                }
-                valoresInputsCalc[key] = input.value; // Guardamos todos (incluso en 0) para restaurar exacto
+                // Eliminamos el if(units > 0) para que registre explícitamente las referencias en 0
+                totalUnits += units;
+                desglose[key] = units;
+                valoresInputsCalc[key] = input.value;
             }
         });
 
@@ -7381,8 +7380,11 @@ function toggleSidebar() {
         localStorage.setItem(`calc_cadena_${asesorCode}`, cadena);
 
         if (totalUnits === 0) {
-            showCustomAlert("Sin Ventas", "Debes ingresar al menos una unidad vendida para registrar en el ranking.");
-            return;
+            // Reemplazamos el bloqueo por una confirmación nativa para permitir el "día en cero"
+            const confirmarCero = confirm("Estás a punto de reportar 0 ventas (quiebre de stock). ¿Deseas registrarlo en el sistema?");
+            if (!confirmarCero) {
+                return; // Si el asesor cancela, detenemos el envío
+            }
         }
 
         const payload = {
@@ -7728,6 +7730,27 @@ function renderInventarioAsesorForm() {
                     `;
                 });
             });
+            // ----------------------------------------------------
+            // MAGIA: Cargar la memoria local del inventario de ayer
+            // ----------------------------------------------------
+            setTimeout(() => {
+                const asesorId = document.getElementById('login-code') ? document.getElementById('login-code').value.trim().toUpperCase() : 'INVITADO';
+                const inventarioGuardado = localStorage.getItem(`inv_previo_${asesorId}`);
+                
+                if (inventarioGuardado) {
+                    try {
+                        const valoresInv = JSON.parse(inventarioGuardado);
+                        Object.keys(valoresInv).forEach(key => {
+                            const input = document.getElementById(`inv-unit-${key}`);
+                            if (input) {
+                                input.value = valoresInv[key];
+                            }
+                        });
+                    } catch (e) {
+                        console.error("Error al restaurar inventario local", e);
+                    }
+                }
+            }, 500); // Pequeño retraso para asegurar que los inputs ya existan
         }
 
         // Asesor: Guarda el inventario en Firebase
@@ -7746,19 +7769,28 @@ function renderInventarioAsesorForm() {
 
             let totalUnits = 0;
             let desglose = {};
+            let valoresInvLocal = {}; // NUEVO: Para guardar en memoria
 
             Object.keys(infinixDatabase).forEach(key => {
                 const input = document.getElementById(`inv-unit-${key}`);
-                if (input && parseInt(input.value) > 0) {
-                    const units = parseInt(input.value);
+                if (input && input.value !== "") {
+                    const units = parseInt(input.value) || 0;
                     totalUnits += units;
                     desglose[infinixDatabase[key].name] = units;
+                    valoresInvLocal[key] = input.value; // Capturamos el valor para memoria
                 }
             });
 
+            // NUEVO: Guardar en el Local Storage del navegador
+            const asesorCode = document.getElementById('login-code') ? document.getElementById('login-code').value.trim().toUpperCase() : 'INVITADO';
+            localStorage.setItem(`inv_previo_${asesorCode}`, JSON.stringify(valoresInvLocal));
+
             if (totalUnits === 0) {
-                showCustomAlert("Inventario Vacío", "Debe ingresar al menos una unidad para subir el reporte.");
-                return;
+                // (Aquí va el confirm() que configuramos en la corrección anterior)
+                const confirmarInv = confirm("Estás reportando 0 unidades de inventario total. ¿Deseas subir el reporte de quiebre de stock?");
+                if (!confirmarInv) {
+                    return;
+                }
             }
 
             const asesorCode = document.getElementById('login-code') ? document.getElementById('login-code').value.trim().toUpperCase() : 'INVITADO';
