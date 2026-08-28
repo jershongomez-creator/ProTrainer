@@ -56,6 +56,40 @@
     </script>
     
     <style>
+  /* --- OPTIMIZACIÓN VISUAL Y ERGONOMÍA TÁCTICA (SÍNDROME DEL DEDO GORDO) --- */
+input, select, textarea {
+    background-color: #1E293B !important; /* Gris Pizarra antirreflejo */
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    border-color: #334155 !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3) !important;
+    
+    /* REGLAS DE ERGONOMÍA MÓVIL */
+    min-height: 50px !important; /* Área táctil estándar de la industria (mínimo 48px) */
+    font-size: 16px !important; /* CLAVE: 16px evita que Safari/iOS haga zoom automático al tocar la caja */
+    padding: 12px 16px !important; /* Espacio interno para que el texto respire y no quede al borde */
+    border-radius: 12px !important; 
+}
+
+/* Agrandar las casillas de verificación (Checkboxes y Radios) en los Reportes de Visita */
+input[type="radio"], input[type="checkbox"] {
+    min-height: 24px !important;
+    min-width: 24px !important;
+    cursor: pointer;
+    margin-right: 8px !important;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #00D100 !important; 
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(0, 209, 0, 0.2) !important;
+}
+
+/* Apagar resplandores innecesarios en tarjetas estáticas */
+.shadow-\[0_0_40px_rgba\(59\,130\,246\,0\.15\)\],
+.shadow-\[0_0_40px_rgba\(255\,0\,127\,0\.15\)\] {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5) !important;
+}
 /* BLINDAJE PARA BOTÓN Y MODAL */
 .btn-alerta-seguro {
     position: relative !important;
@@ -301,9 +335,12 @@
         <div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-6">
             
             <!-- GRUPO 1: COMBATE E INTELIGENCIA RETAIL -->
-            <div>
-                <p class="text-[10px] text-infinix font-black uppercase tracking-widest mb-3 orbitron">⚔️ Inteligencia y Combate</p>
-                <div class="space-y-1">
+            <div class="border-b border-darkBorder pb-2">
+                <button onclick="toggleSubMenu('menu-combate')" class="w-full flex justify-between items-center text-[10px] text-infinix font-black uppercase tracking-widest mb-2 orbitron focus:outline-none">
+                    <span>⚔️ Inteligencia y Combate</span>
+                    <span id="icon-menu-combate" class="transition-transform duration-300 transform rotate-180">▼</span>
+                </button>
+                <div id="menu-combate" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
                     <button onclick="switchTab('tab-comparativa')" id="btn-tab-comparativa" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
                         <span class="text-gray-300 text-base">⚔️</span> Arena Cara a Cara
                     </button>
@@ -317,9 +354,12 @@
             </div>
 
             <!-- GRUPO 2: OPERACIÓN DIARIA EN TIENDA -->
-            <div>
-                <p class="text-[10px] text-blue-400 font-black uppercase tracking-widest mb-3 orbitron">📦 Operación Diaria</p>
-                <div class="space-y-1">
+            <div class="border-b border-darkBorder pb-2">
+                <button onclick="toggleSubMenu('menu-operacion')" class="w-full flex justify-between items-center text-[10px] text-blue-400 font-black uppercase tracking-widest mb-2 orbitron focus:outline-none">
+                    <span>📦 Operación Diaria</span>
+                    <span id="icon-menu-operacion" class="transition-transform duration-300 transform rotate-180">▼</span>
+                </button>
+                <div id="menu-operacion" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
                     <button onclick="switchTab('tab-inventario'); initInventarioView();" id="btn-tab-inventario" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
                         <span class="text-blue-500 text-base">📦</span> Stock y Reportes
                     </button>
@@ -348,9 +388,12 @@
             </div>
 
             <!-- GRUPO 3: ACADEMIA -->
-            <div>
-                <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-3 orbitron">🎓 Entrenamiento</p>
-                <div class="space-y-1">
+            <div class="border-b border-darkBorder pb-2">
+                <button onclick="toggleSubMenu('menu-entrenamiento')" class="w-full flex justify-between items-center text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2 orbitron focus:outline-none">
+                    <span>🎓 Entrenamiento</span>
+                    <span id="icon-menu-entrenamiento" class="transition-transform duration-300 transform rotate-180">▼</span>
+                </button>
+                <div id="menu-entrenamiento" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
                     <button onclick="switchTab('tab-quiz')" id="btn-tab-quiz" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
                         <span class="text-infinix text-base">📝</span> Infinix Xschool
                     </button>
@@ -358,9 +401,12 @@
             </div>
 
             <!-- GRUPO 4: HERRAMIENTAS DE CIERRE FINANCIERO -->
-            <div>
-                <p class="text-[10px] text-yellow-500 font-black uppercase tracking-widest mb-3 orbitron">💰 Herramientas de Cierre</p>
-                <div class="space-y-1">
+            <div class="border-b border-darkBorder pb-2">
+                <button onclick="toggleSubMenu('menu-financiero')" class="w-full flex justify-between items-center text-[10px] text-yellow-500 font-black uppercase tracking-widest mb-2 orbitron focus:outline-none">
+                    <span>💰 Herramientas de Cierre</span>
+                    <span id="icon-menu-financiero" class="transition-transform duration-300 transform rotate-180">▼</span>
+                </button>
+                <div id="menu-financiero" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
                     <button onclick="switchTab('tab-simulador-credito'); inicializarSimuladorAsesor();" id="btn-tab-simulador-credito" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
                         <span class="text-emerald-400 text-base">💳</span> Simulador de Cuotas
                     </button>
@@ -368,9 +414,12 @@
             </div>
 
             <!-- GRUPO 5: ADMINISTRACIÓN MAESTRA -->
-            <div id="sidebar-admin-group" class="hidden">
-                <p class="text-[10px] text-cyberMagenta font-black uppercase tracking-widest mb-3 orbitron border-t border-darkBorder pt-4 mt-2">⚙️ Modo Administrador</p>
-                <div class="space-y-1">
+            <div id="sidebar-admin-group" class="hidden border-b border-darkBorder pb-2 mt-2">
+                <button onclick="toggleSubMenu('menu-admin')" class="w-full flex justify-between items-center text-[10px] text-cyberMagenta font-black uppercase tracking-widest mb-2 orbitron focus:outline-none">
+                    <span>⚙️ Modo Administrador</span>
+                    <span id="icon-menu-admin" class="transition-transform duration-300 transform rotate-180">▼</span>
+                </button>
+                <div id="menu-admin" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
                     <button onclick="switchTab('panel-admin-gerencia')" id="btn-tab-reportes-admin" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
                         <span class="text-green-500 text-base">📊</span> Central Reportes
                     </button>
@@ -3696,8 +3745,8 @@ let advancedSpecsDatabase = {
                 mascot: "infinixvssamsung1.png",
                 mascotName: "SAMSUNG-ALIYE",
                 brandColor: { 
-                    border: 'border-blue-600', text: 'text-blue-500', glow: 'shadow-[0_0_30px_rgba(37,99,235,0.3)]', 
-                    bg: 'bg-blue-600/20', rawColor: '#2563eb', badgeClass: 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+                    border: 'border-gray-700', text: 'text-gray-400', glow: 'shadow-none', 
+                    bg: 'bg-gray-800/30', rawColor: '#9ca3af', badgeClass: 'bg-gray-800/50 text-gray-400 border border-gray-700'
                 },
                 models: {
                     'a07': { name: "Samsung A07",emoji: "📱", screen: "6.7\" PLS LCD (90 Hz)", screentype: "PLS LCD", hz: 90, processor: "Helio G99", ram: "4/6 GB", storage: "256 GB", camera: "Trasera: 50 Mpx / Frontal: 8 Mpx", charge: "25W", battery: "5000 mAh", red: "4G", durability: "Plástico con empaque estándar", highlights: ["✘ Pantalla PLS LCD estándar de solo 90Hz.", "✘ Velocidad de carga limitada a 25W.", "✘ Chasis básico de plástico propenso a fisuras por caídas."] },
@@ -3714,8 +3763,8 @@ let advancedSpecsDatabase = {
                 mascot: "infinixvshonor1.png",
                 mascotName: "HONOR-TIBURÓN",
                 brandColor: { 
-                    border: 'border-purple-600', text: 'text-purple-400', glow: 'shadow-[0_0_30px_rgba(147,51,234,0.3)]', 
-                    bg: 'bg-purple-600/20', rawColor: '#9333ea', badgeClass: 'bg-purple-600/20 text-purple-400 border border-purple-500/30'
+                    border: 'border-gray-700', text: 'text-gray-400', glow: 'shadow-none', 
+                    bg: 'bg-gray-800/30', rawColor: '#9ca3af', badgeClass: 'bg-gray-800/50 text-gray-400 border border-gray-700'
                 },
                 models: {
                     'x5c': { name: "Honor X5C",emoji: "📱", screen: "6.56\" IPS LCD (90 Hz)", screentype: "IPS LCD", hz: 90, processor: "Helio G81", ram: "4 GB", storage: "128 / 256 GB", camera: "Trasera: 50 Mpx / Frontal: 5 Mpx", charge: "15W", battery: "5260 mAh", red: "4G", durability: "Plástico convencional", highlights: ["✘ Monitor lento de 90Hz con resolución de entrada.", "✘ Velocidad de carga lenta de tan solo 15W.", "✘ Sensor de selfie de resolución muy recortada (5 Mpx)."] },
@@ -3732,8 +3781,8 @@ let advancedSpecsDatabase = {
                 mascot: "infinixvsmotorola1.png",
                 mascotName: "MOTOROLA-BAT",
                 brandColor: { 
-                    border: 'border-slate-300/80', text: 'text-slate-200', glow: 'shadow-[0_0_30px_rgba(255,255,255,0.15)]', 
-                    bg: 'bg-white/10', rawColor: '#ffffff', badgeClass: 'bg-white/15 text-white border border-white/20' 
+                    border: 'border-gray-700', text: 'text-gray-400', glow: 'shadow-none', 
+                    bg: 'bg-gray-800/30', rawColor: '#9ca3af', badgeClass: 'bg-gray-800/50 text-gray-400 border border-gray-700'
                 },
                 models: {
                     'g06': { name: "Motorola G06",emoji: "📱", screen: "6.56\" IPS LCD (90 Hz)", screentype: "IPS LCD", hz: 90, processor: "Helio G81", ram: "4 GB", storage: "128 GB", camera: "Trasera: 15 Mpx / Frontal: 6 Mpx", charge: "10W", battery: "5500 mAh", red: "4G", durability: "Resistencia básica contra humedad", highlights: ["✘ Procesador Helio G81 básico propenso a tirones frecuentes.", "✘ Velocidad de carga extremadamente lenta de solo 10W.", "✘ Cámaras de baja resolución (15 Mpx traseros y 6 Mpx frontal)."] },
@@ -3751,8 +3800,8 @@ let advancedSpecsDatabase = {
                 mascot: "infinixvsrealme1.png",
                 mascotName: "REALME-GATO",
                 brandColor: { 
-                    border: 'border-yellow-500', text: 'text-yellow-500', glow: 'shadow-[0_0_30px_rgba(234,179,8,0.3)]', 
-                    bg: 'bg-yellow-500/20', rawColor: '#eab308', badgeClass: 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                    border: 'border-gray-700', text: 'text-gray-400', glow: 'shadow-none', 
+                    bg: 'bg-gray-800/30', rawColor: '#9ca3af', badgeClass: 'bg-gray-800/50 text-gray-400 border border-gray-700'
                 },
                 models: {
                     '15': { name: "Realme 15",emoji: "📱", screen: "6.72\" IPS LCD (120 Hz)", screentype: "IPS LCD", hz: 120, processor: "Dimensity 7300", ram: "8 GB", storage: "256 GB", camera: "Trasera: 50 Mpx / Frontal: 50 Mpx", charge: "45W", battery: "6500 mAh", red: "5G", durability: "Cuerpo plástico convencional", highlights: ["✘ Grosor y pesadez física que cansa la mano en uso continuo.", "✘ Chasis estándar que se marca y daña rápidamente ante golpes.", "✘ Bloatware excesivo en la capa de personalización de software."] },
@@ -3768,8 +3817,8 @@ let advancedSpecsDatabase = {
                 mascot: "infinixvsoppo1.png",
                 mascotName: "OPPO-OLLIE",
                 brandColor: { 
-                    border: 'border-red-600', text: 'text-red-500', glow: 'shadow-[0_0_30px_rgba(220,38,38,0.3)]', 
-                    bg: 'bg-red-600/20', rawColor: '#dc2626', badgeClass: 'bg-red-600/20 text-red-400 border border-red-500/30'
+                    border: 'border-gray-700', text: 'text-gray-400', glow: 'shadow-none', 
+                    bg: 'bg-gray-800/30', rawColor: '#9ca3af', badgeClass: 'bg-gray-800/50 text-gray-400 border border-gray-700'
                 },
                 models: {
                     'a6': { name: "OPPO A6",emoji: "📱", screen: "6.67\" IPS LCD (90 Hz)", screentype: "IPS LCD", hz: 90, processor: "Snapdragon 685", ram: "8 GB", storage: "256 GB", camera: "Trasera: 50 Mpx / Frontal: 8 Mpx", charge: "45W", battery: "7000 mAh", red: "4G", durability: "Plástico convencional", highlights: ["✘ Pantalla de tan solo 90Hz con panel convencional.", "✘ Procesamiento moderado bajo el procesador Snapdragon 685.", "✘ Chasis sumamente grueso y pesado por su volumen físico."] },
@@ -3785,8 +3834,8 @@ let advancedSpecsDatabase = {
                 mascot: "infinixvstecno1.png",
                 mascotName: "TECNO-ROBOT",
                 brandColor: { 
-                    border: 'border-sky-400', text: 'text-sky-400', glow: 'shadow-[0_0_30px_rgba(56,189,248,0.25)]', 
-                    bg: 'bg-sky-400/20', rawColor: '#38bdf8', badgeClass: 'bg-sky-400/20 text-sky-400 border border-sky-400/30'
+                    border: 'border-gray-700', text: 'text-gray-400', glow: 'shadow-none', 
+                    bg: 'bg-gray-800/30', rawColor: '#9ca3af', badgeClass: 'bg-gray-800/50 text-gray-400 border border-gray-700'
                 },
                 models: {
                     'sparkgo3': { name: "Tecno Spark GO3",emoji: "📱", screen: "6.6\" IPS LCD (90 Hz)", screentype: "IPS LCD", hz: 90, processor: "Unisoc T7250", ram: "4 GB", storage: "128 GB", camera: "Trasera: 13 Mpx / Frontal: 8 Mpx", charge: "15W", battery: "5000 mAh", red: "4G", durability: "Plástico básico", highlights: ["✘ Procesador Unisoc T7250 muy limitado en operaciones pesadas.", "✘ Pantalla lenta de 90Hz con resolución de entrada.", "✘ Velocidad de carga lenta de tan solo 15W."] },
@@ -3801,8 +3850,8 @@ let advancedSpecsDatabase = {
                 mascot: "infinixvsxioami.png",
                 mascotName: "XIAOMI-MITU",
                 brandColor: { 
-                    border: 'border-orange-500', text: 'text-orange-500', glow: 'shadow-[0_0_30px_rgba(249,115,22,0.25)]', 
-                    bg: 'bg-orange-500/20', rawColor: '#f97316', badgeClass: 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
+                    border: 'border-gray-700', text: 'text-gray-400', glow: 'shadow-none', 
+                    bg: 'bg-gray-800/30', rawColor: '#9ca3af', badgeClass: 'bg-gray-800/50 text-gray-400 border border-gray-700'
                 },
                 models: {
                     'redmi15': { name: "Redmi 15",emoji: "📱", screen: "6.7\" IPS LCD (90 Hz)", screentype: "IPS LCD", hz: 90, processor: "Snapdragon 685", ram: "8 GB", storage: "256 GB", camera: "Trasera: 50 Mpx / Frontal: 8 Mpx", charge: "33W", battery: "7000 mAh", red: "4G", durability: "Cuerpo plástico simple", highlights: ["✘ Pantalla lenta de 90Hz con panel básico.", "✘ Tarda horas conectado al cargador de 33W por su batería de 7000 mAh.", "✘ Chipset Snapdragon 685 de rendimiento modesto en gráficos."] },
@@ -3816,7 +3865,6 @@ let advancedSpecsDatabase = {
                 }
             }
         };
-
         const HARDWARE_ALERT_DATABASE = {
             "Infinix": ["GT 5 PRO", "Infinix Smart 20", "Infinix Hot 60i", "Infinix HOT 70", "Infinix Hot 60 Pro+", "Infinix Note Edge", "Infinix Note 60", "Infinix Note 60 PRO", "Infinix Note 60 Ultra"],
             "Samsung": ["Samsung A07", "Samsung A17", "Samsung A27", "Samsung A37", "Samsung A57", "Samsung S25 FE", "Galaxy S26+"],
@@ -6773,7 +6821,21 @@ function guardarTasasTarjetas() {
     </div>
 </div>
       <script> 
-
+      
+      function toggleSubMenu(menuId) {
+    const menu = document.getElementById(menuId);
+    const icon = document.getElementById('icon-' + menuId);
+    
+    if (menu.style.maxHeight === '0px' || menu.classList.contains('max-h-0')) {
+        menu.style.maxHeight = '500px';
+        menu.classList.remove('max-h-0');
+        icon.classList.add('rotate-180');
+    } else {
+        menu.style.maxHeight = '0px';
+        menu.classList.add('max-h-0');
+        icon.classList.remove('rotate-180');
+    }
+}
 function toggleSidebar() {
     const sidebar = document.getElementById('cyber-sidebar');
     const overlay = document.getElementById('sidebar-overlay');
