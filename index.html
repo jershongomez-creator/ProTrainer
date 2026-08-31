@@ -393,14 +393,20 @@ input:focus, select:focus, textarea:focus {
                 <button onclick="switchTab('tab-reporte-visita')" id="btn-tab-reporte-visita" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
                     <span class="text-gray-300 text-base">📸</span> Reporte de Visita
                 </button>
+                <button onclick="switchTab('panel-admin-gerencia')" id="btn-tab-reportes-admin" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-green-500 text-base">📊</span> Central Reportes
+                </button>
             </div>
         </div>
 
         <!-- GRUPO 3: ACADEMIA -->
-        <div class="border-b border-darkBorder pb-2">
-            <button onclick="toggleSubMenu('menu-entrenamiento')" class="w-full flex justify-between items-center text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2 orbitron focus:outline-none cursor-pointer">
-                <span>🎓 Entrenamiento</span>
-                <span id="icon-menu-entrenamiento" class="transition-transform duration-300 transform rotate-180">▼</span>
+        <div id="sidebar-entrenamiento-group" class="border-b border-darkBorder pb-2 mt-2">
+            <!-- Encabezado restaurado -->
+            <button onclick="toggleSubMenu('menu-entrenamiento')" class="w-full flex items-center justify-between px-3 py-2 text-gray-400 hover:text-white transition-colors">
+                <span class="text-[11px] font-black tracking-widest uppercase flex items-center gap-2">
+                    🎓 ENTRENAMIENTO
+                </span>
+                <span class="text-xs">▲</span>
             </button>
             <div id="menu-entrenamiento" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
                 <button onclick="switchTab('tab-quiz')" id="btn-tab-quiz" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
@@ -410,10 +416,13 @@ input:focus, select:focus, textarea:focus {
         </div>
 
         <!-- GRUPO 4: HERRAMIENTAS DE CIERRE FINANCIERO -->
-        <div class="border-b border-darkBorder pb-2">
-            <button onclick="toggleSubMenu('menu-financiero')" class="w-full flex justify-between items-center text-[10px] text-yellow-500 font-black uppercase tracking-widest mb-2 orbitron focus:outline-none cursor-pointer">
-                <span>💰 Herramientas de Cierre</span>
-                <span id="icon-menu-financiero" class="transition-transform duration-300 transform rotate-180">▼</span>
+        <div id="sidebar-herramientas-group" class="border-b border-darkBorder pb-2 mt-2">
+            <!-- Encabezado restaurado (Color Amarillo) -->
+            <button onclick="toggleSubMenu('menu-herramientas')" class="w-full flex items-center justify-between px-3 py-2 text-yellow-500 hover:text-yellow-400 transition-colors">
+                <span class="text-[11px] font-black tracking-widest uppercase flex items-center gap-2">
+                    💰 HERRAMIENTAS DE CIERRE
+                </span>
+                <span class="text-xs">▲</span>
             </button>
             <div id="menu-financiero" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
                 <button onclick="switchTab('tab-simulador-credito'); inicializarSimuladorAsesor();" id="btn-tab-simulador-credito" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
@@ -423,15 +432,16 @@ input:focus, select:focus, textarea:focus {
         </div>
 
         <!-- GRUPO 5: ADMINISTRACIÓN MAESTRA -->
-        <div id="sidebar-admin-group" class="hidden border-b border-darkBorder pb-2 mt-2">
+        <div id="sidebar-admin-group" class="border-b border-darkBorder pb-2 mt-2">
             <button onclick="toggleSubMenu('menu-admin')" class="w-full flex justify-between items-center text-[10px] text-cyberMagenta font-black uppercase tracking-widest mb-2 orbitron focus:outline-none cursor-pointer">
                 <span>⚙️ Modo Administrador</span>
                 <span id="icon-menu-admin" class="transition-transform duration-300 transform rotate-180">▼</span>
             </button>
             <div id="menu-admin" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
-                <button onclick="switchTab('panel-admin-gerencia')" id="btn-tab-reportes-admin" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
-                    <span class="text-green-500 text-base">📊</span> Central Reportes
+                <button onclick="switchTab('tab-gestion-personal')" id="btn-tab-gestion-personal" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-cyberMagenta text-base">👥</span> Gestión de Personal
                 </button>
+               
                 <button onclick="switchTab('tab-shopping-admin')" id="btn-tab-shopping-admin" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
                     <span class="text-yellow-500 text-base">📥</span> Auditoría Shopping
                 </button>
@@ -440,9 +450,6 @@ input:focus, select:focus, textarea:focus {
                 </button>
                 <button onclick="switchTab('tab-admin-credito'); inicializarAdminTarjetas();" id="btn-tab-admin-credito" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
                     <span class="text-cyberMagenta text-base">🏦</span> Gestor Tarjetas
-                </button>
-                <button onclick="switchTab('tab-cortex')" id="btn-tab-cortex" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
-                    <span class="text-cyberMagenta text-base">🧠</span> Cortex AI (Global)
                 </button>
                 <button onclick="switchTab('panel-forja-equipos'); cargarMarcasForja();" id="btn-tab-forja-equipos" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
                     <span class="text-yellow-500 text-base">🛠️</span> Forja de Equipos
@@ -455,31 +462,6 @@ input:focus, select:focus, textarea:focus {
                 </button>
             </div>
         </div>
-
-            <!-- GRUPO 3: ACADEMIA -->
-            <div class="border-b border-darkBorder pb-2">
-                <button onclick="toggleSubMenu('menu-entrenamiento')" class="w-full flex justify-between items-center text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2 orbitron focus:outline-none">
-                    <span>🎓 Entrenamiento</span>
-                    <span id="icon-menu-entrenamiento" class="transition-transform duration-300 transform rotate-180">▼</span>
-                </button>
-                <div id="menu-entrenamiento" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
-                    <button onclick="switchTab('tab-quiz')" id="btn-tab-quiz" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
-                        <span class="text-infinix text-base">📝</span> Infinix Xschool
-                    </button>
-                </div>
-            </div>
-
-            <!-- GRUPO 4: HERRAMIENTAS DE CIERRE FINANCIERO -->
-            <div class="border-b border-darkBorder pb-2">
-                <button onclick="toggleSubMenu('menu-financiero')" class="w-full flex justify-between items-center text-[10px] text-yellow-500 font-black uppercase tracking-widest mb-2 orbitron focus:outline-none">
-                    <span>💰 Herramientas de Cierre</span>
-                    <span id="icon-menu-financiero" class="transition-transform duration-300 transform rotate-180">▼</span>
-                </button>
-                <div id="menu-financiero" class="space-y-1 overflow-hidden transition-all duration-300 max-h-[500px]">
-                    <button onclick="switchTab('tab-simulador-credito'); inicializarSimuladorAsesor();" id="btn-tab-simulador-credito" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
-                        <span class="text-emerald-400 text-base">💳</span> Simulador de Cuotas
-                    </button>
-                </div>
             </div>
 
             <!-- GRUPO 5: ADMINISTRACIÓN MAESTRA -->
@@ -515,8 +497,7 @@ input:focus, select:focus, textarea:focus {
                     </button>
                 </div>
             </div>
-            <div class="h-10"></div> <!-- Espaciador final -->
-        </div>
+            <div class="h-10"></div>
     </div>
 
     <section id="consola-selectores" class="max-w-6xl mx-auto w-full px-4 mt-6 transition-all duration-500">
@@ -858,32 +839,6 @@ input:focus, select:focus, textarea:focus {
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <!-- Historial de Precios Nacional -->
-                <div class="bg-darkCard border border-darkBorder rounded-3xl p-5 shadow-xl flex flex-col h-[400px]">
-                    <div class="flex justify-between items-center mb-4 shrink-0">
-                        <h4 class="font-bold text-white orbitron text-sm flex items-center gap-2">
-                            <span class="text-cyberMagenta">📜</span> Historial de Precios Nacional
-                        </h4>
-                        <!-- BOTÓN DE REINICIO SEMANAL DE PRECIOS MÁSTER -->
-                        <button onclick="clearMasterPricesHistory()" class="px-3 py-1.5 bg-red-950/50 border border-red-500/50 text-red-500 text-[9px] font-black uppercase tracking-widest orbitron rounded hover:bg-red-600 hover:text-white transition-all shadow-md cyber-panel-shadow">WIPE SEMANAL</button>
-                    </div>
-                    <div class="overflow-x-auto overflow-y-auto rounded-xl border border-darkBorder flex-grow custom-scrollbar">
-                        <table class="w-full text-left border-collapse relative">
-                            <thead class="sticky top-0 bg-[#0d0d11] z-10 shadow-sm">
-                                <tr class="bg-black/40 text-[9px] font-bold uppercase tracking-wider text-gray-300 border-b border-darkBorder">
-                                    <th class="p-3 pl-4">Ref</th>
-                                    <th class="p-3">Canal</th>
-                                    <th class="p-3">Precio</th>
-                                    <th class="p-3">Rol</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-darkBorder text-[10px] font-mono" id="master-precios-tbody">
-                                <!-- Llenado por JS -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
                 <!-- Historial de Ventas Nacional -->
                 <div class="bg-darkCard border border-darkBorder rounded-3xl p-5 shadow-xl flex flex-col h-[400px]">
                     <div class="flex justify-between items-center mb-4 shrink-0">
@@ -1323,17 +1278,18 @@ input:focus, select:focus, textarea:focus {
                     <h3 class="text-blue-500 font-bold text-xs orbitron uppercase mb-4 tracking-widest">3. Precios Detectados ($)</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
-                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Precio Normal / Oferta *</label>
-                            <div class="relative">
-                                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500 font-black text-xl">$</span>
-                                <input type="number" id="carga-precio-valor" required min="1" placeholder="Ej: 899900" class="w-full bg-darkCard border-2 border-darkBorder focus:border-blue-500 rounded-xl pl-12 pr-4 py-4 text-white text-xl font-mono outline-none transition-colors">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Precio Normal / Oferta *</label>
+                            <div class="flex items-center bg-darkCard border-2 border-darkBorder rounded-xl px-4 py-3 focus-within:border-blue-500 transition-all">
+                                <span class="text-blue-500 font-black text-lg mr-3">$</span>
+                                <input type="number" id="carga-precio-valor" required min="1" placeholder="Ej: 899900" class="w-full bg-transparent text-white font-mono text-xs outline-none border-none p-0 focus:ring-0">
                             </div>
                         </div>
                         <div>
-                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Precio con Tarjeta (Opcional)</label>
-                            <div class="relative">
-                                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-cyberMagenta font-black text-xl">💳</span>
-                                <input type="number" id="carga-precio-tarjeta" placeholder="Ej: 859900" class="w-full bg-darkCard border-2 border-darkBorder focus:border-cyberMagenta rounded-xl pl-12 pr-4 py-4 text-white text-xl font-mono outline-none transition-colors">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Precio con Tarjeta (Opcional)</label>
+                            <!-- Contenedor Flex -->
+                            <div class="flex items-center bg-darkCard border-2 border-darkBorder rounded-xl px-4 py-3 focus-within:border-cyberMagenta transition-all">
+                                <span class="text-cyberMagenta font-black text-lg mr-3">💳</span>
+                                <input type="number" id="carga-precio-tarjeta" placeholder="Ej: 859900" class="w-full bg-transparent text-white font-mono text-xs outline-none border-none p-0 focus:ring-0">
                             </div>
                         </div>
                     </div>
@@ -1951,9 +1907,124 @@ input:focus, select:focus, textarea:focus {
   <!-- ========================================== -->
 <!-- PANEL GERENCIAL / MODO DIOS (Fase 2)       -->
 <!-- ========================================== -->
-<div id="panel-admin-gerencia" class="hidden w-full max-w-7xl mx-auto p-4 space-y-6 mt-8">
+<div class="w-full max-w-7xl mx-auto p-4 space-y-6 mt-8">
    
-    
+    <!-- PANEL DE GESTIÓN DE PERSONAL (ALTAS Y BAJAS RÁPIDAS) -->
+    <div id="tab-gestion-personal" class="admin-panel-content hidden space-y-6">
+        <div class="bg-darkCard border-2 border-cyberMagenta/40 rounded-3xl p-6 shadow-[0_0_30px_rgba(255,0,127,0.15)] relative overflow-hidden">
+            
+            <!-- Cabecera del Módulo -->
+            <div class="flex items-center gap-4 mb-6 border-b border-darkBorder pb-4">
+                <span class="text-3xl">👥</span>
+                <div>
+                    <h3 class="text-lg font-black text-white orbitron">Gestión Rápida de Personal (Altas y Bajas)</h3>
+                    <p class="text-xs text-gray-400">Control ágil de la rotación de asesores y líderes a nivel nacional.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- COLUMNA 1: CREAR / ALTA DE USUARIO -->
+                <div class="bg-darkBg/60 border border-darkBorder rounded-2xl p-5 space-y-4">
+                    <h4 class="text-sm font-black text-infinix orbitron uppercase tracking-wider flex items-center gap-2">
+                        <span>➕</span> Alta de Nuevo Usuario
+                    </h4>
+                    
+                    <form id="form-crear-usuario" onsubmit="registrarNuevoUsuario(event)" class="space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-300 mb-1">Número de Cédula (ID Único)</label>
+                            <input type="text" id="nuevo-cedula" required placeholder="Ej: 1098765432" class="w-full">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-300 mb-1">Nombre Completo</label>
+                            <input type="text" id="nuevo-nombre" required placeholder="Ej: Yerson Gomez" class="w-full">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[11px] font-bold text-gray-300 mb-1">Código DSR</label>
+                                <input type="text" id="nuevo-dsr" required placeholder="Ej: DSR045" class="w-full">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-gray-300 mb-1">Rol en la Plataforma</label>
+                                <select id="nuevo-rol" required class="w-full">
+                                    <option value="ASESOR">Asesor / Promotor</option>
+                                    <option value="LIDER_ZONA">Líder / Supervisor</option>
+                                    <option value="TRAINER">Trainer / Formador</option>
+                                    <option value="ADMINISTRADOR">Administrador Master</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[11px] font-bold text-gray-300 mb-1">Regional</label>
+                                <select id="nuevo-regional" onchange="actualizarZonasRegistro()" class="..." required>
+                                    <option value="">Seleccione Regional...</option>
+                                    <option value="Suroccidente">Suroccidente</option>
+                                    <option value="Antioquia">Antioquia</option>
+                                    <option value="Costa">Costa</option>
+                                    <option value="Centro">Centro</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-gray-300 mb-1">Zona</label>
+                                <select id="nuevo-zona" onchange="actualizarTiendasRegistro()" class="..." required>
+                                    <option value="">Primero seleccione Regional...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-300 mb-1">Punto de Venta / Tienda</label>
+                            <select id="nuevo-tienda" class="..." required>
+                                <option value="">Primero seleccione Zona...</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="w-full py-3 bg-infinix hover:bg-infinix-light text-black font-black uppercase text-xs tracking-widest rounded-xl transition-all shadow-[0_0_15px_rgba(57,255,20,0.3)] mt-2 cursor-pointer">
+                            Registrar Usuario en Sistema
+                        </button>
+                    </form>
+                </div>
+
+                <!-- COLUMNA 2: ELIMINAR / BAJA DE USUARIO -->
+                <div class="bg-darkBg/60 border border-darkBorder rounded-2xl p-5 space-y-4">
+                    <h4 class="text-sm font-black text-red-400 orbitron uppercase tracking-wider flex items-center gap-2">
+                        <span>🗑️</span> Baja / Retiro de Usuario
+                    </h4>
+                    <p class="text-xs text-gray-400">Busca por número de cédula al asesor o líder que se retira de la marca para revocar su acceso de forma inmediata.</p>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-300 mb-1">Cédula del Usuario a Retirar</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="buscar-cedula-baja" placeholder="Número de cédula..." class="w-full">
+                                <button onclick="buscarUsuarioParaBaja()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white font-bold text-xs rounded-xl border border-gray-600 transition-all cursor-pointer">
+                                    Buscar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tarjeta de Resultado de Búsqueda -->
+                        <div id="resultado-baja-container" class="hidden bg-darkCard border border-red-500/30 rounded-xl p-4 space-y-3">
+                            <div class="text-xs space-y-1">
+                                <p class="text-gray-400">Nombre: <span id="baja-info-nombre" class="text-white font-bold">---</span></p>
+                                <p class="text-gray-400">Rol: <span id="baja-info-rol" class="text-infinix font-bold">---</span></p>
+                                <p class="text-gray-400">Tienda / Zona: <span id="baja-info-ubicacion" class="text-white font-bold">---</span></p>
+                            </div>
+                            <button onclick="ejecutarBajaUsuario()" class="w-full py-2.5 bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/50 font-black uppercase text-xs rounded-xl transition-all cursor-pointer">
+                                Confirmar Retiro Definitivo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div id="panel-admin-gerencia" class="admin-panel-content hidden space-y-6">
     <!-- Encabezado Directivo -->
     <div class="flex justify-between items-center bg-[#0d1117] border border-green-500/50 p-6 rounded-lg shadow-lg shadow-green-900/20">
         <div>
@@ -2074,7 +2145,7 @@ input:focus, select:focus, textarea:focus {
         </button>
     </div>
 </div>
-
+</div>
 <!-- ========================================== -->
         <!-- PESTAÑA NUEVA: SIMULADOR DE CUOTAS (ASESOR)-->
         <!-- ========================================== -->
@@ -2116,8 +2187,7 @@ input:focus, select:focus, textarea:focus {
                             <label class="text-[10px] font-black text-green-400 uppercase tracking-widest orbitron mb-1.5 block">4. Número de Cuotas (Meses)</label>
                             <div class="flex items-center gap-4">
                                 <input type="range" id="sim-meses-rango" min="1" max="36" value="12" oninput="document.getElementById('sim-meses-num').value = this.value; calcularCuotasSimulador();" class="w-full accent-green-500">
-                                <input type="number" id="sim-meses-num" min="1" max="48" value="12" oninput="document.getElementById('sim-meses-rango').value = this.value; calcularCuotasSimulador();" class="w-16 bg-black border border-darkBorder text-white text-center rounded-lg py-2 font-mono outline-none">
-                            </div>
+                                <input type="number" id="sim-meses-num" min="1" max="48" value="12" oninput="document.getElementById('sim-meses-rango').value = this.value; calcularCuotasSimulador();" class="w-20 bg-black text-white border border-darkBorder rounded-xl px-2 py-2 text-center text-xs font-mono outline-none focus:border-green-500">                            </div>
                         </div>
                     </div>
 
@@ -2985,20 +3055,21 @@ function switchTab(tabId) {
         }
     }
 
-    // 1. OCULTAR TODAS LAS SECCIONES HTML
-    const tabs = [
-        'tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping', 
-        'tab-cortex', 'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-calculadora', 
-        'tab-admin-calculadora', 'tab-salon-fama', 'tab-inventario', 'tab-simulador', 
-        'tab-shopping-trainer', 'tab-shopping-admin', 'tab-admin-listas', 'panel-admin-gerencia', 
-        'tab-reporte-visita', 'panel-carga-precios', 'panel-forja-equipos',
-        'tab-cierre-ventas', 'tab-simulador-credito', 'tab-admin-credito'
+ // 1. OCULTAR TODAS LAS SECCIONES HTML
+ const tabs = [
+        'tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping',
+        'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-calculadora',
+        'tab-admin-calculadora', 'tab-salon-fama', 'tab-inventario', 'tab-simulador',
+        'tab-shopping-trainer', 'tab-shopping-admin', 'tab-admin-listas',
+        'panel-admin-gerencia', 'tab-gestion-personal', 'tab-reporte-visita',
+        'panel-carga-precios', 'panel-forja-equipos', 'tab-cierre-ventas',
+        'tab-simulador-credito', 'tab-admin-credito'
     ];
     
     // Cerrar el sidebar automáticamente al seleccionar una pestaña
     const sidebar = document.getElementById('cyber-sidebar');
     if (sidebar && !sidebar.classList.contains('-translate-x-full')) {
-        toggleSidebar(); // Asegúrate de que esta función exista en tu código global
+        toggleSidebar(); 
     }
     
     tabs.forEach(t => {
@@ -3019,7 +3090,7 @@ function switchTab(tabId) {
 
     const consolaSelectores = document.getElementById('consola-selectores');
     if (consolaSelectores) {
-        const tabsWithConsole = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-shopping', 'tab-cortex'];
+        const tabsWithConsole = ['tab-comparativa', 'tab-radar-caracteristicas', 'tab-shopping'];
         if (tabsWithConsole.includes(tabId)) consolaSelectores.classList.remove('hidden');
         else consolaSelectores.classList.add('hidden'); 
     }
@@ -3059,13 +3130,15 @@ function switchTab(tabId) {
     const esJonathanFerro = (typeof currentUserCode !== 'undefined' && currentUserCode === 'CO1000429') || (typeof currentUserName !== 'undefined' && currentUserName.toUpperCase().includes('FERRO'));
 
     const buttons = [
-        'btn-tab-comparativa', 'btn-tab-radar-caracteristicas', 'btn-tab-quiz', 'btn-tab-shopping', 
-        'btn-tab-cortex', 'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales', 'btn-tab-calculadora', 
-        'btn-tab-admin-calculadora', 'btn-tab-salon-fama', 'btn-tab-inventario', 'btn-tab-simulador', 
-        'btn-tab-shopping-trainer', 'btn-tab-shopping-admin', 'btn-tab-admin-listas', 'btn-tab-reportes-admin', 
-        'btn-tab-reporte-visita', 'btn-tab-carga-precios', 'btn-tab-forja-equipos',
-        'btn-tab-simulador-credito', 'btn-tab-admin-credito', 'btn-tab-cierre-ventas'
-    ];
+    'btn-tab-comparativa', 'btn-tab-radar-caracteristicas', 'btn-tab-quiz', 'btn-tab-shopping',
+    'btn-tab-alertas-master', 'btn-tab-tendencias-nacionales', 'btn-tab-calculadora',
+    'btn-tab-admin-calculadora', 'btn-tab-salon-fama', 'btn-tab-inventario', 'btn-tab-simulador',
+    'btn-tab-shopping-trainer', 'btn-tab-shopping-admin', 'btn-tab-admin-listas', 
+    'btn-tab-reportes-admin', 
+    'btn-tab-reporte-visita', 'btn-tab-carga-precios', 'btn-tab-forja-equipos', 'btn-tab-simulador-credito',
+    'btn-tab-admin-credito', 'btn-tab-cierre-ventas',
+    'btn-tab-gestion-personal', 'btn-tab-admin-pay'
+];
 
     const baseInactiveClass = "sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3";
 
@@ -3074,28 +3147,52 @@ function switchTab(tabId) {
         if (element) {
             element.className = baseInactiveClass;
             
-            // --- CANDADOS EXPLÍCITOS ---
-            if (btnId === 'btn-tab-shopping' && !['GERENTE', 'SUPERVISOR', 'COORDINADOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
-            if (btnId === 'btn-tab-cortex' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
-            if (btnId === 'btn-tab-alertas-master' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
-            if (btnId === 'btn-tab-tendencias-nacionales' && !['GERENTE', 'SUPERVISOR', 'COORDINADOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
-            if (btnId === 'btn-tab-radar-caracteristicas' && ['GERENTE', 'SUPERVISOR', 'COORDINADOR'].includes(currentUserRole)) element.classList.add('hidden');
-            if (btnId === 'btn-tab-quiz' && currentUserRole === 'GERENTE') element.classList.add('hidden');
-            
-            if (btnId === 'btn-tab-calculadora' && currentUserRole !== 'ASESOR') element.classList.add('hidden');
-            if (btnId === 'btn-tab-simulador' && currentUserRole !== 'ASESOR') element.classList.add('hidden');
-            if (btnId === 'btn-tab-admin-calculadora' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
+       // --- CANDADOS EXPLÍCITOS ---
+        // 1. Módulos de Inteligencia, Cortex y Tendencias
+        if (btnId === 'btn-tab-shopping' && !['GERENTE', 'SUPERVISOR', 'COORDINADOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
+        if (btnId === 'btn-tab-alertas-master' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
+        if (btnId === 'btn-tab-tendencias-nacionales' && !['GERENTE', 'SUPERVISOR', 'COORDINADOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
+        if (btnId === 'btn-tab-radar-caracteristicas' && ['GERENTE', 'SUPERVISOR', 'COORDINADOR'].includes(currentUserRole)) element.classList.add('hidden');
+        if (btnId === 'btn-tab-quiz' && currentUserRole === 'GERENTE') element.classList.add('hidden');
+        
+        // 2. Módulos de Asesor y Calculadoras
+        if (btnId === 'btn-tab-calculadora' && currentUserRole !== 'ASESOR') element.classList.add('hidden');
+        if (btnId === 'btn-tab-simulador' && currentUserRole !== 'ASESOR') element.classList.add('hidden');
+        if (btnId === 'btn-tab-admin-calculadora' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
 
-            if (btnId === 'btn-tab-shopping-admin' && !esAdmin && !esJonathanFerro) element.classList.add('hidden');
-            if (btnId === 'btn-tab-shopping-trainer' && !esAdmin && !esTrainer) element.classList.add('hidden');
+        // 3. Sub-secciones de Shopping y Listas
+        if (btnId === 'btn-tab-shopping-admin' && !esAdmin && !esJonathanFerro) element.classList.add('hidden');
+        if (btnId === 'btn-tab-shopping-trainer' && !esAdmin && !esTrainer) element.classList.add('hidden');
+        if (btnId === 'btn-tab-admin-listas' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
 
-            if (btnId === 'btn-tab-admin-listas' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
-            if (btnId === 'btn-tab-reportes-admin' && currentUserRole === 'ASESOR') element.classList.add('hidden');
-            if (btnId === 'btn-tab-reporte-visita' && !['SUPERVISOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
-            
-            if (btnId === 'btn-tab-carga-precios' && currentUserRole === 'GERENTE') element.classList.add('hidden');
-            if (btnId === 'btn-tab-forja-equipos' && !esAdmin) element.classList.add('hidden');
-            if (btnId === 'btn-tab-admin-credito' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
+        // 4. Reportes y Visitas
+        if (btnId === 'btn-tab-reportes-admin' && !['GERENTE', 'SUPERVISOR', 'COORDINADOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
+        if (btnId === 'btn-tab-reporte-visita' && !['SUPERVISOR', 'TRAINER', 'ADMIN'].includes(currentUserRole)) element.classList.add('hidden');
+
+
+        // 5. Exclusivo Administrador (Gestión, Pagos y Forja)
+        if (btnId === 'btn-tab-gestion-personal' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
+        if (btnId === 'btn-tab-admin-pay' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
+        if (btnId === 'btn-tab-forja-equipos' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
+        if (btnId === 'btn-tab-admin-credito' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
+
+// Ocultar Cierre de Ventas si es Trainer
+if (btnId === 'btn-tab-cierre-ventas' && currentUserRole === 'TRAINER') {
+            element.classList.add('hidden');
+        }
+        
+        // NUEVO: Ocultar botones específicos para GERENTE
+        if (currentUserRole === 'GERENTE') {
+            const botonesBloqueadosGerente = [
+                'btn-tab-cierre-ventas',
+                'btn-tab-carga-precios',     // Inyectar Precios
+                'btn-tab-quiz',              // Infinix Xschool
+                'btn-tab-simulador-credito'  // Simulador de Cuotas
+            ];
+            if (botonesBloqueadosGerente.includes(btnId)) {
+                element.classList.add('hidden');
+            }
+        }
         }
     });
 
@@ -3103,19 +3200,40 @@ function switchTab(tabId) {
     const targetTab = document.getElementById(tabId);
     if (targetTab) targetTab.classList.remove('hidden');
 
-    // Resaltar el botón activo en el menú lateral
+    // Resaltar el botón activo en el menú lateral de forma limpia
     if (tabId !== 'tab-cierre-ventas') {
         let btnTargetId = 'btn-' + tabId;
-        // Ajustes manuales si el ID del botón es diferente al ID de la pestaña
+        
+        // Ajustes manuales limpios fuera del bucle de iteración
         if (tabId === 'panel-carga-precios') btnTargetId = 'btn-tab-carga-precios';
         if (tabId === 'panel-forja-equipos') btnTargetId = 'btn-tab-forja-equipos';
         if (tabId === 'panel-admin-gerencia') btnTargetId = 'btn-tab-reportes-admin';
+        if (tabId === 'tab-gestion-personal') btnTargetId = 'btn-tab-gestion-personal';
+        if (tabId === 'tab-admin-pay') btnTargetId = 'btn-tab-admin-pay';
 
         const activeButton = document.getElementById(btnTargetId);
         if (activeButton) {
             // Estilo verde Infinix iluminado
             activeButton.className = "sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-black text-black bg-infinix shadow-[0_0_15px_rgba(57,255,20,0.3)] transition-all flex items-center gap-3";
         }
+    }
+    // 1. Ocultar Modo Administrador para todos menos ADMIN (Limpia Coordinador y Trainer)
+    const grupoAdmin = document.getElementById('sidebar-admin-group');
+    if (grupoAdmin) {
+        if (currentUserRole !== 'ADMIN') {
+            grupoAdmin.classList.add('hidden');
+        } else {
+            grupoAdmin.classList.remove('hidden');
+        }
+    }
+
+    // 2. Ocultar títulos vacíos para GERENTE
+    if (currentUserRole === 'GERENTE') {
+        const grupoEntrenamiento = document.getElementById('sidebar-entrenamiento-group');
+        if (grupoEntrenamiento) grupoEntrenamiento.classList.add('hidden');
+
+        const grupoHerramientas = document.getElementById('sidebar-herramientas-group');
+        if (grupoHerramientas) grupoHerramientas.classList.add('hidden');
     }
 }
 // --- BASE DE DATOS DE INGENIERÍA LOCAL (NIVEL LIDERAZGO) ---
@@ -5261,9 +5379,8 @@ let shoppingSnapshotUnsubscribe = null;
 function abrirModalVentaDefinitivo() {
     const modal = document.getElementById('cyber-venta-modal');
     if (modal) {
-        document.body.appendChild(modal); 
-        modal.classList.remove('hidden');
-        modal.style.display = 'flex';
+        document.body.appendChild(modal);
+        modal.classList.remove('hidden'); // Solo quitamos hidden
         document.body.style.overflow = 'hidden';
         window.scrollTo(0, 0);
 
@@ -7834,7 +7951,7 @@ function renderInventarioAsesorForm() {
             container.innerHTML = '<div class="text-xs text-center text-gray-500 py-4 orbitron animate-pulse">SINCRONIZANDO REFERENCIAS NUEVAS...</div>';
 
             // 2. Traemos los modelos inyectados desde el panel admin
-            db.collection("configuracion_global").doc("parametros_stock").get().then((docSnapshot) => {
+            db.collection("configuracion_global").doc("parametros_").get().then((docSnapshot) => {
                 if (docSnapshot.exists && docSnapshot.data().modelos_activos) {
                     docSnapshot.data().modelos_activos.forEach(modelo => {
                         let safeKey = "inyectado_" + modelo.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -9723,7 +9840,7 @@ const diccionarioTiendasZonas = {
     "Santander": [
         "Caracoli", "EXITO BARRANCABERMEJA", "EXITO BUCARAMANGA", "EXITO CANAVERAL FLORIDA B", 
         "EXITO ORIENTAL BUCARAMANGA CV", "EXITO SAN MATEO CUCUTA (CV)", "JUMBO MEGA MALL", 
-        "KTRONIX BUCARAMANGA", "METRO VENTURA", "TIENDA IBIS CUCUTA", "TIENDA PASEO DEL COMERCIO", 
+        "KTRONIX BUCARAMANGA", "METRO VENTURA", "TIENDA IBIS CUCUTA",  "ALKOSTO FLORIDA", "TIENDA PASEO DEL COMERCIO", 
         "TIENDA POBLADO DE GIRON", "TIENDA PARQUE SANTANDER"
     ],
     "Falabella / Cencosud & Olimpica Centro": [
@@ -11474,10 +11591,172 @@ function actualizarEstadoRed() {
         }
     });
 }
+// --- LÓGICA DE GESTIÓN DE PERSONAL (ALTAS Y BAJAS) ---
+
+const zonasPorRegional = {
+    "Suroccidente": ["Bucaramanga", "Floridablanca", "Girón", "Cúcuta", "Santander General"],
+    "Antioquia": ["Medellin Centro", "Medellin Poblado", "Antioquia Interior"],
+    "Costa": ["Barranquilla", "Santa Marta", "Cartagena", "Costa General"],
+    "Centro": ["Bogotá Norte", "Bogotá Sur", "Bogotá Centro", "Chía"]
+};
+
+function actualizarZonasPersonal() {
+    const regionalSelect = document.getElementById('nuevo-regional');
+    const zonaSelect = document.getElementById('nuevo-zona');
+    const regionalSeleccionada = regionalSelect.value;
+
+    zonaSelect.innerHTML = '<option value="">Seleccione Zona...</option>';
+    
+    if (zonasPorRegional[regionalSeleccionada]) {
+        zonasPorRegional[regionalSeleccionada].forEach(zona => {
+            const opt = document.createElement('option');
+            opt.value = zona;
+            opt.textContent = zona;
+            zonaSelect.appendChild(opt);
+        });
+    }
+}
+function actualizarZonasRegistro() {
+    const regSelect = document.getElementById('nuevo-regional');
+    const zonaSelect = document.getElementById('nuevo-zona');
+    const tiendaSelect = document.getElementById('nuevo-tienda');
+    
+    if (!regSelect || !zonaSelect || !tiendaSelect) return;
+
+    zonaSelect.innerHTML = '<option value="">Seleccione Zona...</option>';
+    tiendaSelect.innerHTML = '<option value="">Seleccione Tienda...</option>';
+    
+    // Convertir a mayúsculas para que coincida con "SUROCCIDENTE" en mapaOperativo
+    const regVal = regSelect.value.trim().toUpperCase();
+    
+    if (regVal && mapaOperativo[regVal]) {
+        mapaOperativo[regVal].forEach(zona => {
+            zonaSelect.innerHTML += `<option value="${zona}">${zona}</option>`;
+        });
+    }
+}
+
+function actualizarTiendasRegistro() {
+    const zonaSelect = document.getElementById('nuevo-zona');
+    const tiendaSelect = document.getElementById('nuevo-tienda');
+    
+    if (!zonaSelect || !tiendaSelect) return;
+    tiendaSelect.innerHTML = '<option value="">Seleccione Tienda...</option>';
+    
+    // Convertir a mayúsculas para buscar en diccionarioTiendasZonas
+    const zonaVal = zonaSelect.value.trim().toUpperCase();
+    
+    if (zonaVal) {
+        const zonaKey = Object.keys(diccionarioTiendasZonas).find(
+            z => z.trim().toUpperCase() === zonaVal
+        );
+        
+        if (zonaKey && diccionarioTiendasZonas[zonaKey]) {
+            diccionarioTiendasZonas[zonaKey].forEach(tienda => {
+                tiendaSelect.innerHTML += `<option value="${tienda}">${tienda}</option>`;
+            });
+        }
+    }
+}
+async function registrarNuevoUsuario(event) {
+    event.preventDefault();
+
+    const cedula = document.getElementById('nuevo-cedula').value.trim();
+    const nombre = document.getElementById('nuevo-nombre').value.trim();
+    const dsr = document.getElementById('nuevo-dsr').value.trim();
+    const rol = document.getElementById('nuevo-rol').value;
+    const regional = document.getElementById('nuevo-regional').value;
+    const zona = document.getElementById('nuevo-zona').value;
+    const tienda = document.getElementById('nuevo-tienda').value;
+
+    // Validación de seguridad para evitar registros con campos vacíos por saltarse la cascada
+    if (!cedula || !nombre || !rol || !regional || !zona || !tienda) {
+        alert("Por favor, completa todos los campos obligatorios y asegúrate de seleccionar Regional, Zona y Tienda.");
+        return;
+    }
+
+    try {
+        await db.collection('usuarios_auth').doc(cedula).set({
+    codigo: cedula,
+    nombre: nombre.toUpperCase(),
+    password: "Password123*", // O la variable de contraseña si la tienes
+    primer_ingreso: true,
+    regional: regional,
+    rol: rol,
+    tienda: tienda,
+    zona: zona,
+    dsr: dsr // Opcional si lo quieres conservar
+});
+        
+        alert(`¡Usuario ${nombre} registrado con éxito en el sistema!`);
+        document.getElementById('form-crear-usuario').reset();
+        
+        // Retornar los selects en cascada a su estado original después del reset
+        document.getElementById('nuevo-zona').innerHTML = '<option value="">Seleccione Zona...</option>';
+        document.getElementById('nuevo-tienda').innerHTML = '<option value="">Seleccione Tienda...</option>';
+        
+    } catch (error) {
+        console.error("Error al registrar usuario:", error);
+        alert("Hubo un error al guardar en la base de datos. Revisa la consola.");
+    }
+}
+
+let cedulaUsuarioParaEliminar = null;
+
+async function buscarUsuarioParaBaja() {
+    const cedulaInput = document.getElementById('buscar-cedula-baja').value.trim();
+    const contenedorResultado = document.getElementById('resultado-baja-container');
+
+    if (!cedulaInput) {
+        alert("Por favor ingresa un número de cédula para buscar.");
+        return;
+    }
+
+    try {
+        const docRef = await db.collection('usuarios_auth').doc(cedulaInput).get();
+        
+        if (docRef.exists) {
+            const data = docRef.data();
+            cedulaUsuarioParaEliminar = cedulaInput;
+            
+            document.getElementById('baja-info-nombre').textContent = data.nombre || 'Sin nombre';
+            document.getElementById('baja-info-rol').textContent = data.rol || 'ASESOR';
+            document.getElementById('baja-info-ubicacion').textContent = `${data.tienda || 'N/A'} (${data.zona || 'N/A'})`;
+            
+            contenedorResultado.classList.remove('hidden');
+        } else {
+            alert("No se encontró ningún usuario registrado con esa cédula.");
+            contenedorResultado.classList.add('hidden');
+            cedulaUsuarioParaEliminar = null;
+        }
+    } catch (error) {
+        console.error("Error al buscar usuario:", error);
+        alert("Error al consultar la base de datos.");
+    }
+}
+
+async function ejecutarBajaUsuario() {
+    if (!cedulaUsuarioParaEliminar) return;
+
+    if (confirm(`¿Estás completamente seguro de retirar al usuario con cédula ${cedulaUsuarioParaEliminar}?`)) {
+        try {
+            await db.collection('usuarios_auth').doc(cedulaUsuarioParaEliminar).delete();
+            alert("Usuario retirado de la plataforma exitosamente.");
+            
+            document.getElementById('resultado-baja-container').classList.add('hidden');
+            document.getElementById('buscar-cedula-baja').value = '';
+            cedulaUsuarioParaEliminar = null;
+        } catch (error) {
+            console.error("Error al eliminar usuario:", error);
+            alert("No se pudo completar el retiro del usuario.");
+        }
+    }
+}
  </script>
 <!-- MÓDULO 2: MODAL DE ALERTA DE VENTA (CYBERPUNK CYAN) -->
-<div id="cyber-venta-modal" style="position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 2147483647 !important; margin: 0 !important; padding: 0 !important;" class="bg-black/90 backdrop-blur-md flex items-center justify-center hidden">
-    <div class="bg-[#0d0d11] border-2 border-[#00f0ff] rounded-3xl p-6 w-full max-w-lg shadow-[0_0_50px_rgba(0,240,255,0.3)] relative overflow-hidden cyber-panel-cyan-shadow cyber-grid-cyan-overlay">
+<div id="cyber-venta-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-[100000] flex items-center justify-center p-4 hidden">
+
+    <div class="bg-[#0d0d11] border-2 border-[#00f0ff] rounded-3xl p-6 w-full max-w-lg shadow-[0_0_50px_rgba(0,240,255,0.3)] relative overflow-hidden">
         
         <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-[#00f0ff]"></div>
         <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-[#00f0ff]"></div>
@@ -11493,7 +11772,7 @@ function actualizarEstadoRed() {
             </div>
             <button type="button" onclick="cerrarModalVentaDefinitivo()" class="text-gray-400 hover:text-[#00f0ff] text-xl font-black orbitron transition-colors cursor-pointer">&times; CERRAR</button>
         </div>
-
+   
         <form id="venta-alert-form" class="space-y-4 relative z-10" onsubmit="submitVentaAlert(event)">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="space-y-1.5">
@@ -11526,6 +11805,7 @@ function actualizarEstadoRed() {
                     <!-- Llenado por JS -->
                 </select>
             </div>
+            
 
             <button type="submit" class="w-full py-4 bg-[#00f0ff] text-black font-black rounded-xl transition-all duration-300 transform active:scale-95 shadow-[0_0_15px_#00f0ff] hover:shadow-[0_0_25px_#00f0ff] uppercase tracking-widest orbitron mt-4 cursor-pointer">
                 🚀 REGISTRAR VENTA
@@ -11533,6 +11813,7 @@ function actualizarEstadoRed() {
         </form>
     </div>
 </div>
+
 
 </body>
 </html>
