@@ -234,7 +234,7 @@ input:focus, select:focus, textarea:focus {
         <!-- VISTA 1: LOGIN NORMAL -->
         <form id="login-form" class="space-y-5 relative z-10">
             <div>
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron mb-1.5 block">Código DSR / Usuario</label>
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest orbitron mb-1.5 block">Código DCR / Usuario</label>
                 <input type="text" id="login-code" class="w-full bg-black border border-darkBorder rounded-xl px-4 py-3 text-white focus:border-infinix focus:ring-1 focus:ring-infinix transition-all outline-none uppercase font-mono" placeholder="Ej: CO2026141">
             </div>
             <div>
@@ -1796,9 +1796,10 @@ input:focus, select:focus, textarea:focus {
                 <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px;"></div>
                 
                 <div class="flex justify-center mb-6 relative z-10">
-                    <div class="bg-[#1C5B99] text-white px-12 py-3 rounded-md text-2xl font-black tracking-widest shadow-md">
-                        PLAN DE TRABAJO - DÍA DE HOY
-                    </div>
+                  <!-- En tu plantilla HTML dentro de #lienzo-plan-trabajo -->
+               <div class="bg-[#1C5B99] text-white text-center py-2 px-6 rounded-lg font-black text-xl tracking-wider uppercase inline-block mx-auto">
+    <span id="preview-titulo-plan">PLAN DE TRABAJO</span>
+</div>
                 </div>
 
                 <div class="mb-4 relative z-10 text-gray-800 flex flex-col gap-1">
@@ -2010,8 +2011,8 @@ input:focus, select:focus, textarea:focus {
 
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[11px] font-bold text-gray-300 mb-1">Código DSR</label>
-                                <input type="text" id="nuevo-dsr" required placeholder="Ej: DSR045" class="w-full">
+                                <label class="block text-[11px] font-bold text-gray-300 mb-1">Código DCR</label>
+                                <input type="text" id="nuevo-dcr" required placeholder="Ej: DCR045" class="w-full">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-bold text-gray-300 mb-1">Rol en la Plataforma</label>
@@ -8449,7 +8450,7 @@ function inyectarNuevaReferencia() {
                     <body>
                     <table border="1">
                         <tr style="background-color: #00FF66; font-weight: bold; text-align: center;">
-                            <th>Código DSR</th>
+                            <th>Código DCR</th>
                             <th>Asesor</th>
                             <th>Tienda / PDV</th>
                             <th>Zona</th>
@@ -11834,21 +11835,21 @@ async function ejecutarBajaUsuario() {
     }
 }
 
-// --- LÓGICA DEL PLAN DE TRABAJO (VERSIÓN DESPLEGABLE Y LOGOS) ---
+// --- LÓGICA DEL PLAN DE TRABAJO (ACTUALIZADA CON FECHA, ASESOR Y ROI) ---
 
 let contadorTiendasPlan = 0;
 const MAX_TIENDAS = 6;
 
 // 1. Base de datos de tiendas por zona
 const tiendasPorZonaPlan = {
-"Nariño": [
+    "Nariño": [
         "ALKOSTO 20 DE JULIO", "ALKOSTO BOLIVAR", "ALKOSTO CENTRO", "ALKOSTO FLORIDA", "ALKOSTO GRAN PLAZA", 
         "ALKOSTO TUQUERRES", "EXITO PASTO", "EXITO IPIALES"
     ],
     "Santander": [
         "Caracoli", "EXITO BARRANCABERMEJA", "EXITO BUCARAMANGA", "EXITO CANAVERAL FLORIDA B", 
         "EXITO ORIENTAL BUCARAMANGA CV", "EXITO SAN MATEO CUCUTA (CV)", "JUMBO MEGA MALL", 
-        "KTRONIX BUCARAMANGA", "METRO VENTURA", "TIENDA IBIS CUCUTA",  "ALKOSTO FLORIDA", "TIENDA PASEO DEL COMERCIO", 
+        "KTRONIX BUCARAMANGA", "METRO VENTURA", "TIENDA IBIS CUCUTA", "ALKOSTO FLORIDA", "TIENDA PASEO DEL COMERCIO", 
         "TIENDA POBLADO DE GIRON", "TIENDA PARQUE SANTANDER"
     ],
     "Falabella / Cencosud & Olimpica Centro": [
@@ -11917,26 +11918,21 @@ const tiendasPorZonaPlan = {
     ]
 };
 
-// 2. Normalizar la zona MEJORADO (Super Filtro)
+// 2. Normalizar la zona
 function normalizarZona(zonaStr) {
     if (!zonaStr) return 'SANTANDER';
-    
-    // Pasamos a mayúsculas y quitamos acentos (ej. convierte "Antioquía" en "ANTIOQUIA")
     const z = zonaStr.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    
-    // Si el string contiene la palabra clave, asigna la zona maestra
     if (z.includes('ANTIOQUIA')) return 'ANTIOQUIA';
     if (z.includes('SANTANDER')) return 'SANTANDER';
     if (z.includes('BOGOTA')) return 'BOGOTA';
     if (z.includes('COSTA')) return 'COSTA';
-    
-    return z; // Si no reconoce nada, devuelve el original
+    return z;
 }
 
-// 3. Estilos basados directamente en la CADENA seleccionada
+// 3. Estilos de Cadena
 function obtenerEstiloTienda(cadena) {
     let bg = 'bg-[#1C5B99]';
-    let logoUrl = './default.png'; // <-- Cambiado aquí (ruta principal)
+    let logoUrl = './default.png';
     let textClass = 'text-white';
 
     switch (cadena) {
@@ -11953,12 +11949,12 @@ function obtenerEstiloTienda(cadena) {
         case 'OLIMPICA':
             bg = 'bg-[#E31837]'; logoUrl = './olimpica.png'; textClass = 'text-white'; break;
         default:
-            bg = 'bg-[#1C5B99]'; logoUrl = './default.png'; textClass = 'text-white'; break; // Otros
+            bg = 'bg-[#1C5B99]'; logoUrl = './default.png'; textClass = 'text-white'; break;
     }
     return { bg, logoUrl, textClass };
 }
 
-// 4. Agregar Tienda (Con selector de Cadena incluido)
+// 4. Agregar Tienda (con Asesor y ROI)
 function agregarTiendaPlan() {
     if (contadorTiendasPlan >= MAX_TIENDAS) {
         alert("Máximo 6 tiendas para mantener el formato de la imagen.");
@@ -11968,9 +11964,9 @@ function agregarTiendaPlan() {
     contadorTiendasPlan++;
     const id = contadorTiendasPlan;
     
-    // Configurar Tiendas de la zona
-    const zonaInput = document.getElementById('plan-zona').value.toUpperCase();
-    let tiendasDisponibles = ["TIENDA NO ENCONTRADA EN BASE DE DATOS"];
+    // Tiendas de la zona
+    const zonaInput = (document.getElementById('plan-zona')?.value || 'SANTANDER').toUpperCase();
+    let tiendasDisponibles = tiendasPorZonaPlan[normalizarZona(zonaInput)] || ["SELECCIONE TIENDA"];
     if (typeof diccionarioTiendasZonas !== 'undefined') {
         for (const claveZona in diccionarioTiendasZonas) {
             if (claveZona.toUpperCase() === zonaInput) {
@@ -11980,21 +11976,23 @@ function agregarTiendaPlan() {
         }
     }
     
-    // HTML Opciones Cadena
+    // Opciones Cadena
     const cadenas = ['ALKOSTO', 'EXITO', 'FALABELLA', 'CENCOSUD', 'WOM', 'OLIMPICA', 'OTRO'];
     let cadenaOptions = '<option value="" disabled selected>Cadena...</option>';
     cadenas.forEach(c => cadenaOptions += `<option value="${c}">${c}</option>`);
 
-    // HTML Opciones Tienda
+    // Opciones Tienda
     let tiendaOptions = '<option value="" disabled selected>Tienda...</option>';
     tiendasDisponibles.forEach(t => tiendaOptions += `<option value="${t}">${t}</option>`);
     
     const div = document.createElement('div');
-    div.className = 'bg-[#1C212D] p-3 rounded-lg border border-darkBorder flex flex-col relative';
+    div.className = 'bg-[#1C212D] p-3 rounded-lg border border-darkBorder flex flex-col relative mb-2';
     div.id = `fila-plan-${id}`;
     
     div.innerHTML = `
         <button onclick="eliminarTiendaPlan(${id})" class="absolute top-1 right-2 text-red-500 hover:text-red-400 text-xs font-bold z-10">X</button>
+        
+        <!-- Cadena y Tienda -->
         <div class="grid grid-cols-2 gap-2 mt-2">
             <select id="plan-cadena-${id}" class="w-full bg-[#0B0E14] text-white border border-darkBorder rounded px-2 py-1.5 text-[10px] font-bold uppercase cursor-pointer" onchange="actualizarPreviewPlan()">
                 ${cadenaOptions}
@@ -12003,6 +12001,14 @@ function agregarTiendaPlan() {
                 ${tiendaOptions}
             </select>
         </div>
+
+        <!-- Asesor y ROI -->
+        <div class="grid grid-cols-2 gap-2 mt-2">
+            <input type="text" id="plan-asesor-${id}" placeholder="Nombre Asesor..." class="w-full bg-[#0B0E14] text-white border border-darkBorder rounded px-2 py-1.5 text-xs" onkeyup="actualizarPreviewPlan()">
+            <input type="text" id="plan-roi-${id}" placeholder="ROI (ej: 120% / $5M)..." class="w-full bg-[#0B0E14] text-white border border-darkBorder rounded px-2 py-1.5 text-xs" onkeyup="actualizarPreviewPlan()">
+        </div>
+
+        <!-- Actividad -->
         <textarea id="plan-actividad-${id}" placeholder="Actividad (Ej: Refuerzo lanzamientos...)" class="w-full bg-[#0B0E14] text-white border border-darkBorder rounded px-2 py-1.5 text-xs h-12 resize-none mt-2" onkeyup="actualizarPreviewPlan()"></textarea>
     `;
     
@@ -12011,51 +12017,87 @@ function agregarTiendaPlan() {
 }
 
 function eliminarTiendaPlan(id) {
-    document.getElementById(`fila-plan-${id}`).remove();
+    const el = document.getElementById(`fila-plan-${id}`);
+    if (el) el.remove();
     contadorTiendasPlan--;
     actualizarPreviewPlan();
 }
 
-// 5. Actualizar el lienzo
+// 5. Actualizar el lienzo con fecha actual y cápsulas de Asesor/ROI
 function actualizarPreviewPlan() {
-    document.getElementById('preview-nombre').textContent = document.getElementById('plan-nombre').value;
-    document.getElementById('preview-zona').textContent = document.getElementById('plan-zona').value;
+    // Formatear Fecha actual DD/MM/YYYY
+    const hoy = new Date();
+    const dia = String(hoy.getDate()).padStart(2, '0');
+    const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+    const anio = hoy.getFullYear();
+    const fechaFormateada = `${dia}/${mes}/${anio}`;
+
+    // Actualiza el título del lienzo si existe el elemento o busca por selector
+    const tituloPlan = document.getElementById('preview-titulo-plan');
+    if (tituloPlan) {
+        tituloPlan.textContent = `PLAN DE TRABAJO - ${fechaFormateada}`;
+    }
+
+    const inputNombre = document.getElementById('plan-nombre');
+    const inputZona = document.getElementById('plan-zona');
+    if (inputNombre && document.getElementById('preview-nombre')) {
+        document.getElementById('preview-nombre').textContent = inputNombre.value;
+    }
+    if (inputZona && document.getElementById('preview-zona')) {
+        document.getElementById('preview-zona').textContent = inputZona.value;
+    }
     
     const contenedor = document.getElementById('preview-cards-container');
+    if (!contenedor) return;
     contenedor.innerHTML = '';
     
     for (let i = 1; i <= MAX_TIENDAS; i++) {
         const cadenaInput = document.getElementById(`plan-cadena-${i}`);
         const tiendaInput = document.getElementById(`plan-tienda-${i}`);
+        const asesorInput = document.getElementById(`plan-asesor-${i}`);
+        const roiInput = document.getElementById(`plan-roi-${i}`);
         const actividadInput = document.getElementById(`plan-actividad-${i}`);
         
         if (tiendaInput && actividadInput && cadenaInput) {
             const cadena = cadenaInput.value || 'OTRO';
             const nombreTienda = tiendaInput.value || 'SELECCIONE TIENDA';
+            const asesor = (asesorInput && asesorInput.value.trim()) ? asesorInput.value.trim() : 'POR ASIGNAR';
+            const roi = (roiInput && roiInput.value.trim()) ? roiInput.value.trim() : 'N/A';
             const actividad = actividadInput.value || '...';
             
-            // Le pasamos la CADENA a la función de estilo
             const estilo = obtenerEstiloTienda(cadena); 
-            
             const actividadFormateada = actividad.replace(/\n/g, '<br>').replace(/-/g, '<span class="text-[#1C5B99] font-bold">✔</span>');
 
             const card = document.createElement('div');
             card.className = `flex-1 flex flex-col bg-[#F3F4F6] rounded-xl shadow-lg border border-gray-200 overflow-hidden`;
             card.innerHTML = `
-                <!-- ENCABEZADO DE TIENDA (TEXTO MÁS GRANDE Y RESALTADO) -->
+                <!-- ENCABEZADO DE TIENDA -->
                 <div class="${estilo.bg} text-center py-3 px-2 min-h-[56px] flex items-center justify-center">
                     <h4 class="${estilo.textClass} font-black uppercase text-[13px] tracking-wide leading-tight w-full drop-shadow-sm">${nombreTienda}</h4>
                 </div>
                 
-                <!-- CONTENEDOR DEL LOGO (TAMAÑO EQUILIBRADO) -->
-                <div class="py-3 bg-white flex justify-center items-center border-b border-gray-100 h-24">
-                    <img src="${estilo.logoUrl}" alt="Logo" class="max-h-16 max-w-[80%] object-contain">
+                <!-- CONTENEDOR DEL LOGO -->
+                <div class="py-2.5 bg-white flex justify-center items-center border-b border-gray-100 h-20">
+                    <img src="${estilo.logoUrl}" alt="Logo" class="max-h-14 max-w-[80%] object-contain">
                 </div>
 
-                <div class="p-3 text-[13px] text-gray-800 flex-1 bg-[#FAFAFA]">
+                <!-- CÁPSULAS ASESOR Y ROI (UNO DEBAJO DEL OTRO) -->
+                <div class="px-2.5 py-2 bg-gray-50 border-b border-gray-200 flex flex-col gap-1.5">
+                    <div class="bg-white border border-gray-200 rounded-md px-2 py-1 flex items-center justify-between text-[11px] shadow-sm">
+                        <span class="font-bold text-gray-500 uppercase tracking-tight text-[10px]">Asesor:</span>
+                        <span class="font-extrabold text-gray-800 truncate ml-1 text-right max-w-[110px]">${asesor}</span>
+                    </div>
+                    <div class="bg-white border border-gray-200 rounded-md px-2 py-1 flex items-center justify-between text-[11px] shadow-sm">
+                        <span class="font-bold text-gray-500 uppercase tracking-tight text-[10px]">ROI:</span>
+                        <span class="font-black text-[#1C5B99] truncate ml-1 text-right max-w-[110px]">${roi}</span>
+                    </div>
+                </div>
+
+                <!-- ACTIVIDAD -->
+                <div class="p-3 text-[12px] text-gray-800 flex-1 bg-[#FAFAFA]">
                     <div class="flex gap-2">
                         <span class="text-[#1C5B99] font-bold mt-0.5">✔</span>
-                        <span class="leading-tight">${actividadFormateada}</span>
+                        <span class="leading-snug">${actividadFormateada}</span>
                     </div>
                 </div>
             `;
@@ -12067,7 +12109,9 @@ function actualizarPreviewPlan() {
 // 6. Generar Imagen
 function generarImagenPlan() {
     const lienzo = document.getElementById('lienzo-plan-trabajo');
-    const nombreFormador = document.getElementById('plan-nombre').value.replace(/\s+/g, '_') || 'Formador';
+    const hoy = new Date();
+    const fechaTxt = `${String(hoy.getDate()).padStart(2, '0')}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${hoy.getFullYear()}`;
+    const nombreFormador = (document.getElementById('plan-nombre')?.value.replace(/\s+/g, '_') || 'Formador');
     
     actualizarPreviewPlan();
     
@@ -12077,24 +12121,23 @@ function generarImagenPlan() {
         backgroundColor: "#F8F9FB"
     }).then(canvas => {
         const link = document.createElement('a');
-        link.download = `Plan_Trabajo_${nombreFormador}.png`;
+        link.download = `Plan_Trabajo_${fechaTxt}_${nombreFormador}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
     });
 }
 
-// 7. Inicializar Plan de Trabajo (Se ejecuta al abrir la pestaña, no al recargar la página)
+// 7. Inicializar Plan de Trabajo
 function inicializarPlanTrabajo() {
     const inputNombre = document.getElementById('plan-nombre');
     const inputZona = document.getElementById('plan-zona');
 
     if (!inputNombre || !inputZona) return;
 
-    // Extraer variables reales, ignorando los predeterminados "Invitado" y "Todas"
     if (typeof currentUserName !== 'undefined' && currentUserName !== 'Invitado' && currentUserName !== '') {
         inputNombre.value = currentUserName.toUpperCase();
     } else {
-        inputNombre.value = 'JERSHON GOMEZ'; // Respaldo
+        inputNombre.value = 'JERSHON GOMEZ';
     }
 
     if (typeof currentUserCode !== 'undefined' && currentUserCode === 'TRS 002') {
@@ -12102,15 +12145,14 @@ function inicializarPlanTrabajo() {
     } else if (typeof currentUserZone !== 'undefined' && currentUserZone !== 'Todas' && currentUserZone !== '') {
         inputZona.value = currentUserZone.toUpperCase();
     } else {
-        inputZona.value = 'SANTANDER'; // Respaldo
+        inputZona.value = 'SANTANDER';
     }
 
-    // Reiniciar el contenedor de tiendas para borrar el error y cargar la zona correcta
-    document.getElementById('contenedor-tiendas-plan').innerHTML = '';
+    const contenedorForm = document.getElementById('contenedor-tiendas-plan');
+    if (contenedorForm) contenedorForm.innerHTML = '';
     contadorTiendasPlan = 0;
     agregarTiendaPlan();
 }
-
  </script>
 <!-- MÓDULO 2: MODAL DE ALERTA DE VENTA (CYBERPUNK CYAN) -->
 <div id="cyber-venta-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-[100000] flex items-center justify-center p-4 hidden">
