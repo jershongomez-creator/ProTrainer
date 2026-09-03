@@ -12023,10 +12023,9 @@ function eliminarTiendaPlan(id) {
     actualizarPreviewPlan();
 }
 
-// 5. Actualizar el lienzo con fecha actual y cápsulas de Asesor/ROI
-// 5. Actualizar el lienzo con fecha actual, cajas dinámicas y ajuste vertical
+
+// 5. Actualizar el lienzo con soporte robusto para html2canvas
 function actualizarPreviewPlan() {
-    // Formatear Fecha actual DD/MM/YYYY
     const hoy = new Date();
     const dia = String(hoy.getDate()).padStart(2, '0');
     const mes = String(hoy.getMonth() + 1).padStart(2, '0');
@@ -12069,40 +12068,41 @@ function actualizarPreviewPlan() {
             const actividadFormateada = actividad.replace(/\n/g, '<br>').replace(/-/g, '<span class="text-[#1C5B99] font-bold">✔</span>');
 
             const card = document.createElement('div');
-            // Eliminamos restricciones de overflow y dejamos flex-col balanceado
-            card.className = `flex-1 flex flex-col bg-[#F3F4F6] rounded-xl shadow-lg border border-gray-200 h-full justify-between`;
+            card.className = `flex-1 flex flex-col bg-[#F3F4F6] rounded-xl shadow-lg border border-gray-200 overflow-hidden`;
             
             card.innerHTML = `
-                <!-- PARTE SUPERIOR (TIENDA + LOGO + METRICAS) -->
-                <div class="flex flex-col w-full">
-                    <!-- ENCABEZADO DE TIENDA -->
-                    <div class="${estilo.bg} text-center py-2 px-2 min-h-[48px] flex items-center justify-center rounded-t-xl">
-                        <h4 class="${estilo.textClass} font-black uppercase text-[12px] tracking-wide leading-tight w-full drop-shadow-sm">${nombreTienda}</h4>
-                    </div>
-                    
-                    <!-- CONTENEDOR DEL LOGO (COMPACTO Y EQUILIBRADO) -->
-                    <div class="py-1.5 bg-white flex justify-center items-center border-b border-gray-100 h-16">
-                        <img src="${estilo.logoUrl}" alt="Logo" class="max-h-11 max-w-[75%] object-contain">
-                    </div>
-
-                    <!-- CÁPSULAS ASESOR Y ROI (ESPACIO CORREGIDO SIN RECORTES) -->
-                    <div class="px-2 py-2 bg-gray-50 border-b border-gray-200 flex flex-col gap-1.5">
-                        <div class="bg-white border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between shadow-sm min-h-[28px]">
-                            <span class="font-bold text-gray-500 uppercase tracking-tight text-[10px] shrink-0">ASESOR:</span>
-                            <span class="font-bold text-gray-800 text-[11px] truncate ml-1 text-right leading-none">${asesor}</span>
-                        </div>
-                        <div class="bg-white border border-gray-200 rounded-md px-2 py-1.5 flex items-center justify-between shadow-sm min-h-[28px]">
-                            <span class="font-bold text-gray-500 uppercase tracking-tight text-[10px] shrink-0">ROI:</span>
-                            <span class="font-black text-[#1C5B99] text-[11px] truncate ml-1 text-right leading-none">${roi}</span>
-                        </div>
-                    </div>
+                <!-- ENCABEZADO DE TIENDA -->
+                <div class="${estilo.bg} text-center py-2.5 px-2 min-h-[50px] flex items-center justify-center">
+                    <h4 class="${estilo.textClass} font-black uppercase text-[12px] tracking-wide leading-tight w-full">${nombreTienda}</h4>
+                </div>
+                
+                <!-- CONTENEDOR DEL LOGO -->
+                <div class="py-2 bg-white flex justify-center items-center border-b border-gray-100 h-16">
+                    <img src="${estilo.logoUrl}" alt="Logo" class="max-h-12 max-w-[75%] object-contain">
                 </div>
 
-                <!-- ACTIVIDAD (CRECE NATURALMENTE CON TEXTO LARGO) -->
-                <div class="p-2.5 text-[10.5px] text-gray-800 flex-1 bg-[#FAFAFA] rounded-b-xl flex flex-col justify-start">
-                    <div class="flex gap-1.5 items-start">
-                        <span class="text-[#1C5B99] font-bold text-xs leading-none shrink-0 mt-0.5">✔</span>
-                        <div class="leading-relaxed text-gray-700 font-medium break-words">
+                <!-- CÁPSULAS ASESOR Y ROI (A PRUEBA DE HTML2CANVAS) -->
+                <div class="px-2 py-2 bg-gray-50 border-b border-gray-200 flex flex-col gap-1.5">
+                    
+                    <!-- Fila Asesor -->
+                    <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:6px; padding:6px 8px; display:flex; justify-content:space-between; align-items:baseline; min-height:30px;">
+                        <span style="font-size:10px; font-weight:700; color:#6b7280; text-transform:uppercase; line-height:16px;">ASESOR:</span>
+                        <span style="font-size:11px; font-weight:800; color:#1f2937; text-align:right; line-height:16px; margin-left:6px; word-break:break-word;">${asesor}</span>
+                    </div>
+
+                    <!-- Fila ROI -->
+                    <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:6px; padding:6px 8px; display:flex; justify-content:space-between; align-items:baseline; min-height:30px;">
+                        <span style="font-size:10px; font-weight:700; color:#6b7280; text-transform:uppercase; line-height:16px;">ROI:</span>
+                        <span style="font-size:11px; font-weight:900; color:#1C5B99; text-align:right; line-height:16px; margin-left:6px; word-break:break-word;">${roi}</span>
+                    </div>
+
+                </div>
+
+                <!-- ACTIVIDAD -->
+                <div class="p-3 text-[11px] text-gray-800 flex-1 bg-[#FAFAFA]">
+                    <div class="flex gap-2 items-start">
+                        <span class="text-[#1C5B99] font-bold text-xs leading-normal">✔</span>
+                        <div class="leading-relaxed text-gray-700 font-medium">
                             ${actividadFormateada}
                         </div>
                     </div>
@@ -12112,7 +12112,6 @@ function actualizarPreviewPlan() {
         }
     }
 }
-
 // 6. Generar Imagen
 function generarImagenPlan() {
     const lienzo = document.getElementById('lienzo-plan-trabajo');
@@ -12125,7 +12124,10 @@ function generarImagenPlan() {
     html2canvas(lienzo, {
         scale: 2, 
         useCORS: true,
-        backgroundColor: "#F8F9FB"
+        backgroundColor: "#F8F9FB",
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: document.documentElement.offsetWidth
     }).then(canvas => {
         const link = document.createElement('a');
         link.download = `Plan_Trabajo_${fechaTxt}_${nombreFormador}.png`;
