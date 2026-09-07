@@ -375,6 +375,9 @@ input:focus, select:focus, textarea:focus {
                 <button onclick="switchTab('tab-calculadora'); renderCalculadoraAsesor();" id="btn-tab-calculadora" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
                     <span class="text-infinix text-base">🧮</span> Calculadora Comisiones
                 </button>
+                <button onclick="switchTab('tab-calculadora-multicanal'); renderizarCalculadoraMulticanal();" id="btn-tab-calculadora-multicanal" class="sidebar-btn hidden w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all items-center gap-3">
+                    <span class="text-infinix text-base">👑</span> Calc. Multicanal
+                </button>
                 <button onclick="switchTab('tab-salon-fama'); renderSalonFama();" id="btn-tab-salon-fama" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
                     <span class="text-yellow-500 text-base">🏆</span> Ranking Nacional
                 </button>
@@ -450,6 +453,9 @@ input:focus, select:focus, textarea:focus {
                 </button>
                 <button onclick="switchTab('tab-admin-calculadora'); renderAdminCalcModels();" id="btn-tab-admin-calculadora" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
                     <span class="text-cyberMagenta text-base">💸</span> Admin Pay
+                </button>
+                <button onclick="switchTab('tab-admin-multicanal'); renderizarAdminMulticanal();" id="btn-tab-admin-multicanal" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                    <span class="text-cyberMagenta text-base">⚙️</span> Admin Multicanal
                 </button>
                 <button onclick="switchTab('tab-admin-credito'); inicializarAdminTarjetas();" id="btn-tab-admin-credito" class="sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
                     <span class="text-cyberMagenta text-base">🏦</span> Gestor Tarjetas
@@ -1213,6 +1219,47 @@ input:focus, select:focus, textarea:focus {
         </button>
     </div>
 </div>
+
+<!-- ========================================== -->
+<!-- PANEL: CALCULADORA MULTICANAL (STAFF)      -->
+<!-- ========================================== -->
+<div id="tab-calculadora-multicanal" class="hidden tab-content p-4 md:p-6 space-y-6 fade-in">
+    <div class="flex items-center justify-between mb-4 border-b border-darkBorder pb-3">
+        <h2 class="text-2xl font-black text-white orbitron tracking-wider flex items-center gap-2">
+            <span class="text-infinix">👑</span> CALCULADORA MULTICANAL
+        </h2>
+        <div class="text-infinix text-xs font-bold bg-infinix/10 px-3 py-1 rounded-full border border-infinix/30 uppercase tracking-widest">
+            Formadores & Supervisores
+        </div>
+    </div>
+    
+    <!-- Contenedor donde JavaScript inyectará las tarjetas de cada cadena (Éxito, Alkosto, etc.) -->
+    <div id="app-calculadora-multicanal" class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <!-- El contenido se genera mágicamente con JS -->
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- PANEL: ADMIN MULTICANAL (SOLO ADMIN)       -->
+<!-- ========================================== -->
+<div id="tab-admin-multicanal" class="hidden tab-content p-4 md:p-6 space-y-6 fade-in">
+    <div class="flex items-center justify-between mb-4 border-b border-darkBorder pb-3">
+        <h2 class="text-2xl font-black text-cyberMagenta orbitron tracking-wider flex items-center gap-2">
+            <span class="text-cyberMagenta">⚙️</span> CONFIGURACIÓN MULTICANAL
+        </h2>
+        <div class="text-cyberMagenta text-xs font-bold bg-cyberMagenta/10 px-3 py-1 rounded-full border border-cyberMagenta/30 uppercase tracking-widest">
+            Solo Admin
+        </div>
+    </div>
+    
+    <div class="bg-[#050811] border border-darkBorder rounded-xl p-5 text-gray-300">
+        <p class="mb-4">Desde aquí podrás modificar el ROI exigido y el valor a pagar por cada equipo en cada cadena.</p>
+        <div id="app-admin-multicanal">
+            <!-- Aquí construiremos el formulario conectado a Firebase -->
+        </div>
+    </div>
+</div>
+
 <!-- ========================================================= -->
     <!-- PESTAÑA: CARGA DE PRECIOS (ESTILO NATIVO)                 -->
     <!-- ========================================================= -->
@@ -3123,7 +3170,7 @@ function switchTab(tabId) {
         }
     }
 
- // 1. OCULTAR TODAS LAS SECCIONES HTML
+ // 1. OCULTAR TODAS LAS SECCIONES HTML (AQUÍ SE AGREGARON LOS NUEVOS PANELES)
  const tabs = [
         'tab-comparativa', 'tab-radar-caracteristicas', 'tab-quiz', 'tab-shopping',
         'tab-alertas-master', 'tab-tendencias-nacionales', 'tab-calculadora',
@@ -3131,7 +3178,8 @@ function switchTab(tabId) {
         'tab-shopping-trainer', 'tab-shopping-admin', 'tab-admin-listas',
         'panel-admin-gerencia', 'tab-gestion-personal', 'tab-reporte-visita', 'tab-plan-trabajo', 
         'panel-carga-precios', 'panel-forja-equipos', 'tab-cierre-ventas',
-        'tab-simulador-credito', 'tab-admin-credito'
+        'tab-simulador-credito', 'tab-admin-credito',
+        'tab-calculadora-multicanal', 'tab-admin-multicanal' 
     ];
     
     // Cerrar el sidebar automáticamente al seleccionar una pestaña
@@ -3164,7 +3212,17 @@ function switchTab(tabId) {
         if (tabsWithConsole.includes(tabId)) consolaSelectores.classList.remove('hidden');
         else consolaSelectores.classList.add('hidden'); 
     }
-
+    if (tabId === 'tab-calculadora-multicanal') {
+        const refs = obtenerReferenciasDesdeEditor();
+        sincronizarReferenciasMulticanal(refs);
+        renderizarCalculadoraMulticanal();
+    }
+    
+    if (tabId === 'tab-admin-multicanal') {
+        const refs = obtenerReferenciasDesdeEditor();
+        sincronizarReferenciasMulticanal(refs);
+        renderizarAdminMulticanal();
+    }
     const containerRivalBrand = document.getElementById('container-rival-brand');
     const containerRivalModel = document.getElementById('container-rival-model');
     const selectorsGrid = document.getElementById('top-selectors-grid');
@@ -3194,7 +3252,7 @@ function switchTab(tabId) {
         }
     }
 
-    // 3. APAGAR ESTILOS DE TODOS LOS DEMÁS BOTONES Y MANEJAR VISIBILIDAD (CANDADOS)
+    // 3. APAGAR ESTILOS DE TODOS LOS DEMÁS BOTONES (AQUÍ SE AGREGARON LOS NUEVOS BOTONES)
     const esAdmin = (currentUserRole === 'ADMIN');
     const esTrainer = (currentUserRole === 'TRAINER');
     const esJonathanFerro = (typeof currentUserCode !== 'undefined' && currentUserCode === 'CO1000429') || (typeof currentUserName !== 'undefined' && currentUserName.toUpperCase().includes('FERRO'));
@@ -3207,7 +3265,8 @@ function switchTab(tabId) {
     'btn-tab-reportes-admin', 
     'btn-tab-reporte-visita', 'btn-tab-plan-trabajo', 'btn-tab-carga-precios', 'btn-tab-forja-equipos', 'btn-tab-simulador-credito',
     'btn-tab-admin-credito', 'btn-tab-cierre-ventas',
-    'btn-tab-gestion-personal', 'btn-tab-admin-pay'
+    'btn-tab-gestion-personal', 'btn-tab-admin-pay',
+    'btn-tab-calculadora-multicanal', 'btn-tab-admin-multicanal'
 ];
 
     const baseInactiveClass = "sidebar-btn w-full text-left py-2.5 px-3 rounded-lg text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3";
@@ -3246,8 +3305,8 @@ function switchTab(tabId) {
         if (btnId === 'btn-tab-forja-equipos' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
         if (btnId === 'btn-tab-admin-credito' && currentUserRole !== 'ADMIN') element.classList.add('hidden');
 
-// Ocultar Cierre de Ventas si es Trainer
-if (btnId === 'btn-tab-cierre-ventas' && currentUserRole === 'TRAINER') {
+        // Ocultar Cierre de Ventas si es Trainer
+        if (btnId === 'btn-tab-cierre-ventas' && currentUserRole === 'TRAINER') {
             element.classList.add('hidden');
         }
         
@@ -8508,16 +8567,17 @@ function inyectarNuevaReferencia() {
 
 const telefonosInfinix = [
     "Infinix Smart 20",
-    "Infinix Hot 60i",
     "Infinix Hot 70",
+    "Infinix Hot 70 Pro 5g",
     "Infinix Hot 60 Pro+",
     "Infinix Note Edge",
     "Infinix Note 60",
     "Infinix Note 60 Pro",
+    "Infinix Gt 50 Pro",
     "Infinix Note 60 Ultra",
     "Infinix Gt 5 Pro",
     "Infinix Xpad 30E"
-    
+  
     // Agrega aquí más referencias si lo necesitas
 ];
 
@@ -9850,63 +9910,82 @@ function configurarPanelPorRol(datosUsuario) {
     cargarTiendasDeMiZona();
 
     const panelAdmin = document.getElementById('panel-admin-gerencia');
-    // ... de aquí para abajo dejas todo exactamente igual ...
-
     const filtroZona = document.getElementById('filtro-zona-admin');
     const navCierreBtn = document.getElementById('btn-tab-cierre-ventas');
-    const btnTabReportes = document.getElementById('btn-tab-reportes-admin'); // <--- NUEVO BOTÓN
-    
+    const btnTabReportes = document.getElementById('btn-tab-reportes-admin'); 
 
     const rol = datosUsuario && datosUsuario.rol ? datosUsuario.rol.toUpperCase() : 'ASESOR';
     const zonaUser = datosUsuario && datosUsuario.zona ? datosUsuario.zona.toUpperCase() : 'ALL';
 
     // --- FILTRO DE SEGURIDAD: PLAN DE TRABAJO ---
-const btnPlanTrabajo = document.getElementById('btn-tab-plan-trabajo');
-if (btnPlanTrabajo) {
-    if (rol === 'ADMIN' || rol === 'TRAINER') {
-        btnPlanTrabajo.classList.remove('hidden');
-        btnPlanTrabajo.classList.add('flex'); // Lo muestra con el diseño correcto
-    } else {
-        btnPlanTrabajo.classList.add('hidden');
-        btnPlanTrabajo.classList.remove('flex'); // Lo oculta para asesores, gerentes, etc.
+    const btnPlanTrabajo = document.getElementById('btn-tab-plan-trabajo');
+    if (btnPlanTrabajo) {
+        if (rol === 'ADMIN' || rol === 'TRAINER') {
+            btnPlanTrabajo.classList.remove('hidden');
+            btnPlanTrabajo.classList.add('flex'); 
+        } else {
+            btnPlanTrabajo.classList.add('hidden');
+            btnPlanTrabajo.classList.remove('flex'); 
+        }
     }
-}
+
+    // 👉 =========================================================
+    // 👉 AQUÍ INICIA EL PASO 3.1: FILTRO CALCULADORA MULTICANAL 
+    // 👉 =========================================================
+    const btnCalcMulticanal = document.getElementById('btn-tab-calculadora-multicanal');
+    const btnAdminMulticanal = document.getElementById('btn-tab-admin-multicanal');
+
+    if (btnCalcMulticanal && btnAdminMulticanal) {
+        // Primero ocultamos ambos por seguridad
+        btnCalcMulticanal.classList.add('hidden');
+        btnCalcMulticanal.classList.remove('flex');
+        btnAdminMulticanal.classList.add('hidden');
+        btnAdminMulticanal.classList.remove('flex');
+
+        if (rol === 'ADMIN') {
+            // El admin ve ambos botones
+            btnCalcMulticanal.classList.remove('hidden');
+            btnCalcMulticanal.classList.add('flex');
+            btnAdminMulticanal.classList.remove('hidden');
+            btnAdminMulticanal.classList.add('flex');
+        } else if (rol === 'SUPERVISOR' || rol === 'TRAINER') {
+            // Supervisores y formadores solo ven la calculadora
+            btnCalcMulticanal.classList.remove('hidden');
+            btnCalcMulticanal.classList.add('flex');
+        }
+    }
+    // 👉 =========================================================
+    // 👉 FIN DEL PASO 3.1
+    // 👉 =========================================================
 
     if (rol === 'ASESOR') {
         panelAdmin.classList.add('hidden');
         if (navCierreBtn) navCierreBtn.classList.remove('hidden');
-        if (btnTabReportes) btnTabReportes.classList.add('hidden'); // Oculto para asesores
+        if (btnTabReportes) btnTabReportes.classList.add('hidden'); 
         return; 
     }
 
     // SI ES ADMIN, GERENCIA O COORDINADOR:
-    // Ocultamos el cierre de ventas y MOSTRAMOS el botón de Central de Reportes en el menú
     if (navCierreBtn) navCierreBtn.classList.add('hidden'); 
-    if (btnTabReportes) btnTabReportes.classList.remove('hidden'); // <--- ¡AQUÍ SE ENCIENDE!
+    if (btnTabReportes) btnTabReportes.classList.remove('hidden'); 
     
     document.getElementById('admin-user-name').textContent = datosUsuario.nombre || "USUARIO";
     document.getElementById('admin-user-role').textContent = rol;
 
-    // ... (el resto de tu lógica de filtros y permisos se queda igual)
-   // LÓGICA DE CANDADOS Y PERMISOS
-   if (rol === 'ADMIN') {
-
-
+    // LÓGICA DE CANDADOS Y PERMISOS DE ZONA
+    if (rol === 'ADMIN') {
         filtroZona.disabled = false;
         filtroZona.value = 'ALL';
     } else if (rol === 'GERENCIA') {
-    
         filtroZona.disabled = false;
         filtroZona.value = 'ALL';
     } else if (rol === 'COORDINADOR' || rol === 'SUPERVISOR' || rol === 'TRAINER') {
-
         let opcionExiste = Array.from(filtroZona.options).some(opt => opt.value === zonaUser);
         if (opcionExiste) {
             filtroZona.value = zonaUser;
         } else {
             filtroZona.innerHTML = `<option value="${zonaUser}">${zonaUser}</option>`;
         }
-        
         filtroZona.disabled = true; 
         filtroZona.classList.add('opacity-70', 'cursor-not-allowed'); 
     }
@@ -12222,8 +12301,289 @@ function inicializarPlanTrabajo() {
             </button>
         </form>
     </div>
-
+    
 </div>
+<script>
+ // ==========================================
+// MÓDULO: CALCULADORA MULTICANAL
+// ==========================================
 
+const bdCadenas = {
+  exito: { nombre: "Éxito", meta_roi: 75, equipos: {} },
+  alkosto: { nombre: "Alkosto", meta_roi: 75, equipos: {} },
+  cencosud: { nombre: "Cencosud", meta_roi: 65, equipos: {} },
+  falabella: { nombre: "Falabella", meta_roi: 60, equipos: {} },
+  wom: { nombre: "WOM", meta_roi: 50, equipos: {} }
+};
+
+let listaEquiposGlobal = [];
+
+// Función para extraer las referencias directamente de tu panel central de cierre
+function obtenerReferenciasDesdeEditor() {
+    // Buscamos el elemento textarea del editor de listas (ajusta este ID si el tuyo es distinto, ej: 'admin-list-input')
+    const textareaModelos = document.querySelector('textarea') || document.getElementById('editor-referencias-cierre'); 
+    
+    let listaModelos = [];
+
+    if (textareaModelos && textareaModelos.value) {
+        listaModelos = textareaModelos.value.split(',')
+                                      .map(modelo => modelo.trim())
+                                      .filter(modelo => modelo !== "");
+    }
+
+    // Respaldo por defecto si el campo está vacío al arrancar
+    if (listaModelos.length === 0) {
+        listaModelos = [
+            "GT 5 PRO", 
+            "Infinix Smart 20", 
+            "Infinix HOT 70", 
+            "Infinix Hot 60 Pro+", 
+            "Infinix Note 60 Pro", 
+            "Infinix Note 60 Ultra", 
+            "GT 50 Pro", 
+            "Hot 70 Pro 5G"
+        ];
+    }
+
+    return listaModelos.map(nombreModelo => ({
+        id: nombreModelo.toLowerCase().replace(/[^a-z0-9]/g, ''),
+        nombre: nombreModelo
+    }));
+}
+
+function sincronizarReferenciasMulticanal(arrayDeModelosGlobales) {
+    listaEquiposGlobal = arrayDeModelosGlobales;
+
+    for (const [idCadena, cadena] of Object.entries(bdCadenas)) {
+        const equiposActualizados = {};
+        
+        listaEquiposGlobal.forEach(equipo => {
+            const valorExistente = cadena.equipos[equipo.id] ? cadena.equipos[equipo.id].valor : 0;
+            equiposActualizados[equipo.id] = { 
+                nombre: equipo.nombre, 
+                valor: valorExistente 
+            };
+        });
+        
+        cadena.equipos = equiposActualizados;
+    }
+}
+
+function renderizarCalculadoraMulticanal() {
+  const contenedor = document.getElementById('app-calculadora-multicanal');
+  if (!contenedor) return;
+
+  const hoy = new Date();
+  const diaActual = hoy.getDate();
+  const diasDelMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
+
+  let html = `<div class="col-span-full mb-4 text-gray-400 text-sm bg-white/5 p-3 rounded-lg border border-darkBorder">
+                🗓️ <strong>Proyección en tiempo real:</strong> Calculando con base en el día ${diaActual} de ${diasDelMes}.
+              </div>`;
+
+  for (const [idCadena, cadena] of Object.entries(bdCadenas)) {
+    html += `
+      <div class="bg-[#050811] border border-darkBorder rounded-xl p-5 relative shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+        <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
+            <h3 class="text-lg font-black text-white orbitron">${cadena.nombre}</h3>
+            <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded border border-blue-500/30">Meta ROI: ${cadena.meta_roi}</span>
+        </div>
+        
+        <div class="mb-4">
+            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider block mb-1">Head Count (HC)</label>
+            <input type="number" id="hc-${idCadena}" value="1" min="1" oninput="calcularIncentivosMulticanal()" class="w-full bg-black/50 border border-darkBorder rounded-lg p-2 text-white text-center font-bold focus:border-infinix focus:ring-1 focus:ring-infinix outline-none transition-all">
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3 mb-5">
+    `;
+    
+    for (const [idEquipo, equipo] of Object.entries(cadena.equipos)) {
+      html += `
+        <div class="bg-white/5 p-2 rounded-lg border border-white/5">
+          <label class="text-[10px] text-gray-400 block mb-1 truncate">${equipo.nombre}</label>
+          <input type="number" id="eq-${idCadena}-${idEquipo}" value="0" min="0" oninput="calcularIncentivosMulticanal()" class="w-full bg-transparent border-b border-gray-700 text-white text-center font-bold outline-none focus:border-infinix transition-colors">
+        </div>
+      `;
+    }
+
+    html += `
+        </div>
+        
+        <div id="res-${idCadena}" class="bg-black/60 p-4 rounded-lg border border-gray-800"></div>
+      </div>
+    `;
+  }
+  
+  html += `
+    <div class="col-span-full mt-4 bg-infinix/10 border border-infinix/30 rounded-xl p-6 text-center">
+        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Total Incentivos Generados (Solo Cadenas con ROI Cumplido)</h3>
+        <div id="gran-total-multicanal" class="text-4xl font-black text-infinix orbitron">$0</div>
+    </div>
+  `;
+  
+  contenedor.innerHTML = html;
+  calcularIncentivosMulticanal();
+}
+
+function calcularIncentivosMulticanal() {
+  const hoy = new Date();
+  const diaActual = hoy.getDate();
+  const diasDelMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
+  const factorProyeccion = diasDelMes / diaActual;
+  
+  let granTotalAcumulado = 0;
+
+  for (const [idCadena, cadena] of Object.entries(bdCadenas)) {
+    const hcInput = document.getElementById(`hc-${idCadena}`);
+    if(!hcInput) continue;
+    
+    const hc = parseInt(hcInput.value) || 1;
+    let unidadesReales = 0;
+    let dineroAcumuladoReal = 0;
+
+    for (const [idEquipo, equipo] of Object.entries(cadena.equipos)) {
+      const inputEquipo = document.getElementById(`eq-${idCadena}-${idEquipo}`);
+      const vendidas = inputEquipo ? (parseInt(inputEquipo.value) || 0) : 0;
+      unidadesReales += vendidas;
+      dineroAcumuladoReal += (vendidas * equipo.valor);
+    }
+
+    const roiActual = Math.round(unidadesReales / hc);
+    const unidadesProyectadas = Math.round(unidadesReales * factorProyeccion);
+    const roiProyectado = Math.round(unidadesProyectadas / hc);
+
+    let estadoBadge, gananciaHTML;
+
+    if (roiProyectado >= cadena.meta_roi) {
+      estadoBadge = `<span class="bg-green-500/20 text-green-400 border border-green-500/30 px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider">✔ Proyección Alcanzada</span>`;
+      gananciaHTML = `<div class="text-xl font-black text-green-400 mt-1">$${dineroAcumuladoReal.toLocaleString('es-CO')}</div>
+                      <div class="text-[9px] text-green-400/60 uppercase">Acumulado real a hoy</div>`;
+      granTotalAcumulado += dineroAcumuladoReal;
+    } else {
+      estadoBadge = `<span class="bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider">✘ ROI Insuficiente</span>`;
+      gananciaHTML = `<div class="text-xl font-black text-red-500 mt-1">$0</div>
+                      <div class="text-[9px] text-red-500/60 uppercase">Acumulado real a hoy</div>`;
+    }
+
+    const resContainer = document.getElementById(`res-${idCadena}`);
+    if(resContainer) {
+        resContainer.innerHTML = `
+          <div class="flex justify-between items-center mb-3">
+            <div class="text-center w-1/2 border-r border-gray-700">
+                <div class="text-xs text-gray-500 uppercase tracking-wider">Unidades Hoy</div>
+                <div class="text-lg font-bold text-white">${unidadesReales}</div>
+            </div>
+            <div class="text-center w-1/2">
+                <div class="text-xs text-gray-500 uppercase tracking-wider">ROI Actual</div>
+                <div class="text-lg font-bold text-white">${roiActual}</div>
+            </div>
+          </div>
+          
+          <div class="flex justify-between items-center mb-3 border-t border-gray-800 pt-3">
+            <div class="text-center w-1/2 border-r border-gray-700">
+                <div class="text-xs text-gray-500 uppercase tracking-wider">Unds. Proyectadas</div>
+                <div class="text-lg font-bold text-white">${unidadesProyectadas}</div>
+            </div>
+            <div class="text-center w-1/2">
+                <div class="text-xs text-gray-500 uppercase tracking-wider">ROI Proyectado</div>
+                <div class="text-lg font-bold text-white">${roiProyectado}</div>
+            </div>
+          </div>
+          
+          <div class="border-t border-gray-800 pt-3 flex justify-between items-center">
+            <div>${estadoBadge}</div>
+            <div class="text-right">${gananciaHTML}</div>
+          </div>
+        `;
+    }
+  }
+  
+  const totalDiv = document.getElementById('gran-total-multicanal');
+  if(totalDiv) {
+      totalDiv.innerText = `$${granTotalAcumulado.toLocaleString('es-CO')}`;
+  }
+}
+
+// ==========================================
+// MÓDULO: ADMIN MULTICANAL
+// ==========================================
+
+const cadenasDisponibles = ["exito", "alkosto", "cencosud", "falabella", "wom"];
+const nombresCadenas = {
+    exito: "Éxito", alkosto: "Alkosto", cencosud: "Cencosud", falabella: "Falabella", wom: "WOM"
+};
+
+function renderizarAdminMulticanal() {
+  const contenedor = document.getElementById('app-admin-multicanal');
+  if (!contenedor) return;
+
+  let html = `<div class="space-y-6">`;
+
+  cadenasDisponibles.forEach(idCadena => {
+    const cadenaActual = bdCadenas[idCadena] || { meta_roi: 75, equipos: {} };
+    
+    html += `
+      <div class="bg-black/50 p-5 rounded-xl border border-cyberMagenta/30 shadow-[0_4px_15px_rgba(255,0,255,0.1)]">
+        <h3 class="text-xl font-black text-cyberMagenta orbitron mb-4 uppercase tracking-widest">${nombresCadenas[idCadena]}</h3>
+        
+        <div class="mb-5 bg-cyberMagenta/10 p-3 rounded-lg border border-cyberMagenta/20">
+          <label class="text-xs text-cyberMagenta font-bold uppercase tracking-wider block mb-1">Meta ROI Exigida</label>
+          <input type="number" id="admin-roi-${idCadena}" value="${cadenaActual.meta_roi}" min="1" class="w-full bg-black border border-gray-700 text-white p-2 rounded font-bold focus:border-cyberMagenta outline-none transition-all">
+        </div>
+        
+        <h4 class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-3 border-b border-gray-800 pb-1">Valor a pagar por referencia:</h4>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+    `;
+
+    Object.values(cadenaActual.equipos).forEach(equipo => {
+      html += `
+        <div class="bg-white/5 p-2 rounded border border-white/5">
+          <label class="text-[10px] text-gray-400 block mb-1 truncate">${equipo.nombre}</label>
+          <div class="flex items-center">
+            <span class="text-gray-500 mr-1">$</span>
+            <input type="number" id="admin-val-${idCadena}-${equipo.id || equipo.nombre.toLowerCase().replace(/[^a-z0-9]/g, '')}" value="${equipo.valor || 0}" min="0" step="1000" class="w-full bg-transparent text-white font-bold outline-none border-b border-gray-700 focus:border-cyberMagenta transition-colors">
+          </div>
+        </div>
+      `;
+    });
+
+    html += `</div></div>`;
+  });
+
+  html += `
+    <button onclick="guardarConfiguracionMulticanal()" class="w-full py-4 bg-cyberMagenta text-white font-black rounded-xl mt-6 hover:bg-pink-600 transition-all transform active:scale-95 shadow-[0_0_20px_rgba(255,0,255,0.4)] orbitron tracking-widest">
+      💾 GUARDAR CONFIGURACIÓN 
+    </button>
+  </div>`;
+
+  contenedor.innerHTML = html;
+}
+
+function guardarConfiguracionMulticanal() {
+  cadenasDisponibles.forEach(idCadena => {
+    const metaRoiInput = document.getElementById(`admin-roi-${idCadena}`);
+    const metaRoi = metaRoiInput ? (parseInt(metaRoiInput.value) || 0) : 75;
+    
+    if (!bdCadenas[idCadena]) {
+        bdCadenas[idCadena] = { nombre: nombresCadenas[idCadena], equipos: {} };
+    }
+    bdCadenas[idCadena].meta_roi = metaRoi;
+
+    if(bdCadenas[idCadena].equipos) {
+        Object.keys(bdCadenas[idCadena].equipos).forEach(idEquipo => {
+            const inputVal = document.getElementById(`admin-val-${idCadena}-${idEquipo}`);
+            if(inputVal && bdCadenas[idCadena].equipos[idEquipo]) {
+                bdCadenas[idCadena].equipos[idEquipo].valor = parseInt(inputVal.value) || 0;
+            }
+        });
+    }
+  });
+
+  alert('✅ Configuración actualizada con éxito.');
+  if (typeof renderizarCalculadoraMulticanal === 'function') {
+      renderizarCalculadoraMulticanal();
+  }
+}
+</script>
 </body>
 </html>
