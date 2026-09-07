@@ -12308,7 +12308,9 @@ function inicializarPlanTrabajo() {
 // MÓDULO: CALCULADORA MULTICANAL
 // ==========================================
 
-const bdCadenas = {
+// Cargar configuración guardada previamente o usar la base por defecto
+const bdCadenasGuardada = localStorage.getItem('infinix_admin_multicanal_config');
+const bdCadenas = bdCadenasGuardada ? JSON.parse(bdCadenasGuardada) : {
   exito: { nombre: "Éxito", meta_roi: 75, equipos: {} },
   alkosto: { nombre: "Alkosto", meta_roi: 75, equipos: {} },
   cencosud: { nombre: "Cencosud", meta_roi: 65, equipos: {} },
@@ -12384,30 +12386,30 @@ function renderizarCalculadoraMulticanal() {
                 🗓️ <strong>Proyección en tiempo real:</strong> Calculando con base en el día ${diaActual} de ${diasDelMes}.
               </div>`;
 
-  for (const [idCadena, cadena] of Object.entries(bdCadenas)) {
-    html += `
-      <div class="bg-[#050811] border border-darkBorder rounded-xl p-5 relative shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
-        <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
-            <h3 class="text-lg font-black text-white orbitron">${cadena.nombre}</h3>
-            <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded border border-blue-500/30">Meta ROI: ${cadena.meta_roi}</span>
-        </div>
-        
-        <div class="mb-4">
-            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider block mb-1">Head Count (HC)</label>
-            <input type="number" id="hc-${idCadena}" value="1" min="1" oninput="calcularIncentivosMulticanal()" class="w-full bg-black/50 border border-darkBorder rounded-lg p-2 text-white text-center font-bold focus:border-infinix focus:ring-1 focus:ring-infinix outline-none transition-all">
-        </div>
-        
-        <div class="grid grid-cols-2 gap-3 mb-5">
-    `;
-    
-    for (const [idEquipo, equipo] of Object.entries(cadena.equipos)) {
+              for (const [idCadena, cadena] of Object.entries(bdCadenas)) {
       html += `
-        <div class="bg-white/5 p-2 rounded-lg border border-white/5">
-          <label class="text-[10px] text-gray-400 block mb-1 truncate">${equipo.nombre}</label>
-          <input type="number" id="eq-${idCadena}-${idEquipo}" value="0" min="0" oninput="calcularIncentivosMulticanal()" class="w-full bg-transparent border-b border-gray-700 text-white text-center font-bold outline-none focus:border-infinix transition-colors">
-        </div>
+        <div class="bg-[#050811] border border-darkBorder rounded-xl p-5 relative shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+          <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
+              <h3 class="text-lg font-black text-white orbitron">${cadena.nombre}</h3>
+              <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded border border-blue-500/30">Meta ROI: ${cadena.meta_roi}</span>
+          </div>
+          
+          <div class="mb-4">
+              <label class="text-xs text-gray-400 font-bold uppercase tracking-wider block mb-1">Head Count (HC)</label>
+              <input type="number" id="hc-${idCadena}" value="1" min="1" oninput="calcularIncentivosMulticanal(); guardarEstadoCalculadoraMulticanal();" class="w-full bg-black/50 border border-darkBorder rounded-lg p-2 text-white text-center font-bold focus:border-infinix focus:ring-1 focus:ring-infinix outline-none transition-all">
+          </div>
+          
+          <div class="grid grid-cols-2 gap-3 mb-5">
       `;
-    }
+      
+      for (const [idEquipo, equipo] of Object.entries(cadena.equipos)) {
+        html += `
+          <div class="bg-white/5 p-2 rounded-lg border border-white/5">
+            <label class="text-[10px] text-gray-400 block mb-1 truncate">${equipo.nombre}</label>
+            <input type="number" id="eq-${idCadena}-${idEquipo}" value="0" min="0" oninput="calcularIncentivosMulticanal(); guardarEstadoCalculadoraMulticanal();" class="w-full bg-transparent border-b border-gray-700 text-white text-center font-bold outline-none focus:border-infinix transition-colors">
+          </div>
+        `;
+      }
 
     html += `
         </div>
@@ -12425,7 +12427,8 @@ function renderizarCalculadoraMulticanal() {
   `;
   
   contenedor.innerHTML = html;
-  calcularIncentivosMulticanal();
+  calcularIncentivosMulticanal(); // Cálculo inicial en ceros
+  cargarEstadoCalculadoraMulticanal(); // Restaura los valores guardados en localStorage
 }
 
 function calcularIncentivosMulticanal() {
@@ -12582,9 +12585,50 @@ function guardarConfiguracionMulticanal() {
     }
   });
 
-  alert('✅ Configuración actualizada con éxito.');
+  // GUARDAR EN LOCALSTORAGE DE FORMA PERMANENTE
+  localStorage.setItem('infinix_admin_multicanal_config', JSON.stringify(bdCadenas));
+
+  alert('✅ Configuración actualizada y guardada exitosamente.');
+  
   if (typeof renderizarCalculadoraMulticanal === 'function') {
       renderizarCalculadoraMulticanal();
+  }
+}
+// Guardar el estado de la calculadora en localStorage cada vez que escriben
+function guardarEstadoCalculadoraMulticanal() {
+  const datosCalculadora = {};
+  for (const idCadena of Object.keys(bdCadenas)) {
+    const hcInput = document.getElementById(`hc-${idCadena}`);
+    datosCalculadora[idCadena] = {
+      hc: hcInput ? hcInput.value : 1,
+      equipos: {}
+    };
+    for (const idEquipo of Object.keys(bdCadenas[idCadena].equipos)) {
+      const eqInput = document.getElementById(`eq-${idCadena}-${idEquipo}`);
+      datosCalculadora[idCadena].equipos[idEquipo] = eqInput ? eqInput.value : 0;
+    }
+  }
+  localStorage.setItem('infinix_calc_multicanal_state', JSON.stringify(datosCalculadora));
+}
+
+// Restaurar los datos guardados al abrir la calculadora
+function cargarEstadoCalculadoraMulticanal() {
+  const guardado = localStorage.getItem('infinix_calc_multicanal_state');
+  if (!guardado) return;
+  try {
+    const datosCalculadora = JSON.parse(guardado);
+    for (const [idCadena, valores] of Object.entries(datosCalculadora)) {
+      if (bdCadenas[idCadena]) {
+        const hcInput = document.getElementById(`hc-${idCadena}`);
+        if (hcInput) hcInput.value = valores.hc;
+        for (const [idEquipo, cant] of Object.entries(valores.equipos)) {
+          const eqInput = document.getElementById(`eq-${idCadena}-${idEquipo}`);
+          if (eqInput) eqInput.value = cant;
+        }
+      }
+    }
+  } catch (e) {
+    console.error("Error al cargar estado de la calculadora", e);
   }
 }
 </script>
