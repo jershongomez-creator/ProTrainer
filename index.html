@@ -1839,24 +1839,26 @@ input:focus, select:focus, textarea:focus {
         <div class="lg:col-span-2 overflow-x-auto bg-[#0B0E14] p-4 rounded-xl border border-darkBorder">
             <p class="text-xs text-gray-500 mb-2 text-center">Vista previa de la imagen generada</p>
             
-            <div id="lienzo-plan-trabajo" class="bg-[#F8F9FB] w-[1000px] h-[562px] p-8 relative overflow-hidden font-sans mx-auto flex flex-col">
-                <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px;"></div>
-                
-                <div class="flex justify-center mb-6 relative z-10">
-                  <!-- En tu plantilla HTML dentro de #lienzo-plan-trabajo -->
-               <div class="bg-[#1C5B99] text-white text-center py-2 px-6 rounded-lg font-black text-xl tracking-wider uppercase inline-block mx-auto">
-    <span id="preview-titulo-plan">PLAN DE TRABAJO</span>
+           <!-- LIENZO A CAPTURAR (Se ajustará dinámicamente) -->
+<div id="lienzo-plan-trabajo" class="bg-[#F8F9FB] w-full h-auto min-h-fit p-6 relative pb-10">
+    
+    <!-- Encabezado del Plan -->
+    <div class="mb-4">
+        <div class="bg-[#1C5B99] text-white text-center py-2 rounded-md mb-6 w-max mx-auto px-8">
+            <h2 id="preview-titulo-plan" class="font-black text-lg tracking-wider">PLAN DE TRABAJO</h2>
+        </div>
+        
+        <div class="text-left text-[13px] font-bold text-gray-800 leading-tight">
+            <p class="mb-1">FORMADOR: <span id="preview-nombre" class="font-normal text-gray-600"></span></p>
+            <p>ZONA: <span id="preview-zona" class="font-normal text-gray-600"></span></p>
+        </div>
+    </div>
+    
+    <!-- CONTENEDOR DE TARJETAS (La clave está aquí: grid de 4 columnas) -->
+    <div id="preview-cards-container" class="grid grid-cols-4 gap-4 w-full h-auto items-stretch">
+        <!-- Las tarjetas se inyectan aquí automáticamente -->
+    </div>
 </div>
-                </div>
-
-                <div class="mb-4 relative z-10 text-gray-800 flex flex-col gap-1">
-                    <div class="text-sm"><span class="font-bold">FORMADOR:</span> <span id="preview-nombre">...</span></div>
-                    <div class="text-sm"><span class="font-bold">ZONA:</span> <span id="preview-zona">...</span></div>
-                </div>
-
-                <div id="preview-cards-container" class="grid grid-cols-4 gap-3 w-full items-stretch"></div>
-                    <!-- Se inyectan por JS -->
-                </div>
             </div>
         </div>
     </div>
