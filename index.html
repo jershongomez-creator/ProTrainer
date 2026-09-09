@@ -1840,7 +1840,7 @@ input:focus, select:focus, textarea:focus {
             <p class="text-xs text-gray-500 mb-2 text-center">Vista previa de la imagen generada</p>
             
            <!-- LIENZO A CAPTURAR (Se ajustará dinámicamente) -->
-<div id="lienzo-plan-trabajo" class="bg-[#F8F9FB] w-full h-auto min-h-fit p-6 relative pb-10">
+           <div id="lienzo-plan-trabajo" class="bg-[#F8F9FB] w-full min-w-[1000px] h-auto min-h-fit p-6 relative pb-10">
     
     <!-- Encabezado del Plan -->
     <div class="mb-4">
@@ -12193,30 +12193,70 @@ function actualizarPreviewPlan() {
         }
     }
 }
-// 6. Generar Imagen
+// 6. Generar Imagen (A PRUEBA DE CELULARES - TÉCNICA DE CLONACIÓN)
 function generarImagenPlan() {
-    const lienzo = document.getElementById('lienzo-plan-trabajo');
+    const lienzoOriginal = document.getElementById('lienzo-plan-trabajo');
+    if (!lienzoOriginal) return;
+
     const hoy = new Date();
     const fechaTxt = `${String(hoy.getDate()).padStart(2, '0')}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${hoy.getFullYear()}`;
     const nombreFormador = (document.getElementById('plan-nombre')?.value.replace(/\s+/g, '_') || 'Formador');
     
     actualizarPreviewPlan();
-    
-    html2canvas(lienzo, {
-        scale: 2, 
-        useCORS: true,
-        backgroundColor: "#F8F9FB",
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: document.documentElement.offsetWidth
-    }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = `Plan_Trabajo_${fechaTxt}_${nombreFormador}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-    });
-}
 
+    // 1. CREAMOS UN CLON FANTASMA
+    // Esto hace una copia exacta del diseño para no alterar la pantalla del celular
+    const clon = lienzoOriginal.cloneNode(true);
+    
+    // 2. FORZAMOS EL TAMAÑO DE PC (1200px) EN EL CLON
+    clon.style.position = 'absolute';
+    clon.style.top = '-9999px'; // Lo escondemos fuera de la pantalla
+    clon.style.left = '0';
+    clon.style.width = '1200px';
+    clon.style.minWidth = '1200px';
+    clon.style.transform = 'none'; // Quitamos cualquier reducción forzada del celular
+    
+    // Aseguramos que el contenedor de las tarjetas esté en fila (flex-row) estrictamente
+    const contenedorCartas = clon.querySelector('#preview-cards-container');
+    if (contenedorCartas) {
+        contenedorCartas.style.display = 'flex';
+        contenedorCartas.style.flexDirection = 'row';
+        contenedorCartas.style.flexWrap = 'nowrap';
+        contenedorCartas.style.width = '100%';
+    }
+
+    // Metemos el clon al documento (invisible) para que la cámara de html2canvas lo pueda "ver"
+    document.body.appendChild(clon);
+
+    // 3. TOMAMOS LA FOTO AL CLON ANCHO
+    setTimeout(() => {
+        html2canvas(clon, {
+            scale: 2, 
+            useCORS: true,
+            backgroundColor: "#F8F9FB",
+            windowWidth: 1200, 
+            width: 1200
+        }).then(canvas => {
+            // 4. DESTRUIR EL CLON Y DESCARGAR
+            document.body.removeChild(clon);
+
+            const link = document.createElement('a');
+            link.download = `Plan_Trabajo_${fechaTxt}_${nombreFormador}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            if (typeof triggerCyberToast === 'function') {
+                triggerCyberToast("¡Éxito!", "Plan de trabajo generado en formato PC.", true);
+            } else {
+                alert('Plan de trabajo generado correctamente.');
+            }
+        }).catch(err => {
+            console.error("Error al generar imagen: ", err);
+            if (document.body.contains(clon)) document.body.removeChild(clon);
+            alert("Hubo un error al generar la imagen.");
+        });
+    }, 500); // 500ms de gracia para que carguen bien los logos en la nueva copia
+}
 // 7. Inicializar Plan de Trabajo
 function inicializarPlanTrabajo() {
     const inputNombre = document.getElementById('plan-nombre');
