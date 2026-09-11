@@ -12023,6 +12023,8 @@ function obtenerEstiloTienda(cadena) {
             bg = 'bg-[#FFE700]'; logoUrl = './exito.png'; textClass = 'text-black'; break;
         case 'FALABELLA':
             bg = 'bg-[#B2D235]'; logoUrl = './falabella.png'; textClass = 'text-black'; break;
+        case 'KTRONIX':
+            bg = 'bg-[#8AB8E6]'; logoUrl = './ktronix.png'; textClass = 'text-black'; break;
         case 'CENCOSUD':
             bg = 'bg-[#00704A]'; logoUrl = './cencosud.png'; textClass = 'text-white'; break;
         case 'WOM':
@@ -12058,7 +12060,7 @@ function agregarTiendaPlan() {
     }
     
     // Opciones Cadena
-    const cadenas = ['ALKOSTO', 'EXITO', 'FALABELLA', 'CENCOSUD', 'WOM', 'OLIMPICA', 'OTRO'];
+    const cadenas = ['ALKOSTO', 'EXITO', 'FALABELLA', 'CENCOSUD', 'WOM', 'OLIMPICA', 'KTRONIX'];
     let cadenaOptions = '<option value="" disabled selected>Cadena...</option>';
     cadenas.forEach(c => cadenaOptions += `<option value="${c}">${c}</option>`);
 
@@ -12355,6 +12357,7 @@ const bdCadenasGuardada = localStorage.getItem('infinix_admin_multicanal_config'
 const bdCadenas = bdCadenasGuardada ? JSON.parse(bdCadenasGuardada) : {
   exito: { nombre: "Éxito", meta_roi: 75, equipos: {} },
   alkosto: { nombre: "Alkosto", meta_roi: 75, equipos: {} },
+  ktronix: { nombre: "Ktronix", meta_roi: 75, equipos: {} },
   cencosud: { nombre: "Cencosud", meta_roi: 65, equipos: {} },
   falabella: { nombre: "Falabella", meta_roi: 60, equipos: {} },
   wom: { nombre: "WOM", meta_roi: 50, equipos: {} }
@@ -12556,7 +12559,7 @@ function calcularIncentivosMulticanal() {
 // MÓDULO: ADMIN MULTICANAL
 // ==========================================
 
-const cadenasDisponibles = ["exito", "alkosto", "cencosud", "falabella", "wom"];
+const cadenasDisponibles = ["exito", "alkosto", "cencosud", "falabella", "wom", "ktronix"];
 const nombresCadenas = {
     exito: "Éxito", alkosto: "Alkosto", cencosud: "Cencosud", falabella: "Falabella", wom: "WOM"
 };
