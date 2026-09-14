@@ -11922,7 +11922,7 @@ async function ejecutarBajaUsuario() {
     }
 }
 
-// --- LÓGICA DEL PLAN DE TRABAJO (ACTUALIZADA CON FECHA, ASESOR Y ROI) ---
+// --- LÓGICA DEL PLAN DE TRABAJO (ACTUALIZADA CON FECHA, ASESOR, ROI Y VENTA SEMANAL) ---
 
 let contadorTiendasPlan = 0;
 const MAX_TIENDAS = 6;
@@ -12043,7 +12043,7 @@ function obtenerEstiloTienda(cadena) {
     return { bg, logoUrl, textClass };
 }
 
-// 4. Agregar Tienda (con Asesor y ROI)
+// 4. Agregar Tienda (con Asesor, ROI y Venta Semanal)
 function agregarTiendaPlan() {
     if (contadorTiendasPlan >= MAX_TIENDAS) {
         alert("Máximo 6 tiendas para mantener el formato de la imagen.");
@@ -12091,14 +12091,17 @@ function agregarTiendaPlan() {
             </select>
         </div>
 
-        <!-- Asesor y ROI -->
+        <!-- Asesor, ROI y Venta Semanal -->
+        <div class="grid grid-cols-1 gap-2 mt-2">
+             <input type="text" id="plan-asesor-${id}" placeholder="Nombre Asesor..." class="w-full bg-[#0B0E14] text-white border border-darkBorder rounded px-2 py-1.5 text-xs" onkeyup="actualizarPreviewPlan()">
+        </div>
         <div class="grid grid-cols-2 gap-2 mt-2">
-            <input type="text" id="plan-asesor-${id}" placeholder="Nombre Asesor..." class="w-full bg-[#0B0E14] text-white border border-darkBorder rounded px-2 py-1.5 text-xs" onkeyup="actualizarPreviewPlan()">
-            <input type="text" id="plan-roi-${id}" placeholder="ROI (ej: 120% / $5M)..." class="w-full bg-[#0B0E14] text-white border border-darkBorder rounded px-2 py-1.5 text-xs" onkeyup="actualizarPreviewPlan()">
+            <input type="text" id="plan-roi-${id}" placeholder="ROI (ej: W37 = 20 Und)..." class="w-full bg-[#0B0E14] text-white border border-darkBorder rounded px-2 py-1.5 text-xs" onkeyup="actualizarPreviewPlan()">
+            <input type="text" id="plan-venta-semanal-${id}" placeholder="Venta Semanal (Ej: 15 Und)..." class="w-full bg-[#0B0E14] text-white border border-darkBorder rounded px-2 py-1.5 text-xs" onkeyup="actualizarPreviewPlan()">
         </div>
 
         <!-- Actividad -->
-        <textarea id="plan-actividad-${id}" placeholder="Actividad (Ej: Refuerzo lanzamientos...)" class="w-full bg-[#0B0E14] text-white border border-darkBorder rounded px-2 py-1.5 text-xs h-12 resize-none mt-2" onkeyup="actualizarPreviewPlan()"></textarea>
+        <textarea id="plan-actividad-${id}" placeholder="Plan de Trabajo (ej: Refuerzo lanzamientos...)" class="w-full bg-[#0B0E14] text-white border border-darkBorder rounded px-2 py-1.5 text-xs h-12 resize-none mt-2" onkeyup="actualizarPreviewPlan()"></textarea>
     `;
     
     document.getElementById('contenedor-tiendas-plan').appendChild(div);
@@ -12144,6 +12147,7 @@ function actualizarPreviewPlan() {
         const tiendaInput = document.getElementById(`plan-tienda-${i}`);
         const asesorInput = document.getElementById(`plan-asesor-${i}`);
         const roiInput = document.getElementById(`plan-roi-${i}`);
+        const ventaSemanalInput = document.getElementById(`plan-venta-semanal-${i}`);
         const actividadInput = document.getElementById(`plan-actividad-${i}`);
         
         if (tiendaInput && actividadInput && cadenaInput) {
@@ -12151,6 +12155,7 @@ function actualizarPreviewPlan() {
             const nombreTienda = tiendaInput.value || 'SELECCIONE TIENDA';
             const asesor = (asesorInput && asesorInput.value.trim()) ? asesorInput.value.trim() : 'POR ASIGNAR';
             const roi = (roiInput && roiInput.value.trim()) ? roiInput.value.trim() : 'N/A';
+            const ventaSemanal = (ventaSemanalInput && ventaSemanalInput.value.trim()) ? ventaSemanalInput.value.trim() : 'N/A';
             const actividad = actividadInput.value || '...';
             
             const estilo = obtenerEstiloTienda(cadena); 
@@ -12170,7 +12175,7 @@ function actualizarPreviewPlan() {
                     <img src="${estilo.logoUrl}" alt="Logo" class="max-h-12 max-w-[75%] object-contain">
                 </div>
 
-                <!-- CÁPSULAS ASESOR Y ROI (A PRUEBA DE HTML2CANVAS) -->
+                <!-- CÁPSULAS ASESOR, ROI Y VENTA SEMANAL (A PRUEBA DE HTML2CANVAS) -->
                 <div class="px-2 py-2 bg-gray-50 border-b border-gray-200 flex flex-col gap-1.5">
                     
                     <!-- Fila Asesor -->
@@ -12181,8 +12186,14 @@ function actualizarPreviewPlan() {
 
                     <!-- Fila ROI -->
                     <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:6px; padding:6px 8px; display:flex; justify-content:space-between; align-items:baseline; min-height:30px;">
-                        <span style="font-size:10px; font-weight:700; color:#6b7280; text-transform:uppercase; line-height:16px;">ROI:</span>
+                        <span style="font-size:10px; font-weight:700; color:#6b7280; text-transform:uppercase; line-height:16px;">ROI POR W:</span>
                         <span style="font-size:11px; font-weight:900; color:#1C5B99; text-align:right; line-height:16px; margin-left:6px; word-break:break-word;">${roi}</span>
+                    </div>
+
+                    <!-- Fila Venta Semanal -->
+                    <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:6px; padding:6px 8px; display:flex; justify-content:space-between; align-items:baseline; min-height:30px;">
+                        <span style="font-size:10px; font-weight:700; color:#6b7280; text-transform:uppercase; line-height:16px;">V. SEMANA:</span>
+                        <span style="font-size:11px; font-weight:900; color:#059669; text-align:right; line-height:16px; margin-left:6px; word-break:break-word;">${ventaSemanal}</span>
                     </div>
 
                 </div>
@@ -12201,6 +12212,7 @@ function actualizarPreviewPlan() {
         }
     }
 }
+
 // 6. Generar Imagen (A PRUEBA DE CELULARES - TÉCNICA DE CLONACIÓN)
 function generarImagenPlan() {
     const lienzoOriginal = document.getElementById('lienzo-plan-trabajo');
