@@ -11832,13 +11832,14 @@ async function registrarNuevoUsuario(event) {
 
     const cedula = document.getElementById('nuevo-cedula').value.trim();
     const nombre = document.getElementById('nuevo-nombre').value.trim();
-    const dsr = document.getElementById('nuevo-dsr').value.trim();
+    // CORRECCIÓN: Aquí cambié 'nuevo-dsr' por 'nuevo-dcr' para que coincida con tu HTML
+    const dsr = document.getElementById('nuevo-dcr').value.trim(); 
     const rol = document.getElementById('nuevo-rol').value;
     const regional = document.getElementById('nuevo-regional').value;
     const zona = document.getElementById('nuevo-zona').value;
     const tienda = document.getElementById('nuevo-tienda').value;
 
-    // Validación de seguridad para evitar registros con campos vacíos por saltarse la cascada
+    // Validación de seguridad para evitar registros con campos vacíos
     if (!cedula || !nombre || !rol || !regional || !zona || !tienda) {
         alert("Por favor, completa todos los campos obligatorios y asegúrate de seleccionar Regional, Zona y Tienda.");
         return;
@@ -11846,23 +11847,24 @@ async function registrarNuevoUsuario(event) {
 
     try {
         await db.collection('usuarios_auth').doc(cedula).set({
-    codigo: cedula,
-    nombre: nombre.toUpperCase(),
-    password: "Password123*", // O la variable de contraseña si la tienes
-    primer_ingreso: true,
-    regional: regional,
-    rol: rol,
-    tienda: tienda,
-    zona: zona,
-    dsr: dsr // Opcional si lo quieres conservar
-});
+            codigo: cedula,
+            nombre: nombre.toUpperCase(),
+            password: "Password123*", // Contraseña por defecto para primer ingreso
+            primer_ingreso: true,
+            regional: regional,
+            rol: rol,
+            tienda: tienda,
+            zona: zona,
+            dsr: dsr 
+        });
         
+        // Alerta de éxito y limpieza visual
         alert(`¡Usuario ${nombre} registrado con éxito en el sistema!`);
         document.getElementById('form-crear-usuario').reset();
         
         // Retornar los selects en cascada a su estado original después del reset
-        document.getElementById('nuevo-zona').innerHTML = '<option value="">Seleccione Zona...</option>';
-        document.getElementById('nuevo-tienda').innerHTML = '<option value="">Seleccione Tienda...</option>';
+        document.getElementById('nuevo-zona').innerHTML = '<option value="">Primero seleccione Regional...</option>';
+        document.getElementById('nuevo-tienda').innerHTML = '<option value="">Primero seleccione Zona...</option>';
         
     } catch (error) {
         console.error("Error al registrar usuario:", error);
